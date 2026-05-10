@@ -9,7 +9,7 @@ This repository contains the evaluation code for **BioXArena**, our benchmark fo
 ## 💬 Join Our Community
 
 <div align="center">
-  <img src="figs/wechat_group.png" alt="WeChat Group" width="200"/>
+  <img src="figs/wechat_group.jpg" alt="WeChat Group" width="200"/>
   <p><strong>Join our WeChat group for discussions and updates!</strong></p>
 </div>
 
