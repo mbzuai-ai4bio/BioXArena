@@ -19,8 +19,6 @@ This repository contains the evaluation code for **BioXArena**, our benchmark fo
 
 ## How to Use
 
----
-
 ### 1. Download the BioXArena data
 
 Before running any evaluation, download **BioXArena-Data-Public** from Hugging Face:
