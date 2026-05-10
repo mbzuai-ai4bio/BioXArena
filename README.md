@@ -129,7 +129,7 @@ MODEL="z-ai/glm-5.1"
 
 #### Other agents
 
-Evaluation for other LLM agents follows the same pattern. Their evaluation entry shell scripts and corresponding Python runner files are also located under `training/`.
+Evaluation for other LLM agents follows the same pattern. Their evaluation entry shell scripts and corresponding Python runner files are also located under `training/`. The codebase for each (custom) agent is organized under the `agents/` directory.
 
 You can also add more agents, including your own LLM agents, by following the same script structure.
 
