@@ -17,10 +17,11 @@ This repository contains the evaluation code for **BioXArena**, our benchmark fo
 
 - **[2026.05.10]** We open-sourced the **BioXArena** codebase and released the [project page](https://leagein.github.io/BioXArena-ProjectPage/).
 
+## How to Use
 
 ---
 
-## 1. Download the BioXArena data
+### 1. Download the BioXArena data
 
 Before running any evaluation, download **BioXArena-Data-Public** from Hugging Face:
 
@@ -35,7 +36,7 @@ tar -xzf BioXArena-Data-Public.tar.gz
 
 ---
 
-## 2. Install the environment
+### 2. Install the environment
 
 The recommended environment is defined in [environment.yaml](environment.yaml).
 
@@ -55,7 +56,7 @@ conda activate bioxbench
 
 ---
 
-## 3. Run evaluation
+### 3. Run evaluation
 
 First, clone the repository and move into it:
 
@@ -86,7 +87,7 @@ Before launching any script, make sure the correct environment is activated:
 conda activate bioxbench
 ```
 
-### Example: General LLM agents
+#### Example: General LLM agents
 
 For general LLM agents, run the following four evaluation entry shell scripts:
 
@@ -128,19 +129,19 @@ PREFIX_DIR="/path/to/data"
 MODEL="z-ai/glm-5.1"
 ```
 
-### Other agents
+#### Other agents
 
 Evaluation for other LLM agents follows the same pattern. Their evaluation entry shell scripts and corresponding Python runner files are also located under `training/`.
 
 You can also add more agents, including your own LLM agents, by following the same script structure.
 
-### Special notes
+#### Special notes
 
 For the **Biomni** agent, you must download the Biomni data lake in advance and place `biomni_data/` under `PREFIX_DIR`.
 
 For **MLEvolve** or **mlmaster2.0**, you may either use the shared `bioxbench` environment or create their dedicated environments as follows.
 
-#### MLEvolve
+##### MLEvolve
 
 ```bash
 conda create -n MLEvolve python=3.12
@@ -151,7 +152,7 @@ pip install --no-deps -r requirements_ml.txt
 pip install --no-deps -r requirements_domain.txt
 ```
 
-#### mlmaster2.0
+##### mlmaster2.0
 
 ```bash
 conda create -n mlmaster2.0 python=3.12
@@ -162,7 +163,7 @@ pip install -r playground/ml_master_2/requirements.txt
 
 ---
 
-## 4. Evaluation outputs
+### 4. Evaluation outputs
 
 After evaluation finishes, each agent produces outputs following a unified directory structure:
 
@@ -172,7 +173,7 @@ BioXArena-Output/<AgentName>/<round>/<domain>/<task>/
 
 All outputs are stored under `BioXArena-Output/`, which is located inside `PREFIX_DIR/`.
 
-### Required files
+#### Required files
 
 For **each task**, the corresponding task **root** directory must contain at least the following files:
 
@@ -182,7 +183,7 @@ For **each task**, the corresponding task **root** directory must contain at lea
 
 Among these files, `submission.csv` is **mandatory** and must be correctly formatted for downstream evaluation.
 
-### Search-based coding agents
+#### Search-based coding agents
 
 For agents that employ **search-based strategies** such as Monte Carlo Tree Search (MCTS), including:
 
@@ -227,7 +228,7 @@ The `metrics.json` file typically records information such as:
 - token usage
 - other execution-related statistics
 
-### Standard agents
+#### Standard agents
 
 For all other agents, outputs are written directly to the task root directory:
 
@@ -243,7 +244,7 @@ solution.py
 metrics.json
 ```
 
-### Extending to new agents
+#### Extending to new agents
 
 To integrate a new agent into the BioXArena evaluation pipeline, ensure the following (you may refer to the existing agent runner Python scripts under `training/`):
 
@@ -270,7 +271,7 @@ Adhering to this format ensures compatibility with the evaluation and scoring pi
 
 ---
 
-## 5. Scoring and leaderboard
+### 5. Scoring and leaderboard
 
 At the moment, we have **not yet publicly released** the ground-truth `answers.csv` file for the 76 benchmark tasks.
 
