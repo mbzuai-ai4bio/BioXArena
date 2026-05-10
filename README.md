@@ -1,7 +1,7 @@
 # BioXArena
 
 <p align="center">
-  <img src="figs/Figure1_benchmark_pipeline.pdf" alt="BioXArena Overview" width="80%">
+  <img src="figs/Figure1_benchmark_pipeline.png" alt="BioXArena Overview" width="80%">
 </p>
 
 This repository contains the evaluation code for **BioXArena**, our benchmark for assessing State-Of-The-Art (SOTA) LLM agents on biomedical tasks. We have used this codebase to evaluate more than a dozen SOTA LLM agents on the **BioXArena** benchmark.
