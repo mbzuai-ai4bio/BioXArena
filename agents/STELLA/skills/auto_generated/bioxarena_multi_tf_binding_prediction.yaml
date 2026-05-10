@@ -1,0 +1,72 @@
+skill_id: bioxarena_multi_tf_binding_prediction
+version: 1.0.0
+name: Multi-Transcription Factor Binding Prediction with Categorical Features
+domain: genomics
+description: Predicts binding sites for multiple transcription factors from genomic
+  sequences by integrating sequence data with categorical genomic features using deep
+  learning.
+workflow:
+- step: 1
+  action: execute
+  description: '1. Data exploration: Analyzed 38,124 training samples with DNA sequences
+    (150-350bp), categorical features (15 TFs, 7 cell types, 5 CRE types)
+
+    2. Feature engineering: One-hot encoding for DNA sequences (fixed 400bp), label
+    encoding for categorical variables
+
+    3. Model architecture: Hybrid CNN (2-layer Conv1D) for sequences + embedding layers
+    for categorical features + combined MLP classifier
+
+    4. Training: Binary cross-entropy loss, Adam optimizer, ReduceLROnPlateau scheduler,
+    validation ROC-AUC mon'
+  tools_required:
+  - dev_agent
+  - run_shell_command
+  - analyze_query_and_load_relevant_tools
+  - retrieve_similar_skills
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: dev_agent
+  version: '>=1.0.0'
+  optional: false
+- tool_id: run_shell_command
+  version: '>=1.0.0'
+  optional: false
+- tool_id: analyze_query_and_load_relevant_tools
+  version: '>=1.0.0'
+  optional: false
+- tool_id: retrieve_similar_skills
+  version: '>=1.0.0'
+  optional: false
+tags:
+- genomics
+- transcription-factors
+- sequence-modeling
+- multi-task-learning
+- bioinformatics
+- deep-learning
+- categorical-features
+applicable_queries:
+- BioXArena * binding prediction *
+- multi-TF binding prediction from genomic sequences*
+- predict transcription factor binding with categorical features*
+- genomic sequence classification multi-label*
+- TF binding site prediction using deep learning*
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-17'
+  created_at: '2026-04-17'
+  last_updated: '2026-04-17'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260417_113457_f8d024
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-17'
+    changes: Auto-created from successful run
+status: active

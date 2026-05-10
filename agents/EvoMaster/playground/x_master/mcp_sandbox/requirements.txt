@@ -1,0 +1,26 @@
+# ============================================
+# X-Master MCP Sandbox Requirements
+# Python >= 3.10 (recommended 3.11)
+# ============================================
+# 安装: pip install -r requirements.txt
+
+# MCP Framework (FastMCP server)
+mcp>=1.0.0
+
+# Web Framework (API Server)
+fastapi>=0.109.0
+uvicorn>=0.27.0
+starlette>=0.27.0
+
+# Rate Limiting
+slowapi>=0.1.9
+
+# HTTP Clients
+aiohttp>=3.9.0
+requests>=2.31.0
+
+# Data Validation
+pydantic>=2.5.0
+
+# PDF Processing (fitz module)
+PyMuPDF>=1.23.0

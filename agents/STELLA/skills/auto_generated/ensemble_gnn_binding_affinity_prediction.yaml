@@ -1,0 +1,88 @@
+skill_id: ensemble_gnn_binding_affinity_prediction
+version: 1.0.0
+name: Ensemble ML and GNN Binding Affinity Prediction
+domain: cheminformatics
+description: A comprehensive workflow for predicting protein-ligand binding affinity
+  from SMILES strings using an ensemble of gradient boosting machines and Graph Neural
+  Networks.
+workflow:
+- step: 1
+  action: execute
+  description: "1. Used shell commands to verify data files existence without forbidden\
+    \ os module\n2. Delegated implementation to dev_agent with create_and_run_script\
+    \ capability\n3. Implemented comprehensive feature engineering: ECFP4, MACCS,\
+    \ Morgan fingerprints + descriptors\n4. Applied feature selection (VarianceThreshold\
+    \ + SelectKBest) to reduce 4470\u21922000 features\n5. Trained multiple models:\
+    \ XGBoost, LightGBM, CatBoost with Bayesian hyperparameter optimization\n6. Implemented\
+    \ D-MPNN GNN on 4 GPUs with mixed prec"
+  tools_required:
+  - dev_agent
+  - critic_agent
+  - RDKit
+  - scikit-learn
+  - xgboost
+  - lightgbm
+  - catboost
+  - pytorch
+  - pytorch-geometric
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: dev_agent
+  version: '>=1.0.0'
+  optional: false
+- tool_id: critic_agent
+  version: '>=1.0.0'
+  optional: false
+- tool_id: RDKit
+  version: '>=1.0.0'
+  optional: false
+- tool_id: scikit-learn
+  version: '>=1.0.0'
+  optional: false
+- tool_id: xgboost
+  version: '>=1.0.0'
+  optional: false
+- tool_id: lightgbm
+  version: '>=1.0.0'
+  optional: false
+- tool_id: catboost
+  version: '>=1.0.0'
+  optional: false
+- tool_id: pytorch
+  version: '>=1.0.0'
+  optional: false
+- tool_id: pytorch-geometric
+  version: '>=1.0.0'
+  optional: false
+tags:
+- cheminformatics
+- binding-affinity
+- graph-neural-networks
+- ensemble-learning
+- SMILES
+- drug-discovery
+- BACE1
+applicable_queries:
+- '* binding affinity prediction from SMILES'
+- '* BACE1 inhibitor prediction *'
+- ensemble machine learning for * cheminformatics
+- GNN and gradient boosting for molecular property prediction
+- BioXArena * prediction workflow
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-17'
+  created_at: '2026-04-17'
+  last_updated: '2026-04-17'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260417_074947_e428eb
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-17'
+    changes: Auto-created from successful run
+status: active

@@ -1,0 +1,15 @@
+# RAG Skill Dependencies
+
+# Vector database
+faiss-cpu>=1.7.4  # Use faiss-gpu if CUDA is available
+
+# Transformers for embeddings
+transformers>=4.30.0
+torch>=2.0.0
+
+# NumPy for array operations
+numpy>=1.24.0
+
+# Optional: For GPU support
+# faiss-gpu>=1.7.4  # Uncomment if using GPU
+# torch>=2.0.0+cu118  # Use CUDA-enabled PyTorch if using GPU

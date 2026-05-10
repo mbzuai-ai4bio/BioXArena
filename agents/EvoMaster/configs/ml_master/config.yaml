@@ -1,0 +1,232 @@
+# ML Master Configuration File
+# EvoMaster configuration for UCT-based multi-agent ML workflow
+
+# ============================================
+# Task-Specific Configuration
+# ============================================
+exp_id: "X"
+data_root: "/data/exp_data"   # Local dataset root directory
+
+# ============================================
+# LLM Configuration
+# ============================================
+llm:
+  openai:
+    provider: "openai"
+    model: "${GPT_CHAT_MODEL}"
+    api_key: "${OPENAI_API_KEY}"
+    base_url: "${GPT_BASE_URL}"
+    temperature: 0.7
+    max_tokens: 16384
+    timeout: 60
+    max_retries: 3
+    retry_delay: 1.0
+
+  anthropic:
+    provider: "anthropic"
+    model: "claude-haiku-4-5-20251001"
+    api_key: "${ANTHROPIC_API_KEY}"
+    base_url: "${ANTHROPIC_BASE_URL}"
+    temperature: 0.7
+    max_tokens: 16384
+    timeout: 60
+    max_retries: 3
+    retry_delay: 1.0
+
+  # Local LLM configuration example
+  local_sglang:
+    provider: "deepseek"
+    model: "DeepSeek/DeepSeek-R1-671B"
+    api_key: "${DEEPSEEK_API_KEY}"  # Placeholder key can be used for local deployment
+    base_url: "${DEEPSEEK_API_BASE}"
+    temperature: 0.5
+    max_tokens: 80000
+    timeout: 3600
+    max_retries: 3
+    retry_delay: 1.0
+
+  default: "local_sglang"
+
+# ============================================
+# Multi-Agent Configuration
+# ============================================
+agents:
+  # Draft Agent - Generates initial code
+  draft:
+    llm: "local_sglang"
+    max_turns: 30
+    tools:
+      builtin: []
+
+    context:
+      max_tokens: 128000
+      truncation_strategy: "latest_half"
+      preserve_system_messages: true
+      preserve_recent_turns: 5
+
+    # Prompt configuration
+    system_prompt_file: "prompts/draft/system_prompt.txt"
+    user_prompt_file: "prompts/draft/user_prompt.txt"
+
+  # Debug Agent - Repairs buggy code
+  debug:
+    llm: "local_sglang"
+    max_turns: 30
+    tools:
+      builtin: []
+
+    context:
+      max_tokens: 128000
+      truncation_strategy: "latest_half"
+      preserve_system_messages: true
+      preserve_recent_turns: 5
+
+    # Prompt configuration
+    system_prompt_file: "prompts/debug/system_prompt.txt"
+    user_prompt_file: "prompts/debug/user_prompt.txt"
+
+  # Improve Agent - Optimizes existing code
+  improve:
+    llm: "local_sglang"
+    max_turns: 30
+    tools:
+      builtin: []
+
+    context:
+      max_tokens: 128000
+      truncation_strategy: "latest_half"
+      preserve_system_messages: true
+      preserve_recent_turns: 5
+
+    # Prompt configuration
+    system_prompt_file: "prompts/improve/system_prompt.txt"
+    user_prompt_file: "prompts/improve/user_prompt.txt"
+
+  # Metric Agent - Evaluates task performance
+  metric:
+    llm: "local_sglang"
+    max_turns: 8
+    tools:
+      builtin: []
+
+    context:
+      max_tokens: 64000
+      truncation_strategy: "latest_half"
+      preserve_system_messages: true
+      preserve_recent_turns: 2
+
+    # Prompt configuration
+    system_prompt_file: "prompts/metric/system_prompt.txt"
+    user_prompt_file: "prompts/metric/user_prompt.txt"
+
+
+
+# ============================================
+# Session Configuration
+# ============================================
+session:
+  # Session type: local or docker
+  type: "local"  # Options: "local" or "docker"
+
+  # Local Session configuration
+  local:
+    working_dir: "./playground/ml_master/workspace"
+    workspace_path: "./playground/workspace"
+    timeout: 32400
+
+    # GPU device configuration (optional)
+    # Options:
+    #   - null: No GPU restriction (use all available GPUs)
+    #   - "2": Use only GPU 2
+    #   - ["0", "1"]: Use GPUs 0 and 1
+    gpu_devices: ["0,1", "2,3", "4,5", "6,7"]  # 4-way parallelism on an 8-GPU machine (2 GPUs per task)
+
+    # CPU device configuration (optional)
+    # Options:
+    #   - null: No CPU restriction (use all available CPUs)
+    #   - "0-15": Use CPUs 0 to 15
+    #   - [0, 1, 2, 3]: Use CPUs 0, 1, 2, 3
+    cpu_devices: "0-127"  # Example: use CPUs 0-127
+
+    parallel:
+      enabled: true
+      max_parallel: 4
+      split_workspace_for_exp: true
+
+    # Symlink configuration
+    symlinks:
+      "/data/exp_data/X/prepared/public": "input"
+
+  # Docker Session configuration
+  docker:
+    # Docker image
+    image: "evomaster/base:latest"
+
+    # Container name (null for auto-generation)
+    container_name: null
+
+    # Use existing container (if set, use it instead of creating a new one)
+    use_existing_container: null
+
+    # Working directory (inside container)
+    working_dir: "/workspace"
+
+    # Resource limits
+    memory_limit: "64g"  # Memory limit, e.g. "4g", "8g"
+    cpu_limit: 16.0      # CPU limit (number of cores)
+    gpu_devices: "0"     # GPU devices, options:
+                         #   - null: No GPU
+                         #   - "all": Use all GPUs
+                         #   - "0": Use GPU 0
+                         #   - ["0", "1"]: Use GPUs 0 and 1
+
+    # Network mode
+    network_mode: "host"  # bridge, host, none
+
+    # Mount volumes (mount local directories to container)
+    volumes: {"./playground/ml_master/workspace": "/workspace"}
+
+    # Environment variables
+    env_vars: {}
+
+    # Container lifecycle
+    auto_remove: false   # true: auto-remove after completion, false: keep container
+
+    # Timeout in seconds for long-running tasks
+    timeout: 300
+
+# ============================================
+# LLM Output Display Configuration
+# ============================================
+llm_output:
+  # Whether to display LLM output in console in real-time
+  show_in_console: true
+
+  # Whether to log LLM output to file
+  log_to_file: true
+
+# ============================================
+# Logging Configuration
+# ============================================
+logging:
+  level: "INFO"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file: null
+  console: true
+
+
+
+# ============================================
+# ml_master Specific Configuration
+# ============================================
+# Grading server configuration
+grading_servers:
+  - "http://127.0.0.1:5001"
+
+# mle-bench grading configuration
+mlebench:
+  auto_grade: true
+  grade_output: "mlebench_grade.json"
+  grade_overwrite: true
+
+

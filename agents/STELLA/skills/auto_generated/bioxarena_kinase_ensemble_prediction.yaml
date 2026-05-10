@@ -1,0 +1,85 @@
+skill_id: bioxarena_kinase_ensemble_prediction
+version: 1.0.0
+name: BioXArena Kinase Selectivity Ensemble Modeling
+domain: chemical-biology
+description: A workflow for predicting kinase selectivity using ensemble machine learning
+  models (LightGBM, XGBoost) and generating standardized BioXArena competition outputs
+  including submission CSVs and metrics JSON.
+workflow:
+- step: 1
+  action: execute
+  description: '1. Identified critical format mismatch: training data has ''id, SMILES''
+    columns but submission requires ''smiles'' column
+
+    2. Created solution that handles column name mapping correctly
+
+    3. Implemented ensemble of LightGBM, XGBoost, and Neural Network
+
+    4. Generated all required output files with correct formatting
+
+    5. Included proper timing metrics in metrics.json
+
+    6. Created standalone solution.py file'
+  tools_required:
+  - pandas
+  - numpy
+  - lightgbm
+  - xgboost
+  - sklearn
+  - time
+  - json
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: pandas
+  version: '>=1.0.0'
+  optional: false
+- tool_id: numpy
+  version: '>=1.0.0'
+  optional: false
+- tool_id: lightgbm
+  version: '>=1.0.0'
+  optional: false
+- tool_id: xgboost
+  version: '>=1.0.0'
+  optional: false
+- tool_id: sklearn
+  version: '>=1.0.0'
+  optional: false
+- tool_id: time
+  version: '>=1.0.0'
+  optional: false
+- tool_id: json
+  version: '>=1.0.0'
+  optional: false
+tags:
+- kinase-selectivity
+- ensemble-learning
+- bioxarena
+- cheminformatics
+- qsar-modeling
+- lightgbm
+- xgboost
+applicable_queries:
+- BioXArena * kinase prediction *
+- '* ensemble model for kinase selectivity *'
+- predict kinase binding with * formatting
+- generate BioXArena submission.csv and metrics.json for *
+- chemical-biology kinase selectivity ensemble *
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-07'
+  created_at: '2026-04-07'
+  last_updated: '2026-04-07'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260407_173323_2b79ae
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-07'
+    changes: Auto-created from successful run
+status: active

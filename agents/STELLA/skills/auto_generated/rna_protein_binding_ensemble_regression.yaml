@@ -1,0 +1,79 @@
+skill_id: rna_protein_binding_ensemble_regression
+version: 1.0.0
+name: RNA-Protein Binding Affinity Prediction via Transformer Ensembles
+domain: sequence_regression
+description: Predicts binding signal intensity between RNA and protein sequences by
+  extracting embeddings from specialized BERT models and training a gradient-boosted
+  ensemble for regression.
+workflow:
+- step: 1
+  action: execute
+  description: '1. Data exploration of 930k samples 2. Feature engineering: RNABERT
+    embeddings, protein features, positional features 3. Model testing: RandomForest,
+    XGBoost, LightGBM, Transformer 4. Ensemble approach: Transformer + LightGBM stacking
+    5. GPU acceleration for transformer training 6. Submission generation with exact
+    format matching'
+  tools_required:
+  - RNABERT
+  - ProteinBERT
+  - transformers
+  - LightGBM
+  - PyTorch
+  - pandas
+  - numpy
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: RNABERT
+  version: '>=1.0.0'
+  optional: false
+- tool_id: ProteinBERT
+  version: '>=1.0.0'
+  optional: false
+- tool_id: transformers
+  version: '>=1.0.0'
+  optional: false
+- tool_id: LightGBM
+  version: '>=1.0.0'
+  optional: false
+- tool_id: PyTorch
+  version: '>=1.0.0'
+  optional: false
+- tool_id: pandas
+  version: '>=1.0.0'
+  optional: false
+- tool_id: numpy
+  version: '>=1.0.0'
+  optional: false
+tags:
+- bioinformatics
+- transformer-embeddings
+- ensemble-learning
+- RNA-protein-interaction
+- sequence-regression
+- RNABERT
+- ProteinBERT
+- genomics
+applicable_queries:
+- '*binding affinity prediction*sequence*'
+- '*RNA-protein*regression*transformer*'
+- '*predict*signal*from*sequence*embeddings*'
+- '*ensemble*model*genomic*regression*'
+- '*RNABERT*ProteinBERT*prediction*'
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-09'
+  created_at: '2026-04-09'
+  last_updated: '2026-04-09'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260409_071811_7c3302
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-09'
+    changes: Auto-created from successful run
+status: active

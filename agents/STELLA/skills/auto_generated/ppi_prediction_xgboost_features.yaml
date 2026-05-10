@@ -1,0 +1,71 @@
+skill_id: ppi_prediction_xgboost_features
+version: 1.0.0
+name: Protein-Protein Interaction Prediction via Feature Engineering
+domain: genomics
+description: A pipeline for predicting protein-protein interactions from raw amino
+  acid sequences using comprehensive feature extraction and an optimized XGBoost classifier.
+workflow:
+- step: 1
+  action: execute
+  description: "1. Data exploration of HuRI dataset with 82,744 training samples\n\
+    2. Feature engineering: 122 features per protein pair including:\n   - Amino acid\
+    \ composition (20 AAs per protein)\n   - Physicochemical properties (hydrophobic,\
+    \ polar, charged)\n   - Sequence length\n   - Interaction features: absolute differences,\
+    \ element-wise products, averages\n   - Length ratios\n3. Model selection: XGBoost\
+    \ with tree_method='hist' for efficiency\n4. Hyperparameters: n_estimators=300,\
+    \ max_depth=7, learning_rate=0.05\n5"
+  tools_required:
+  - dev_agent
+  - pandas
+  - numpy
+  - xgboost
+  - sklearn
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: dev_agent
+  version: '>=1.0.0'
+  optional: false
+- tool_id: pandas
+  version: '>=1.0.0'
+  optional: false
+- tool_id: numpy
+  version: '>=1.0.0'
+  optional: false
+- tool_id: xgboost
+  version: '>=1.0.0'
+  optional: false
+- tool_id: sklearn
+  version: '>=1.0.0'
+  optional: false
+tags:
+- proteomics
+- protein-protein interaction
+- sequence-analysis
+- feature-engineering
+- xgboost
+- bioinformatics
+- machine-learning
+applicable_queries:
+- predict protein interactions from * sequences
+- PPI prediction using * and XGBoost
+- amino acid sequence classification for * interactions
+- feature extraction and machine learning for protein *
+- genomics pipeline for sequence-based * prediction
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-17'
+  created_at: '2026-04-17'
+  last_updated: '2026-04-17'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260417_114007_9524e6
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-17'
+    changes: Auto-created from successful run
+status: active

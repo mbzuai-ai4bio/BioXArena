@@ -1,0 +1,84 @@
+skill_id: citeseq_protein_prediction_ensemble
+version: 1.0.0
+name: CITE-seq Protein Abundance Prediction via Ensemble Learning
+domain: genomics
+description: Predicts surface protein (ADT) levels from single-cell RNA expression
+  data using an ensemble of Multi-Layer Perceptrons and LightGBM models to capture
+  both linear and non-linear biological relationships.
+workflow:
+- step: 1
+  action: execute
+  description: '1. Data exploration: Loaded sparse RNA and ADT matrices, checked dimensions
+    (76,161 train, 14,100 test, 2000 RNA features, 134 ADT targets)
+
+    2. Preprocessing: Applied CLR normalization to ADT targets, log1p transformation
+    to RNA counts, Truncated SVD (128 components) for dimensionality reduction
+
+    3. Model selection: Implemented ensemble of Deep MLP (1024-512-256) and LightGBM
+    multi-output regressor
+
+    4. Training: Used 3-fold cross-validation, AdamW optimizer with ReduceLROnPlateau
+    for MLP, optimized'
+  tools_required:
+  - dev_agent
+  - torch
+  - scikit-learn
+  - lightgbm
+  - numpy
+  - pandas
+  - scipy
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: dev_agent
+  version: '>=1.0.0'
+  optional: false
+- tool_id: torch
+  version: '>=1.0.0'
+  optional: false
+- tool_id: scikit-learn
+  version: '>=1.0.0'
+  optional: false
+- tool_id: lightgbm
+  version: '>=1.0.0'
+  optional: false
+- tool_id: numpy
+  version: '>=1.0.0'
+  optional: false
+- tool_id: pandas
+  version: '>=1.0.0'
+  optional: false
+- tool_id: scipy
+  version: '>=1.0.0'
+  optional: false
+tags:
+- genomics
+- CITE-seq
+- multi-omics
+- ensemble-learning
+- protein-prediction
+- single-cell-analysis
+- bioinformatics
+applicable_queries:
+- predict * protein levels from * RNA expression
+- CITE-seq * prediction using *
+- multi-omic integration * RNA and ADT
+- single-cell protein abundance prediction *
+- ensemble model for * genomics data
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-09'
+  created_at: '2026-04-09'
+  last_updated: '2026-04-09'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260409_141213_0db37d
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-09'
+    changes: Auto-created from successful run
+status: active

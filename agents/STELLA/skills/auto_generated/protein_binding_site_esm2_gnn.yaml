@@ -1,0 +1,76 @@
+skill_id: protein_binding_site_esm2_gnn
+version: 1.0.0
+name: Protein Binding Site Prediction with ESM-2 and GNN
+domain: structure
+description: A workflow for detecting protein binding sites by integrating ESM-2 language
+  model embeddings with Graph Neural Networks (GNN) for structural analysis.
+workflow:
+- step: 1
+  action: execute
+  description: '1. Used shell commands to explore data due to module restrictions
+
+    2. Delegated implementation to dev_agent which handles Python safely
+
+    3. Implemented ESM-2 protein embeddings for sequence features
+
+    4. Used GNN on residue graphs for 3D structure features
+
+    5. Combined features with fusion network
+
+    6. Used 5-fold cross-validation with class weighting for imbalance
+
+    7. Generated all required output files: submission.csv, metrics.json, solution.py,
+    model_weights.pt
+
+    8. Verified file formats match requirem'
+  tools_required:
+  - run_shell_command
+  - dev_agent
+  - critic_agent
+  - multi_source_search
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: run_shell_command
+  version: '>=1.0.0'
+  optional: false
+- tool_id: dev_agent
+  version: '>=1.0.0'
+  optional: false
+- tool_id: critic_agent
+  version: '>=1.0.0'
+  optional: false
+- tool_id: multi_source_search
+  version: '>=1.0.0'
+  optional: false
+tags:
+- protein-structure
+- binding-site-detection
+- esm-2
+- graph-neural-networks
+- bioinformatics
+- deep-learning
+- structural-biology
+applicable_queries:
+- Protein binding site detection with * and *
+- Predict binding residues using * embeddings
+- Structural protein analysis with GNN and *
+- Identify active sites in * using ESM-2
+- GNN-based protein-ligand interaction prediction
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-09'
+  created_at: '2026-04-09'
+  last_updated: '2026-04-09'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260409_061536_7096d6
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-09'
+    changes: Auto-created from successful run
+status: active

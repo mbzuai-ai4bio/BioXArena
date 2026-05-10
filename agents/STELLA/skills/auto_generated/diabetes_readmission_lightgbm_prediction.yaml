@@ -1,0 +1,72 @@
+skill_id: diabetes_readmission_lightgbm_prediction
+version: 1.0.0
+name: Efficient Diabetes Readmission Prediction with LightGBM
+domain: healthcare
+description: A high-performance machine learning workflow for predicting hospital
+  readmissions using LightGBM, including data preprocessing, model training, and standardized
+  output generation.
+workflow:
+- step: 1
+  action: execute
+  description: "1. Task: Multiclass classification predicting hospital readmission\
+    \ (3 classes: <30, >30, NO)\n2. Approach: Efficient LightGBM with basic preprocessing\n\
+    3. Key steps:\n   - Dropped weight column (97% missing)\n   - Grouped ICD-9 codes\
+    \ into clinical categories\n   - Used class_weight='balanced' for imbalance\n\
+    \   - Simple but effective feature engineering\n4. Outputs: Generated all required\
+    \ files with exact format matching\n5. Performance: Achieved reasonable training\
+    \ time (2.5s) with proper validation"
+  tools_required:
+  - pandas
+  - numpy
+  - scikit-learn
+  - lightgbm
+  - joblib
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: pandas
+  version: '>=1.0.0'
+  optional: false
+- tool_id: numpy
+  version: '>=1.0.0'
+  optional: false
+- tool_id: scikit-learn
+  version: '>=1.0.0'
+  optional: false
+- tool_id: lightgbm
+  version: '>=1.0.0'
+  optional: false
+- tool_id: joblib
+  version: '>=1.0.0'
+  optional: false
+tags:
+- healthcare-analytics
+- gradient-boosting
+- lightgbm
+- clinical-prediction
+- tabular-data
+- binary-classification
+- model-serialization
+applicable_queries:
+- '*readmission prediction*'
+- '*diabetes*hospital*prediction*'
+- '*LightGBM*healthcare*classification*'
+- '*patient*outcome*prediction*'
+- '*medical*risk*stratification*'
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-08'
+  created_at: '2026-04-08'
+  last_updated: '2026-04-08'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260408_233804_dd1446
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-08'
+    changes: Auto-created from successful run
+status: active

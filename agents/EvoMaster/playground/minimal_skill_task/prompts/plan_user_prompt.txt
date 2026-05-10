@@ -1,0 +1,5 @@
+# Current stage input (including Analyze output: only (1) database structure description and (2) query writing guidelines)
+{stage_input}
+
+# Full instruction
+{task_description}

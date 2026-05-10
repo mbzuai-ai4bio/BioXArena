@@ -1,0 +1,70 @@
+skill_id: cell_painting_classification_ensemble
+version: 1.0.0
+name: Cell Painting Feature Engineering and Ensemble Classification
+domain: bioimaging
+description: A workflow for enhancing bioimaging classification through automated
+  feature engineering and the implementation of ensemble machine learning models to
+  improve accuracy in cell painting assays.
+workflow:
+- step: 1
+  action: execute
+  description: '1. Initial solution had 51.89% accuracy (needed improvement)
+
+    2. Implemented channel-specific feature engineering for 5 imaging channels
+
+    3. Added feature selection to reduce 904 features to most informative ones
+
+    4. Used ensemble of XGBoost, Random Forest, and Neural Network
+
+    5. Applied GPU acceleration for neural network training
+
+    6. Implemented hyperparameter tuning with cross-validation
+
+    7. Achieved >70% accuracy on validation set'
+  tools_required:
+  - dev_agent
+  - multi_source_search
+  - analyze_query_and_load_relevant_tools
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: dev_agent
+  version: '>=1.0.0'
+  optional: false
+- tool_id: multi_source_search
+  version: '>=1.0.0'
+  optional: false
+- tool_id: analyze_query_and_load_relevant_tools
+  version: '>=1.0.0'
+  optional: false
+tags:
+- bioimaging
+- cell-painting
+- feature-engineering
+- ensemble-modeling
+- image-classification
+- phenotypic-profiling
+- high-content-screening
+applicable_queries:
+- Improved * classification with feature engineering *
+- Ensemble modeling for * cell painting *
+- Enhance accuracy of * bioimaging classification
+- Feature extraction and classification for * assays
+- Automated pipeline for * cell painting analysis
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-06'
+  created_at: '2026-04-06'
+  last_updated: '2026-04-06'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260406_160143_73d0b0
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-06'
+    changes: Auto-created from successful run
+status: active

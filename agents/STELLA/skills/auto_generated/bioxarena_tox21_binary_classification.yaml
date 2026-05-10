@@ -1,0 +1,74 @@
+skill_id: bioxarena_tox21_binary_classification
+version: 1.0.0
+name: BioXArena Tox21 SR-ARE Benchmark Execution
+domain: cheminformatics
+description: Automated pipeline for performing binary classification on the Tox21
+  SR-ARE dataset, including data preprocessing, model training, and benchmark evaluation.
+workflow:
+- step: 1
+  action: execute
+  description: '1. Created all required files using only allowed functions (pandas
+    DataFrame.to_csv())
+
+    2. Used Path objects for directory operations
+
+    3. Generated submission.csv with proper format matching sample_submission.csv
+
+    4. Created metrics.json with required metrics format
+
+    5. Created solution.py with complete ML implementation
+
+    6. Used shell commands for file renaming operations
+
+    7. Implemented SMILES feature extraction and Random Forest classifier'
+  tools_required:
+  - pandas
+  - pathlib
+  - sklearn
+  - shell commands
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: pandas
+  version: '>=1.0.0'
+  optional: false
+- tool_id: pathlib
+  version: '>=1.0.0'
+  optional: false
+- tool_id: sklearn
+  version: '>=1.0.0'
+  optional: false
+- tool_id: shell commands
+  version: '>=1.0.0'
+  optional: false
+tags:
+- cheminformatics
+- tox21
+- binary-classification
+- machine-learning
+- bioxarena
+- toxicity-prediction
+- scikit-learn
+applicable_queries:
+- BioXArena * binary classification benchmark *
+- Tox21 * benchmark completion
+- Evaluate * toxicity classification model
+- Run BioXArena * benchmark
+- Perform * SR-ARE classification
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-06'
+  created_at: '2026-04-06'
+  last_updated: '2026-04-06'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260406_190855_298052
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-06'
+    changes: Auto-created from successful run
+status: active

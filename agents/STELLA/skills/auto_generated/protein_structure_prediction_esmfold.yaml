@@ -1,0 +1,88 @@
+skill_id: protein_structure_prediction_esmfold
+version: 1.0.0
+name: ESMFold Protein 3D Structure Prediction
+domain: bioinformatics
+description: Automated pipeline for predicting protein 3D structures from amino acid
+  sequences using the ESMFold model, optimized for benchmark datasets with integrated
+  security constraint handling.
+workflow:
+- step: 1
+  action: execute
+  description: '1. Analyzed task requirements with security constraints (avoid forbidden
+    modules)
+
+    2. Retrieved similar skills for protein structure prediction
+
+    3. Researched existing solutions (ESMFold as optimal choice for speed and accuracy)
+
+    4. Loaded relevant tools for bioinformatics and deep learning
+
+    5. Delegated implementation to dev_agent with specific security-aware requirements
+
+    6. dev_agent implemented ESMFold-based solution with GPU support and proper file
+    handling
+
+    7. Generated predictions in required J'
+  tools_required:
+  - dev_agent
+  - critic_agent
+  - multi_source_search
+  - search_github_repositories
+  - analyze_query_and_load_relevant_tools
+  - retrieve_similar_skills
+  - run_shell_command
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: dev_agent
+  version: '>=1.0.0'
+  optional: false
+- tool_id: critic_agent
+  version: '>=1.0.0'
+  optional: false
+- tool_id: multi_source_search
+  version: '>=1.0.0'
+  optional: false
+- tool_id: search_github_repositories
+  version: '>=1.0.0'
+  optional: false
+- tool_id: analyze_query_and_load_relevant_tools
+  version: '>=1.0.0'
+  optional: false
+- tool_id: retrieve_similar_skills
+  version: '>=1.0.0'
+  optional: false
+- tool_id: run_shell_command
+  version: '>=1.0.0'
+  optional: false
+tags:
+- bioinformatics
+- protein-folding
+- esmfold
+- 3d-structure
+- bioxarena
+- structural-biology
+- machine-learning
+applicable_queries:
+- predict protein structure for * using ESMFold
+- run ESMFold on * sequence for * benchmark
+- generate PDB files from protein sequences using *
+- protein 3D structure prediction for * dataset
+- ESMFold pipeline for * with security constraints
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-17'
+  created_at: '2026-04-17'
+  last_updated: '2026-04-17'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260417_173335_618dbf
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-17'
+    changes: Auto-created from successful run
+status: active

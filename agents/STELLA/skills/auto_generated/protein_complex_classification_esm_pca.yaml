@@ -1,0 +1,69 @@
+skill_id: protein_complex_classification_esm_pca
+version: 1.0.0
+name: Protein Complex Classification with ESM Embeddings and PCA
+domain: bioinformatics
+description: A workflow for classifying protein complexes by extracting high-dimensional
+  ESM-2 embeddings, reducing dimensionality via PCA, and training a Multi-Layer Perceptron
+  classifier.
+workflow:
+- step: 1
+  action: execute
+  description: "1. Used ESM-2 8M model for protein sequence embeddings\n2. Applied\
+    \ PCA for dimensionality reduction from 320 to 256 dimensions\n3. Built MLP classifier\
+    \ with architecture: 256\u2192512\u2192256\u2192128\u219210\n4. Used 5-fold cross-validation\n\
+    5. Achieved only 11.1% accuracy (near random chance)"
+  tools_required:
+  - PyTorch
+  - fair-esm
+  - scikit-learn
+  - pandas
+  - numpy
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: PyTorch
+  version: '>=1.0.0'
+  optional: false
+- tool_id: fair-esm
+  version: '>=1.0.0'
+  optional: false
+- tool_id: scikit-learn
+  version: '>=1.0.0'
+  optional: false
+- tool_id: pandas
+  version: '>=1.0.0'
+  optional: false
+- tool_id: numpy
+  version: '>=1.0.0'
+  optional: false
+tags:
+- bioinformatics
+- protein-embeddings
+- esm-2
+- dimensionality-reduction
+- pytorch
+- protein-classification
+- scikit-learn
+applicable_queries:
+- Protein complex classification using ESM*
+- Classify protein sequences with * embeddings and MLP
+- Predict protein interactions using PCA and *
+- Bioinformatics classification with fair-esm and scikit-learn
+- Structural biology prediction using ESM-2 and neural networks
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-17'
+  created_at: '2026-04-17'
+  last_updated: '2026-04-17'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260417_093820_7af29c
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-17'
+    changes: Auto-created from successful run
+status: active

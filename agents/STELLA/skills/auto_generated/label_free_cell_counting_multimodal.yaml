@@ -1,0 +1,80 @@
+skill_id: label_free_cell_counting_multimodal
+version: 1.0.0
+name: Label-Free Cell Counting with Multi-Modal Deep Learning
+domain: imaging
+description: Automated pipeline for training deep learning models to perform cell
+  counting on label-free microscopy datasets like LIVECell using PyTorch and multi-modal
+  feature integration.
+workflow:
+- step: 1
+  action: execute
+  description: '1. Data exploration: Analyzed 3,727 training and 1,512 test samples
+    of 520x704 grayscale TIFF images with metadata
+
+    2. Model design: Multi-modal architecture with ResNet18 for images and MLP for
+    metadata
+
+    3. Implementation: Created PyTorch Dataset with augmentations, used Huber loss,
+    AdamW optimizer
+
+    4. Training: Multi-GPU with DataParallel, mixed precision, early stopping
+
+    5. Output: Generated submission.csv, metrics.json, solution.py, and model weights'
+  tools_required:
+  - dev_agent
+  - PyTorch
+  - torchvision
+  - pandas
+  - numpy
+  - scikit-learn
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: dev_agent
+  version: '>=1.0.0'
+  optional: false
+- tool_id: PyTorch
+  version: '>=1.0.0'
+  optional: false
+- tool_id: torchvision
+  version: '>=1.0.0'
+  optional: false
+- tool_id: pandas
+  version: '>=1.0.0'
+  optional: false
+- tool_id: numpy
+  version: '>=1.0.0'
+  optional: false
+- tool_id: scikit-learn
+  version: '>=1.0.0'
+  optional: false
+tags:
+- bioimaging
+- cell-counting
+- label-free
+- pytorch
+- computer-vision
+- livecell
+- deep-learning
+applicable_queries:
+- Label-free * counting on * dataset
+- Train * model for cell counting using *
+- Multi-modal deep learning for * imaging
+- Automated cell quantification on * microscopy
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-17'
+  created_at: '2026-04-17'
+  last_updated: '2026-04-17'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260417_155801_842516
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-17'
+    changes: Auto-created from successful run
+status: active

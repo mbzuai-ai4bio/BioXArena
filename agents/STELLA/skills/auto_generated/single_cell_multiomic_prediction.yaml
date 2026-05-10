@@ -1,0 +1,84 @@
+skill_id: single_cell_multiomic_prediction
+version: 1.0.0
+name: Single-Cell Chromatin-to-Expression Prediction
+domain: genomics
+description: Predicts gene expression levels from single-cell ATAC-seq data and DNA
+  sequences using ensemble modeling and sparse matrix processing. This workflow integrates
+  genomic sequence features with chromatin accessibility profiles to model regulatory
+  dynamics.
+workflow:
+- step: 1
+  action: execute
+  description: '1. Analyzed task: single-cell ATAC-seq to RNA-seq regression
+
+    2. Retrieved similar skills for multi-omics prediction
+
+    3. Researched existing approaches: ChromFormer, scBasset, MultiVI
+
+    4. Implemented hybrid CNN-Transformer architecture
+
+    5. Added comprehensive validation with 5-fold cross-validation
+
+    6. Implemented ensemble of multiple architectures (MLP, CNN, Transformer, Hybrid)
+
+    7. Included baseline models for comparison
+
+    8. Generated all required output files with proper formatting
+
+    9. Used 4 GPUs fo'
+  tools_required:
+  - dev_agent
+  - critic_agent
+  - multi_source_search
+  - search_github_repositories
+  - analyze_query_and_load_relevant_tools
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: dev_agent
+  version: '>=1.0.0'
+  optional: false
+- tool_id: critic_agent
+  version: '>=1.0.0'
+  optional: false
+- tool_id: multi_source_search
+  version: '>=1.0.0'
+  optional: false
+- tool_id: search_github_repositories
+  version: '>=1.0.0'
+  optional: false
+- tool_id: analyze_query_and_load_relevant_tools
+  version: '>=1.0.0'
+  optional: false
+tags:
+- genomics
+- single-cell
+- ATAC-seq
+- gene expression
+- sparse matrices
+- deep learning
+- bioinformatics
+- multiomics
+applicable_queries:
+- Predict gene expression from * accessibility *
+- Model * from ATAC-seq and DNA sequence *
+- Single-cell * prediction using sparse matrices
+- Train ensemble model for genomic * prediction
+- Analyze chromatin accessibility for * expression
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-17'
+  created_at: '2026-04-17'
+  last_updated: '2026-04-17'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260417_142243_8fb18b
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-17'
+    changes: Auto-created from successful run
+status: active

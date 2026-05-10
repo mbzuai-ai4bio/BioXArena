@@ -1,0 +1,75 @@
+skill_id: bace1_binding_affinity_lightgbm
+version: 1.0.0
+name: BACE1 Binding Affinity Prediction with LightGBM
+domain: drug_discovery
+description: A machine learning pipeline for predicting BACE1 binding affinity from
+  SMILES strings using RDKit molecular descriptors and LightGBM regression with cross-validation.
+workflow:
+- step: 1
+  action: execute
+  description: '1. Data Exploration: Analyzed train.csv (6,487 samples) and test.csv
+    (1,622 samples) structure
+
+    2. Feature Engineering: Generated Morgan fingerprints (ECFP4, 2048 bits) and RDKit
+    2D descriptors
+
+    3. Model Selection: Compared Random Forest, XGBoost, LightGBM, Gradient Boosting
+    using 5-fold CV
+
+    4. Model Training: Selected LightGBM with best Pearson correlation (0.8273)
+
+    5. File Generation: Created submission.csv, metrics.json, solution.py, model.joblib
+
+    6. Validation: Ensured file formats match sample_s'
+  tools_required:
+  - dev_agent
+  - run_shell_command
+  - check_tools_for_task
+  - retrieve_similar_skills
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: dev_agent
+  version: '>=1.0.0'
+  optional: false
+- tool_id: run_shell_command
+  version: '>=1.0.0'
+  optional: false
+- tool_id: check_tools_for_task
+  version: '>=1.0.0'
+  optional: false
+- tool_id: retrieve_similar_skills
+  version: '>=1.0.0'
+  optional: false
+tags:
+- drug-discovery
+- binding-affinity
+- BACE1
+- lightgbm
+- rdkit
+- molecular-descriptors
+- regression
+- smiles
+applicable_queries:
+- BioXArena * binding affinity regression *
+- predict * affinity from SMILES using LightGBM
+- RDKit feature extraction and * regression for drug discovery
+- BACE1 * prediction using * features
+- machine learning pipeline for * SMILES strings
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-10'
+  created_at: '2026-04-10'
+  last_updated: '2026-04-10'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260410_100527_b832d6
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-10'
+    changes: Auto-created from successful run
+status: active

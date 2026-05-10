@@ -1,0 +1,63 @@
+skill_id: protein_interface_fraction_regression
+version: 1.0.0
+name: Protein Interface Fraction Prediction from 3D Structures
+domain: structure
+description: Predicts the fraction of residues involved in protein-protein interfaces
+  by extracting geometric and sequence features from 3D structures and applying regression
+  models.
+workflow:
+- step: 1
+  action: execute
+  description: "1. Analyzed task requirements: regression predicting interface_fraction\
+    \ (0-1) from 3D structures\n2. Retrieved similar skills: Found Protein Interface\
+    \ Fraction Prediction via Sequence-Based Random Forest\n3. Explored data: Found\
+    \ train.csv, test.csv, and data/structures/*.dill files\n4. Delegated to dev_agent\
+    \ for implementation\n5. dev_agent implemented: \n   - Used 3D structure .dill\
+    \ files as required\n   - Extracted geometric features from CA atoms (contact\
+    \ residues, residue ratio, min distance)\n   -"
+  tools_required:
+  - dev_agent
+  - critic_agent
+  - run_shell_command
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: dev_agent
+  version: '>=1.0.0'
+  optional: false
+- tool_id: critic_agent
+  version: '>=1.0.0'
+  optional: false
+- tool_id: run_shell_command
+  version: '>=1.0.0'
+  optional: false
+tags:
+- structural-biology
+- protein-protein-interaction
+- interface-prediction
+- 3d-structure-analysis
+- regression-modeling
+- bioinformatics
+- pdb-processing
+applicable_queries:
+- Predict * fraction from protein * structures
+- Calculate interface * using regression on * PDB files
+- Estimate protein-protein interaction * from 3D coordinates
+- Analyze * interface area from protein complex sequences and structures
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-17'
+  created_at: '2026-04-17'
+  last_updated: '2026-04-17'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260417_170750_dd99ea
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-17'
+    changes: Auto-created from successful run
+status: active

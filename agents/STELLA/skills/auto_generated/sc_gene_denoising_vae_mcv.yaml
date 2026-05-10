@@ -1,0 +1,68 @@
+skill_id: sc_gene_denoising_vae_mcv
+version: 1.0.0
+name: Single-Cell Gene Expression Denoising with VAE and MCV
+domain: genomics
+description: Implements a Variational Autoencoder with Softplus activation and Molecular
+  Cross-Validation to denoise single-cell RNA sequencing data while ensuring non-negative
+  expression values.
+workflow:
+- step: 1
+  action: execute
+  description: '1. Data exploration: Loaded H5AD files with scanpy, examined noisy
+    counts in layers[''counts'']
+
+    2. Preprocessing: Applied total count normalization (target sum 10,000) + log1p
+    transformation
+
+    3. Feature selection: Identified top 50 Highly Variable Genes (HVGs) for prediction
+
+    4. Model architecture: Implemented Variational Autoencoder (VAE) with encoder-decoder
+    structure
+
+    5. Biological constraints: Used Softplus activation in output layer to ensure
+    non-negative predictions
+
+    6. Training strategy: Molecu'
+  tools_required:
+  - dev_agent
+  - run_shell_command
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: dev_agent
+  version: '>=1.0.0'
+  optional: false
+- tool_id: run_shell_command
+  version: '>=1.0.0'
+  optional: false
+tags:
+- single-cell genomics
+- variational autoencoder
+- molecular cross-validation
+- gene expression denoising
+- deep learning
+- bioinformatics
+- scRNA-seq
+applicable_queries:
+- Single-cell gene expression denoising using *
+- VAE model for * scRNA-seq data
+- Denoise * using Molecular Cross-Validation
+- Train VAE with Softplus activation for * genomics
+- Generate non-negative gene expression predictions for *
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-09'
+  created_at: '2026-04-09'
+  last_updated: '2026-04-09'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260409_001833_b7508e
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-09'
+    changes: Auto-created from successful run
+status: active

@@ -1,0 +1,64 @@
+skill_id: medical_vqa_model_training
+version: 1.0.0
+name: Medical Visual Question Answering Model Training
+domain: medical_vqa
+description: Fine-tunes vision-language models like BLIP on medical imaging datasets
+  to perform visual question answering and generates evaluation metrics and predictions.
+workflow:
+- step: 1
+  action: execute
+  description: '1. Analyzed the dataset and found it contains 25,913 training samples
+    and 6,719 test samples.
+
+    2. Decided to use a generative VQA model (Salesforce/blip-vqa-base) because the
+    answers are open-ended and there are 4,039 unique answers.
+
+    3. Wrote a PyTorch script to load the dataset, initialize the BLIP model and processor,
+    and train it for 3 epochs using AdamW.
+
+    4. Used a custom PyTorch Dataset to handle the image loading and text processing
+    with padding and truncation.
+
+    5. Ran the script in the backg'
+  tools_required:
+  - dev_agent
+  - python_interpreter
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: dev_agent
+  version: '>=1.0.0'
+  optional: false
+- tool_id: python_interpreter
+  version: '>=1.0.0'
+  optional: false
+tags:
+- medical-vqa
+- pathology
+- blip-vqa
+- computer-vision
+- deep-learning
+- pytorch
+- huggingface
+applicable_queries:
+- Train a VQA model on the * dataset
+- Fine-tune * for medical visual question answering
+- Generate predictions for * VQA task
+- Train a pathology VQA model and evaluate performance
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-14'
+  created_at: '2026-04-14'
+  last_updated: '2026-04-14'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260414_004440_6071e7
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-14'
+    changes: Auto-created from successful run
+status: active

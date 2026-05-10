@@ -1,0 +1,64 @@
+skill_id: multimodal_gene_expression_classification
+version: 1.0.0
+name: Multimodal Gene Expression Classification with Text Integration
+domain: bioinformatics
+description: A workflow for training and evaluating bioinformatics models that combine
+  numerical gene expression data with textual metadata for classification tasks.
+workflow:
+- step: 1
+  action: execute
+  description: 1. Use dev_agent for file system operations due to restrictions, 2.
+    Implement multimodal feature engineering combining gene expression vectors and
+    text embeddings, 3. Use transformer-based architecture with GPU acceleration,
+    4. Generate probability predictions for ROC-AUC evaluation, 5. Save all required
+    output files in specified formats
+  tools_required:
+  - dev_agent
+  - critic_agent
+  - multi_source_search
+  - search_github_repositories
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: dev_agent
+  version: '>=1.0.0'
+  optional: false
+- tool_id: critic_agent
+  version: '>=1.0.0'
+  optional: false
+- tool_id: multi_source_search
+  version: '>=1.0.0'
+  optional: false
+- tool_id: search_github_repositories
+  version: '>=1.0.0'
+  optional: false
+tags:
+- bioinformatics
+- gene-expression
+- multimodal-learning
+- text-integration
+- classification
+- genomics
+- machine-learning
+applicable_queries:
+- '* gene expression classification * text *'
+- BioXArena * solution
+- '* multimodal * bioinformatics * classification'
+- integrate * metadata with gene expression *
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-17'
+  created_at: '2026-04-17'
+  last_updated: '2026-04-17'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260417_211647_56b96d
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-17'
+    changes: Auto-created from successful run
+status: active

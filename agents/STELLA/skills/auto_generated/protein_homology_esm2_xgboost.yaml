@@ -1,0 +1,67 @@
+skill_id: protein_homology_esm2_xgboost
+version: 1.0.0
+name: Remote Homology Prediction via ESM-2 and XGBoost
+domain: bioinformatics
+description: Predicts protein structural similarity (TM-score) by extracting high-dimensional
+  embeddings from ESM-2 language models and training an XGBoost regression model.
+workflow:
+- step: 1
+  action: execute
+  description: '1. Data exploration: Found 80,000 training pairs, 20,000 test pairs,
+    601,328 FASTA sequences
+
+    2. ID mapping: CSV IDs (e.g., ''3uebF00'') mapped to FASTA IDs (e.g., ''cath|4_4_0|3uebF00/0-153'')
+
+    3. Feature extraction: Used ESM-2 (esm2_t33_650M_UR50D) for 1280-dimensional protein
+    embeddings
+
+    4. Feature engineering: Concatenated embeddings + cosine similarity + sequence
+    length ratio + Euclidean distance
+
+    5. Model selection: Compared neural network vs XGBoost, XGBoost performed better
+    (Spearman 0.74)
+
+    6. Tr'
+  tools_required:
+  - dev_agent
+  - run_shell_command
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: dev_agent
+  version: '>=1.0.0'
+  optional: false
+- tool_id: run_shell_command
+  version: '>=1.0.0'
+  optional: false
+tags:
+- bioinformatics
+- protein-structure
+- remote-homology
+- esm-2
+- xgboost
+- embeddings
+- machine-learning
+applicable_queries:
+- '*remote homology detection*ESM-2*'
+- predict TM-score from protein sequences*
+- '*protein embeddings*XGBoost regression*'
+- BioXArena*homology*prediction*
+- train model to predict protein similarity using ESM*
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-17'
+  created_at: '2026-04-17'
+  last_updated: '2026-04-17'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260417_121627_01f3c8
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-17'
+    changes: Auto-created from successful run
+status: active

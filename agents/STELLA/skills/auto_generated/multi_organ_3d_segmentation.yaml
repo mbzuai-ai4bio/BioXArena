@@ -1,0 +1,72 @@
+skill_id: multi_organ_3d_segmentation
+version: 1.0.0
+name: 3D Multi-Organ Abdominal Segmentation
+domain: medical_imaging
+description: End-to-end workflow for training 3D UNet models on large-scale medical
+  imaging datasets like AMOS to perform multi-organ segmentation and generate standardized
+  submission outputs.
+workflow:
+- step: 1
+  action: execute
+  description: '1. Problem analysis: Identified issues in previous implementation
+    (incomplete training, wrong submission format)
+
+    2. Research: Based on AMOS challenge literature, nnU-Net is state-of-the-art
+
+    3. Implementation strategy: Full training on 288 samples, proper preprocessing,
+    sliding window inference
+
+    4. Execution: Delegated to dev_agent with specific requirements
+
+    5. Quality control: Used critic_agent evaluation to identify and fix gaps
+
+    6. Verification: Comprehensive checking of all outputs
+
+    7. Results: '
+  tools_required:
+  - dev_agent
+  - critic_agent
+  - run_shell_command
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: dev_agent
+  version: '>=1.0.0'
+  optional: false
+- tool_id: critic_agent
+  version: '>=1.0.0'
+  optional: false
+- tool_id: run_shell_command
+  version: '>=1.0.0'
+  optional: false
+tags:
+- medical-imaging
+- 3d-segmentation
+- amos-dataset
+- unet
+- deep-learning
+- ct-mri-analysis
+- radiology-ai
+applicable_queries:
+- Complete * multi-organ segmentation from *
+- Train 3D UNet on * dataset for medical imaging
+- Perform abdominal organ segmentation on * CT/MRI
+- Generate segmentation predictions for * dataset submission
+- Multi-label 3D segmentation of * organs
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-06'
+  created_at: '2026-04-06'
+  last_updated: '2026-04-06'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260406_191137_8dd7b8
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-06'
+    changes: Auto-created from successful run
+status: active

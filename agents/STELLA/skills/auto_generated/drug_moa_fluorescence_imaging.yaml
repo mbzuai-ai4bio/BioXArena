@@ -1,0 +1,80 @@
+skill_id: drug_moa_fluorescence_imaging
+version: 1.0.0
+name: Drug MOA Prediction from Fluorescence Microscopy
+domain: imaging
+description: A multi-modal ResNet50 workflow for predicting drug Mechanism of Action
+  (MOA) from cellular morphology in fluorescence microscopy images, including NSC
+  evaluation and performance metrics.
+workflow:
+- step: 1
+  action: execute
+  description: "1. Analyzed task: Multi-modal classification with NSC evaluation challenge\n\
+    2. Data exploration: 944 train, 592 test images, 696x520 RGB, 7 MOA classes, zero\
+    \ compound overlap\n3. Designed multi-modal architecture: ResNet50 for images\
+    \ + embedding/MLP for tabular features\n4. Key considerations: \n   - NSC evaluation\
+    \ requires learning morphology, not compounds\n   - Class imbalance handled with\
+    \ weighted loss\n   - Data augmentation for generalization\n   - Transfer learning\
+    \ from ImageNet-pretrained ResNe"
+  tools_required:
+  - PyTorch
+  - torchvision
+  - pandas
+  - numpy
+  - PIL
+  - scikit-learn
+  - DataParallel
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: PyTorch
+  version: '>=1.0.0'
+  optional: false
+- tool_id: torchvision
+  version: '>=1.0.0'
+  optional: false
+- tool_id: pandas
+  version: '>=1.0.0'
+  optional: false
+- tool_id: numpy
+  version: '>=1.0.0'
+  optional: false
+- tool_id: PIL
+  version: '>=1.0.0'
+  optional: false
+- tool_id: scikit-learn
+  version: '>=1.0.0'
+  optional: false
+- tool_id: DataParallel
+  version: '>=1.0.0'
+  optional: false
+tags:
+- fluorescence-microscopy
+- mechanism-of-action
+- resnet50
+- cellular-morphology
+- multi-modal-learning
+- nsc-evaluation
+- pytorch
+applicable_queries:
+- Drug MOA prediction from * microscopy images
+- Cellular morphology analysis using * ResNet*
+- Predicting * from fluorescence imaging with NSC evaluation
+- Multi-modal deep learning for * drug discovery
+- High-content screening analysis for * prediction
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-17'
+  created_at: '2026-04-17'
+  last_updated: '2026-04-17'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260417_153919_442f2a
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-17'
+    changes: Auto-created from successful run
+status: active

@@ -1,0 +1,79 @@
+skill_id: cite_seq_cross_modality_classification
+version: 1.0.0
+name: CITE-seq Cross-Modality Cell Type Classification
+domain: single-cell_analysis
+description: A workflow for integrating RNA and ADT features from CITE-seq data to
+  perform multi-modal cell type classification using ensemble learning.
+workflow:
+- step: 1
+  action: execute
+  description: '1. Task analysis: 27-class classification with 5,000 RNA + 228 ADT
+    features
+
+    2. Data exploration: Loaded train.csv and test.csv from public directory
+
+    3. Domain-specific preprocessing: log1p for RNA counts, arcsinh/5 for ADT cytometry
+    data
+
+    4. Dimensionality reduction: PCA to reduce RNA features from 5000 to 500 components
+
+    5. Feature scaling: StandardScaler applied to both modalities
+
+    6. Model training: XGBoost with multi-class objective and class weighting for
+    imbalance
+
+    7. Prediction generation: Cr'
+  tools_required:
+  - pandas
+  - numpy
+  - scikit-learn
+  - xgboost
+  - joblib
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: pandas
+  version: '>=1.0.0'
+  optional: false
+- tool_id: numpy
+  version: '>=1.0.0'
+  optional: false
+- tool_id: scikit-learn
+  version: '>=1.0.0'
+  optional: false
+- tool_id: xgboost
+  version: '>=1.0.0'
+  optional: false
+- tool_id: joblib
+  version: '>=1.0.0'
+  optional: false
+tags:
+- single-cell analysis
+- CITE-seq
+- multi-modal integration
+- cell type classification
+- xgboost
+- bioinformatics
+- ADT features
+applicable_queries:
+- BioXArena * cell type classification * RNA and ADT
+- multi-modal * classification * CITE-seq
+- predict cell types using * RNA and protein features
+- cross-modality * single-cell * classification
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-09'
+  created_at: '2026-04-09'
+  last_updated: '2026-04-09'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260409_143101_4c3d84
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-09'
+    changes: Auto-created from successful run
+status: active

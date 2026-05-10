@@ -1,0 +1,75 @@
+skill_id: ppi_prediction_esm2_ensemble
+version: 1.0.0
+name: Protein-Protein Interaction Prediction with ESM-2 and Graph Ensembles
+domain: bioinformatics
+description: A bioinformatics pipeline that extracts protein sequence embeddings using
+  ESM-2 and combines them with graph-based features for high-accuracy PPI prediction
+  using ensemble models like XGBoost.
+workflow:
+- step: 1
+  action: execute
+  description: 1. Data exploration revealed multimodal features (sequences + graph
+    metrics). 2. Research indicated ESM-2 for sequence embeddings and ensemble methods
+    for best performance. 3. Implemented feature extraction combining ESM-2 embeddings
+    (1280-dim) with 9 graph features. 4. Developed and compared XGBoost, Neural Network,
+    and Ensemble models. 5. Selected ensemble model achieving ROC-AUC 0.935. 6. Generated
+    proper submission format.
+  tools_required:
+  - torch
+  - esm
+  - xgboost
+  - sklearn
+  - pandas
+  - numpy
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: torch
+  version: '>=1.0.0'
+  optional: false
+- tool_id: esm
+  version: '>=1.0.0'
+  optional: false
+- tool_id: xgboost
+  version: '>=1.0.0'
+  optional: false
+- tool_id: sklearn
+  version: '>=1.0.0'
+  optional: false
+- tool_id: pandas
+  version: '>=1.0.0'
+  optional: false
+- tool_id: numpy
+  version: '>=1.0.0'
+  optional: false
+tags:
+- bioinformatics
+- protein-protein interaction
+- esm-2
+- sequence embeddings
+- ensemble learning
+- graph features
+- proteomics
+applicable_queries:
+- Protein-protein interaction prediction using * embeddings
+- Predict PPI using ESM* and *
+- Ensemble modeling for protein interaction with * features
+- Bioinformatics pipeline for * sequence embeddings and graph analysis
+- Predicting protein binding using transformer models and XGBoost
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-17'
+  created_at: '2026-04-17'
+  last_updated: '2026-04-17'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260417_075919_4c77bb
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-17'
+    changes: Auto-created from successful run
+status: active

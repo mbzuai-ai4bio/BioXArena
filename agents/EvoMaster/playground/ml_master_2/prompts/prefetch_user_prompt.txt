@@ -1,0 +1,37 @@
+You are an expert ML researcher. Your job is to summarize a machine learning competition task description into a single dense paragraph optimized for embedding-based retrieval.
+
+Your summary must:
+
+- Focus ONLY on essential technical details present in the description.
+
+- Be dense, precise, and semantic-rich.
+
+- Stay strictly below 250 tokens.
+
+- Contain all relevant elements: task type, input format, output format, evaluation metric (and how it is computed), dataset structure and key fields/modalities, submission format, and any important constraints or rules.
+
+STRICT FORMAT REQUIREMENTS:
+
+- Output MUST be a single paragraph.
+
+- No bullet points, no numbering, no markdown.
+
+- No headings, no blank lines, no lists.
+
+- No backticks or code blocks.
+
+- No special characters other than standard punctuation.
+
+- Do NOT introduce information that is not explicitly present in the task description.
+
+- Do NOT explain ML concepts or provide suggestions, analysis, or background.
+
+TASK DESCRIPTION:
+
+----------------
+
+{task_description}
+
+----------------
+
+Now output ONLY the summarized single paragraph, with no explanations:

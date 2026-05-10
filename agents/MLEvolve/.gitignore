@@ -1,0 +1,85 @@
+# ===== Python =====
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+*.egg
+.installed.cfg
+MANIFEST
+build/
+dist/
+develop-eggs/
+eggs/
+.eggs/
+wheels/
+sdist/
+
+# ===== Environments =====
+.env
+.venv
+env/
+venv/
+
+# ===== IDE / Editor =====
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ===== Testing & Coverage =====
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+.pytest_cache/
+.hypothesis/
+coverage.xml
+nosetests.xml
+*.cover
+*.py,cover
+
+# ===== Type Checking =====
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.pytype/
+.pyre/
+
+# ===== Jupyter =====
+.ipynb_checkpoints/
+
+# ===== Model Weights & Artifacts =====
+*.pth
+*.pt
+*.pkl
+*.bin
+checkpoints/
+
+# ===== Logs =====
+*.log
+logs/
+*.pid
+*.out
+
+# ===== Project Specific =====
+cache/
+scripts/
+workspace/
+workspaces/
+test_workspace/
+runs/
+dataset/
+mle-bench/
+grading_servers/
+test/
+test.py
+run_scripts/*.json
+eval/grade/*/private/*
+evaluate/
+grading_server.output
+CODE_ANALYSIS_REPORT.md
+PROMPT_COMPARISON_REPORT.md

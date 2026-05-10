@@ -1,0 +1,92 @@
+skill_id: enzyme_commission_prediction_ml
+version: 1.0.0
+name: Enzyme Commission Number Prediction via Gradient Boosting
+domain: bioinformatics
+description: A workflow for classifying protein sequences into Enzyme Commission (EC)
+  categories using feature engineering and XGBoost classifiers. It includes data preprocessing,
+  model training, evaluation, and artifact generation.
+workflow:
+- step: 1
+  action: execute
+  description: '1. Task analysis: Multi-class classification of 7 EC classes from
+    protein sequences
+
+    2. Data exploration: Found train.csv (17273 samples), test.csv (1918 samples),
+    sample_submission.csv
+
+    3. Feature engineering: Extracted amino acid composition (20 features), sequence
+    length, hydrophobicity
+
+    4. Model selection: XGBoost for tabular features with class weighting for imbalance
+
+    5. Implementation: StandardScaler for normalization, train/validation split, macro
+    F1 optimization
+
+    6. Output generation: submis'
+  tools_required:
+  - pandas
+  - numpy
+  - scikit-learn
+  - xgboost
+  - joblib
+  - json
+  - time
+  - os
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: pandas
+  version: '>=1.0.0'
+  optional: false
+- tool_id: numpy
+  version: '>=1.0.0'
+  optional: false
+- tool_id: scikit-learn
+  version: '>=1.0.0'
+  optional: false
+- tool_id: xgboost
+  version: '>=1.0.0'
+  optional: false
+- tool_id: joblib
+  version: '>=1.0.0'
+  optional: false
+- tool_id: json
+  version: '>=1.0.0'
+  optional: false
+- tool_id: time
+  version: '>=1.0.0'
+  optional: false
+- tool_id: os
+  version: '>=1.0.0'
+  optional: false
+tags:
+- bioinformatics
+- protein-sequence-analysis
+- enzyme-classification
+- xgboost
+- machine-learning
+- scikit-learn
+- proteomics
+applicable_queries:
+- predict * commission from * sequences
+- classify protein * using machine learning
+- enzyme * prediction * xgboost
+- protein function prediction from * sequence
+- EC number classification * ml
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-17'
+  created_at: '2026-04-17'
+  last_updated: '2026-04-17'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260417_113034_288af2
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-17'
+    changes: Auto-created from successful run
+status: active

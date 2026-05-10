@@ -1,0 +1,58 @@
+skill_id: esmfold_protein_structure_prediction
+version: 1.0.0
+name: ESMFold 3D Protein Structure Prediction
+domain: structure_prediction
+description: Predicts 3D coordinates of C-alpha atoms from protein sequences using
+  the ESMFold transformer model and generates structured coordinate outputs.
+workflow:
+- step: 1
+  action: execute
+  description: 1. Analyzed the task and identified it as a zero-shot protein structure
+    prediction problem. 2. Chose ESMFold (facebook/esmfold_v1) as the state-of-the-art
+    model for this task. 3. Wrote a Python script to load the pre-trained model, iterate
+    through the test sequences, and predict the 3D coordinates. 4. Extracted the C-alpha
+    coordinates (atom index 1) from the model's output positions. 5. Saved the coordinates
+    as JSON files and created the submission.csv and metrics.json files according
+    to the req
+  tools_required:
+  - python_interpreter
+  - run_shell_command
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: python_interpreter
+  version: '>=1.0.0'
+  optional: false
+- tool_id: run_shell_command
+  version: '>=1.0.0'
+  optional: false
+tags:
+- protein-folding
+- esmfold
+- structural-biology
+- c-alpha-coordinates
+- bioinformatics
+- transformer-models
+- pdb-generation
+applicable_queries:
+- Predict 3D coordinates of * from protein sequences using ESMFold
+- Fold protein sequences * and extract C-alpha atoms
+- Run ESMFold on * to generate PDB files
+- Predict protein structures for * sequences using transformer models
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-13'
+  created_at: '2026-04-13'
+  last_updated: '2026-04-13'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260413_220243_951f8c
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-13'
+    changes: Auto-created from successful run
+status: active

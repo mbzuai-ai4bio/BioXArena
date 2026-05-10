@@ -1,0 +1,76 @@
+skill_id: genomic_variant_pathogenicity_prediction
+version: 1.0.0
+name: Genomic Variant Pathogenicity Prediction and Benchmarking
+domain: genomics
+description: A workflow for predicting the clinical impact of DNA sequence variants
+  by integrating genomic data with clinical annotations and benchmarking against established
+  datasets like BioXArena.
+workflow:
+- step: 1
+  action: execute
+  description: '1. Used dev_agent for safe file operations avoiding forbidden modules
+
+    2. Implemented comprehensive feature engineering: k-mer frequencies from DNA sequences
+
+    3. Used XGBoost with GPU acceleration for efficient training
+
+    4. Optimized for Macro F1 score with proper cross-validation
+
+    5. Generated all required output files: submission.csv, metrics.json, solution.py
+
+    6. Saved model artifacts for reproducibility'
+  tools_required:
+  - dev_agent
+  - multi_source_search
+  - search_github_repositories
+  - analyze_query_and_load_relevant_tools
+  - evaluate_with_critic
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: dev_agent
+  version: '>=1.0.0'
+  optional: false
+- tool_id: multi_source_search
+  version: '>=1.0.0'
+  optional: false
+- tool_id: search_github_repositories
+  version: '>=1.0.0'
+  optional: false
+- tool_id: analyze_query_and_load_relevant_tools
+  version: '>=1.0.0'
+  optional: false
+- tool_id: evaluate_with_critic
+  version: '>=1.0.0'
+  optional: false
+tags:
+- genomics
+- variant-calling
+- pathogenicity-prediction
+- BioXArena
+- clinical-annotations
+- bioinformatics-benchmarking
+- dna-sequencing
+applicable_queries:
+- '* variant pathogenicity prediction *'
+- BioXArena benchmark * DNA sequences
+- predict clinical impact of * mutations
+- genomic variant analysis using * clinical annotations
+- evaluate * pathogenicity using DNA sequence data
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-17'
+  created_at: '2026-04-17'
+  last_updated: '2026-04-17'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260417_132914_745fc5
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-17'
+    changes: Auto-created from successful run
+status: active

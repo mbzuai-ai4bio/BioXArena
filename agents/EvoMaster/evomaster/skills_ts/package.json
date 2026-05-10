@@ -1,0 +1,20 @@
+{
+  "name": "evomaster-skills-ts",
+  "version": "1.0.0",
+  "type": "module",
+  "private": true,
+  "imports": {
+    "openclaw/plugin-sdk/feishu": "./openclaw-compat/plugin-sdk/feishu.ts",
+    "openclaw/plugin-sdk/compat": "./openclaw-compat/plugin-sdk/compat.ts",
+    "openclaw/plugin-sdk/account-id": "./openclaw-compat/plugin-sdk/account-id.ts"
+  },
+  "dependencies": {
+    "@larksuiteoapi/node-sdk": "^1.59.0",
+    "@sinclair/typebox": "^0.34.0",
+    "https-proxy-agent": "^8.0.0"
+  },
+  "devDependencies": {
+    "tsx": "^4.0.0",
+    "typescript": "^5.0.0"
+  }
+}

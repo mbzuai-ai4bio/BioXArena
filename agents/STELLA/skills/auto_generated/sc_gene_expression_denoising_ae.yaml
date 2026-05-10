@@ -1,0 +1,72 @@
+skill_id: sc_gene_expression_denoising_ae
+version: 1.0.0
+name: Single-Cell Gene Expression Denoising with Autoencoders
+domain: single-cell genomics
+description: A workflow for preprocessing sparse single-cell RNA-seq data and training
+  an autoencoder model to reconstruct gene expression profiles and reduce technical
+  noise.
+workflow:
+- step: 1
+  action: execute
+  description: "1. Analyzed task: denoise single-cell RNA-seq data to predict clean\
+    \ expression for 50 genes\n2. Data structure: H5AD files with noisy counts, CSV\
+    \ files with row_idx mapping\n3. Approach: Denoising autoencoder with self-reconstruction\n\
+    4. Implementation: PyTorch autoencoder with architecture 16096\u21921024\u2192\
+    512\u2192256\u2192128\u2192256\u2192512\u21921024\u219216096\n5. Training: MSE\
+    \ loss, Adam optimizer, batch size 64, 30 epochs, GPU acceleration\n6. Output:\
+    \ Created submission.csv, metrics.json, solution.py, model.pt\n7. Key insight: "
+  tools_required:
+  - dev_agent
+  - pandas
+  - numpy
+  - torch
+  - json
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: dev_agent
+  version: '>=1.0.0'
+  optional: false
+- tool_id: pandas
+  version: '>=1.0.0'
+  optional: false
+- tool_id: numpy
+  version: '>=1.0.0'
+  optional: false
+- tool_id: torch
+  version: '>=1.0.0'
+  optional: false
+- tool_id: json
+  version: '>=1.0.0'
+  optional: false
+tags:
+- single-cell genomics
+- gene expression
+- denoising
+- autoencoder
+- deep learning
+- pytorch
+- bioinformatics
+applicable_queries:
+- '* single-cell gene expression denoising *'
+- '* scRNA-seq autoencoder *'
+- BioXArena * denoising *
+- '* gene expression reconstruction *'
+- '* scRNA-seq imputation model *'
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-17'
+  created_at: '2026-04-17'
+  last_updated: '2026-04-17'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260417_080822_71352f
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-17'
+    changes: Auto-created from successful run
+status: active

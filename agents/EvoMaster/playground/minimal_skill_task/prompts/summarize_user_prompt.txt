@@ -1,0 +1,10 @@
+# Full instruction
+{task_description}
+
+# Multi-round retrieval results (from the Search Agent)
+{search_results}
+
+# `nodes_data` path (used to obtain the `prepare_code` of the selected node)
+nodes_data: {nodes_data}
+
+You need to select the task that best matches the full instruction, and write the task name and its `prepare_code` into a PDF file. The PDF must be saved in the current working directory.

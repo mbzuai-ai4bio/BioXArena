@@ -1,0 +1,63 @@
+skill_id: egfr_affinity_regression_lightgbm
+version: 1.0.0
+name: EGFR Binding Affinity Regression with LightGBM
+domain: drug_discovery
+description: A machine learning pipeline for predicting protein-ligand binding affinity
+  from SMILES strings using RDKit molecular fingerprints and LightGBM regression.
+workflow:
+- step: 1
+  action: execute
+  description: "1. Data exploration revealed SMILES strings and pChEMBL affinity values.\
+    \ 2. Feature extraction using RDKit: Morgan fingerprints (ECFP4, 2048 bits) and\
+    \ 2D descriptors. 3. Data preprocessing with standardization. 4. Model comparison:\
+    \ Random Forest (R\xB2 ~0.66), XGBoost (R\xB2 ~0.67), LightGBM (R\xB2 ~0.68).\
+    \ 5. 5-fold cross-validation for robust evaluation. 6. Final LightGBM model trained\
+    \ on full dataset."
+  tools_required:
+  - dev_agent
+  - run_shell_command
+  - evaluate_with_critic
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: dev_agent
+  version: '>=1.0.0'
+  optional: false
+- tool_id: run_shell_command
+  version: '>=1.0.0'
+  optional: false
+- tool_id: evaluate_with_critic
+  version: '>=1.0.0'
+  optional: false
+tags:
+- drug-discovery
+- SMILES
+- RDKit
+- LightGBM
+- molecular-fingerprints
+- regression
+- EGFR
+- chemoinformatics
+applicable_queries:
+- '* binding affinity regression from SMILES *'
+- '* prediction using RDKit fingerprints and LightGBM'
+- Predict * inhibition using machine learning *
+- QSAR modeling for * using SMILES strings
+- Machine learning pipeline for * drug discovery
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-07'
+  created_at: '2026-04-07'
+  last_updated: '2026-04-07'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260407_163822_e0d009
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-07'
+    changes: Auto-created from successful run
+status: active

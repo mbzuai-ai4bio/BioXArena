@@ -1,0 +1,94 @@
+skill_id: kegg_metabolic_network_enzyme_prediction
+version: 1.0.0
+name: KEGG Metabolic Network Enzyme-Reaction Prediction
+domain: bioinformatics
+description: A robust workflow for predicting enzyme-reaction associations in metabolic
+  networks using XGBoost, featuring automated handling of missing biological data
+  and strict submission format constraints.
+workflow:
+- step: 1
+  action: execute
+  description: '1. Handled CSV file format (not Parquet as initially thought)
+
+    2. Managed missing enzyme sequences (543 in train, 123 in test)
+
+    3. Implemented robust feature engineering with error handling
+
+    4. Applied target encoding for categorical variables
+
+    5. Worked around import restrictions (sklearn.model_selection not available)
+
+    6. Implemented manual train-test split and ROC-AUC calculation
+
+    7. Trained XGBoost with 0.7342 validation ROC-AUC
+
+    8. Generated predictions despite data challenges
+
+    9. Created all requi'
+  tools_required:
+  - pathlib
+  - pandas
+  - numpy
+  - xgboost
+  - joblib
+  - json
+  - time
+  - manual implementations
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: pathlib
+  version: '>=1.0.0'
+  optional: false
+- tool_id: pandas
+  version: '>=1.0.0'
+  optional: false
+- tool_id: numpy
+  version: '>=1.0.0'
+  optional: false
+- tool_id: xgboost
+  version: '>=1.0.0'
+  optional: false
+- tool_id: joblib
+  version: '>=1.0.0'
+  optional: false
+- tool_id: json
+  version: '>=1.0.0'
+  optional: false
+- tool_id: time
+  version: '>=1.0.0'
+  optional: false
+- tool_id: manual implementations
+  version: '>=1.0.0'
+  optional: false
+tags:
+- bioinformatics
+- metabolic-networks
+- kegg-database
+- enzyme-prediction
+- xgboost
+- machine-learning
+- data-imputation
+applicable_queries:
+- '*KEGG*metabolic*prediction*'
+- '*enzyme*reaction*mapping*'
+- '*bioinformatics*classification*constraints*'
+- '*metabolic*network*analysis*xgboost*'
+- '*predict*enzyme*function*biological*data*'
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-09'
+  created_at: '2026-04-09'
+  last_updated: '2026-04-09'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260409_030508_611820
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-09'
+    changes: Auto-created from successful run
+status: active

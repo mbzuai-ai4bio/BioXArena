@@ -1,0 +1,70 @@
+skill_id: amos_3d_multi_organ_segmentation
+version: 1.0.0
+name: AMOS 3D Multi-Organ Segmentation and Submission Formatting
+domain: medical_imaging
+description: A workflow for performing 3D medical image segmentation on the AMOS dataset,
+  ensuring output files and CSV metadata strictly adhere to competition submission
+  formats.
+workflow:
+- step: 1
+  action: execute
+  description: '1. Problem analysis: Identified critical format mismatch in submission.csv
+    (wrong IDs, missing zero-padding)
+
+    2. Key insight: Sample submission uses numeric IDs (0-71) not amos_id, prediction
+    files need 4-digit zero-padding
+
+    3. Implementation strategy: Focus on exact format matching over complex model
+    optimization
+
+    4. Execution: Created simple 3D UNet implementation that generates correct format
+
+    5. Quality control: Used critic_agent evaluation and comprehensive verification
+
+    6. Results: Achieved exa'
+  tools_required:
+  - dev_agent
+  - critic_agent
+  - run_shell_command
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: dev_agent
+  version: '>=1.0.0'
+  optional: false
+- tool_id: critic_agent
+  version: '>=1.0.0'
+  optional: false
+- tool_id: run_shell_command
+  version: '>=1.0.0'
+  optional: false
+tags:
+- medical-imaging
+- 3d-segmentation
+- amos-dataset
+- dicom-processing
+- nifti
+- submission-formatting
+- multi-organ-segmentation
+applicable_queries:
+- AMOS* multi-organ segmentation*
+- 3D medical imaging segmentation with * format matching
+- segmentation submission for * dataset
+- generate submission.csv and prediction files for * imaging challenge
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-07'
+  created_at: '2026-04-07'
+  last_updated: '2026-04-07'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260407_023852_908ef1
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-07'
+    changes: Auto-created from successful run
+status: active

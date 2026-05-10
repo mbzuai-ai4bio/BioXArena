@@ -1,0 +1,76 @@
+skill_id: cite_seq_cell_type_classification
+version: 1.0.0
+name: Cross-Modality CITE-seq Cell Type Classification
+domain: single-cell_genomics
+description: A workflow for predicting cell types from multi-modal single-cell data
+  by integrating RNA expression and Antibody-Derived Tags (ADT) using deep learning
+  or ensemble methods.
+workflow:
+- step: 1
+  action: execute
+  description: "1. Data Exploration: Loaded 128,727 training samples and 32,182 test\
+    \ samples, analyzed class distribution (27 classes with imbalance)\n2. Preprocessing:\
+    \ RNA features: log1p transformation \u2192 PCA reduction to 512 components \u2192\
+    \ standardization. ADT features: CLR transformation \u2192 standardization\n3.\
+    \ Feature Engineering: Separated RNA and ADT modalities for specialized processing,\
+    \ maintained modality-specific characteristics\n4. Model Architecture: Dual-branch\
+    \ neural network with separate encoders:\n   - "
+  tools_required:
+  - pandas
+  - numpy
+  - scikit-learn
+  - torch
+  - matplotlib
+  - seaborn
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: pandas
+  version: '>=1.0.0'
+  optional: false
+- tool_id: numpy
+  version: '>=1.0.0'
+  optional: false
+- tool_id: scikit-learn
+  version: '>=1.0.0'
+  optional: false
+- tool_id: torch
+  version: '>=1.0.0'
+  optional: false
+- tool_id: matplotlib
+  version: '>=1.0.0'
+  optional: false
+- tool_id: seaborn
+  version: '>=1.0.0'
+  optional: false
+tags:
+- single-cell genomics
+- CITE-seq
+- multi-modal integration
+- cell type annotation
+- transcriptomics
+- proteomics
+- macro-f1 optimization
+applicable_queries:
+- Cross-modality cell type classification from * data
+- Predicting * cell types using * RNA and * ADT features
+- Multi-modal single-cell classification for * PBMC
+- CITE-seq data analysis with * features and * macro F1
+- Cell type annotation using integrated RNA and surface protein data
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-17'
+  created_at: '2026-04-17'
+  last_updated: '2026-04-17'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260417_161949_900f68
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-17'
+    changes: Auto-created from successful run
+status: active

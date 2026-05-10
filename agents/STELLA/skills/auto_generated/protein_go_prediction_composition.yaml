@@ -1,0 +1,49 @@
+skill_id: protein_go_prediction_composition
+version: 1.0.0
+name: Protein GO Multi-label Prediction via Amino Acid Composition
+domain: genomics
+description: Predicts Gene Ontology (GO) terms for protein sequences using basic amino
+  acid composition features and multi-label classification models.
+workflow:
+- step: 1
+  action: execute
+  description: Used XGBoost with AAC features but achieved poor performance (AUC ~0.5)
+  tools_required:
+  - dev_agent
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: dev_agent
+  version: '>=1.0.0'
+  optional: false
+tags:
+- genomics
+- protein-function
+- gene-ontology
+- amino-acid-composition
+- multi-label-classification
+- bioinformatics
+- feature-engineering
+applicable_queries:
+- GO function * prediction using * features
+- predict protein function from * composition
+- multi-label classification of * sequences
+- protein GO term annotation using *
+- functional annotation of proteins via *
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-17'
+  created_at: '2026-04-17'
+  last_updated: '2026-04-17'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260417_193724_734d5c
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-17'
+    changes: Auto-created from successful run
+status: active

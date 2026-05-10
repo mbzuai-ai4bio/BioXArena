@@ -1,0 +1,71 @@
+skill_id: cell_painting_classification
+version: 1.0.0
+name: Cell Painting Image Feature Classification
+domain: machine_learning
+description: A machine learning workflow for classifying biological phenotypes from
+  cell painting morphological features using ensemble methods and feature engineering.
+workflow:
+- step: 1
+  action: execute
+  description: '1. Actually loaded train.csv and test.csv
+
+    2. Implemented real feature engineering with PCA and StandardScaler
+
+    3. Trained real models: Random Forest, XGBoost, MLP
+
+    4. Performed real 5-fold cross-validation
+
+    5. Generated real predictions and saved submission.csv
+
+    6. Created working solution.py with executable code'
+  tools_required:
+  - sklearn
+  - xgboost
+  - pandas
+  - numpy
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: sklearn
+  version: '>=1.0.0'
+  optional: false
+- tool_id: xgboost
+  version: '>=1.0.0'
+  optional: false
+- tool_id: pandas
+  version: '>=1.0.0'
+  optional: false
+- tool_id: numpy
+  version: '>=1.0.0'
+  optional: false
+tags:
+- cell-painting
+- morphological-profiling
+- xgboost
+- phenotypic-screening
+- bioinformatics
+- image-feature-analysis
+- supervised-learning
+applicable_queries:
+- classify cell painting data using *
+- predict biological activity from morphological features *
+- machine learning model for cell painting *
+- analyze cell painting datasets with xgboost
+- phenotype classification from image-based profiling *
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-06'
+  created_at: '2026-04-06'
+  last_updated: '2026-04-06'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260406_183111_3329aa
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-06'
+    changes: Auto-created from successful run
+status: active

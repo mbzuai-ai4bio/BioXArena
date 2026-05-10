@@ -1,0 +1,66 @@
+skill_id: lung_nodule_malignancy_prediction
+version: 1.0.0
+name: Lung Nodule Malignancy Prediction via RandomForest
+domain: medical_imaging
+description: A workflow for predicting lung nodule malignancy by training a RandomForest
+  classifier on clinical features and exporting the model for clinical decision support.
+workflow:
+- step: 1
+  action: execute
+  description: 'Analyzed data structure, identified 11 clinical features: subtlety,
+    internalStructure, calcification, sphericity, margin, lobulation, spiculation,
+    texture, n_slices, n_radiologists, manufacturer. Implemented preprocessing with
+    LabelEncoder for manufacturer and StandardScaler for numerical features. Used
+    RandomForestClassifier with class weighting for imbalance. Created submission.csv,
+    metrics.json, solution.py, and model_weights.joblib files.'
+  tools_required:
+  - sklearn
+  - pandas
+  - numpy
+  - joblib
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: sklearn
+  version: '>=1.0.0'
+  optional: false
+- tool_id: pandas
+  version: '>=1.0.0'
+  optional: false
+- tool_id: numpy
+  version: '>=1.0.0'
+  optional: false
+- tool_id: joblib
+  version: '>=1.0.0'
+  optional: false
+tags:
+- oncology
+- random-forest
+- clinical-features
+- medical-imaging
+- classification
+- scikit-learn
+- predictive-modeling
+applicable_queries:
+- '* malignancy prediction * RandomForest *'
+- predict lung nodule * clinical features
+- classify * nodules * sklearn
+- medical imaging * malignancy classification *
+- train * classifier for lung cancer features
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-17'
+  created_at: '2026-04-17'
+  last_updated: '2026-04-17'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260417_161414_87bc63
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-17'
+    changes: Auto-created from successful run
+status: active

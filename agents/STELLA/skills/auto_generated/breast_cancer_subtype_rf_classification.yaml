@@ -1,0 +1,60 @@
+skill_id: breast_cancer_subtype_rf_classification
+version: 1.0.0
+name: Breast Cancer Subtype Classification via Random Forest
+domain: genomics
+description: A workflow for integrating clinical and gene expression data to classify
+  cancer subtypes using Random Forest with automated preprocessing and class balancing.
+workflow:
+- step: 1
+  action: execute
+  description: 1. Data exploration showed 1523 training samples, 381 test samples,
+    217 features (17 clinical + 200 gene expression), 7 classes with NC class having
+    only 6 samples. 2. Implemented preprocessing with categorical encoding and numerical
+    scaling. 3. Used Random Forest with class_weight='balanced' due to XGBoost CUDA
+    compatibility issues. 4. Achieved 0.5766 mean CV macro F1 score.
+  tools_required:
+  - dev_agent
+  - multi_source_search
+  - search_github_repositories
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: dev_agent
+  version: '>=1.0.0'
+  optional: false
+- tool_id: multi_source_search
+  version: '>=1.0.0'
+  optional: false
+- tool_id: search_github_repositories
+  version: '>=1.0.0'
+  optional: false
+tags:
+- genomics
+- machine-learning
+- random-forest
+- breast-cancer
+- gene-expression
+- multi-modal-data
+- bioinformatics
+applicable_queries:
+- '* cancer subtype classification * Random Forest *'
+- '* gene expression * clinical features * classifier *'
+- classify * subtypes using * genomic data
+- Random Forest model for * cancer prediction *
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-09'
+  created_at: '2026-04-09'
+  last_updated: '2026-04-09'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260409_080344_8ded08
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-09'
+    changes: Auto-created from successful run
+status: active

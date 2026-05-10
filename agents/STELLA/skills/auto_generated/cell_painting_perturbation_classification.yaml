@@ -1,0 +1,71 @@
+skill_id: cell_painting_perturbation_classification
+version: 1.0.0
+name: High-Dimensional Cell Painting Feature Classification
+domain: bioimaging
+description: A workflow for analyzing and classifying morphological perturbations
+  in bioimaging data using high-dimensional feature sets and multi-class labels.
+workflow:
+- step: 1
+  action: execute
+  description: '1. Data exploration revealed 6,087 training samples, 1,522 test samples,
+    904 features, 303 classes
+
+    2. Skills retrieval suggested ensemble approach (XGBoost, Random Forest, Neural
+    Network)
+
+    3. Implementation attempts exceeded time limits due to performance bottlenecks
+
+    4. Critic identified need for optimization tool
+
+    5. Need streamlined approach focusing on XGBoost with GPU acceleration'
+  tools_required:
+  - dev_agent
+  - retrieve_similar_skills
+  - multi_source_search
+  - analyze_query_and_load_relevant_tools
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: dev_agent
+  version: '>=1.0.0'
+  optional: false
+- tool_id: retrieve_similar_skills
+  version: '>=1.0.0'
+  optional: false
+- tool_id: multi_source_search
+  version: '>=1.0.0'
+  optional: false
+- tool_id: analyze_query_and_load_relevant_tools
+  version: '>=1.0.0'
+  optional: false
+tags:
+- cell-painting
+- bioimaging
+- perturbation-analysis
+- high-dimensional-data
+- morphological-profiling
+- multi-class-classification
+- feature-engineering
+applicable_queries:
+- Cell painting * classification * features
+- Analyze * perturbation * classes * features
+- Classify * morphological * features * bioimaging
+- High-dimensional * cell painting * analysis
+- Predict * perturbation * from * features
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-17'
+  created_at: '2026-04-17'
+  last_updated: '2026-04-17'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260417_075947_d4395c
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-17'
+    changes: Auto-created from successful run
+status: active

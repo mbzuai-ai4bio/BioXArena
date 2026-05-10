@@ -1,0 +1,58 @@
+skill_id: genotype_phenotype_prediction_xgboost
+version: 1.0.0
+name: Genotype-to-Phenotype Prediction with XGBoost
+domain: genomics
+description: A workflow for predicting phenotypic traits from genomic data using XGBoost,
+  including data preprocessing, model training, and evaluation for BioXArena competitions.
+workflow:
+- step: 1
+  action: execute
+  description: Loaded data, preprocessed features, trained XGBoost with GPU, generated
+    predictions, saved outputs
+  tools_required:
+  - xgboost
+  - pandas
+  - sklearn
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: xgboost
+  version: '>=1.0.0'
+  optional: false
+- tool_id: pandas
+  version: '>=1.0.0'
+  optional: false
+- tool_id: sklearn
+  version: '>=1.0.0'
+  optional: false
+tags:
+- genomics
+- xgboost
+- phenotype-prediction
+- bioinformatics
+- machine-learning
+- supervised-learning
+- genotype
+applicable_queries:
+- '* genotype-to-phenotype prediction *'
+- BioXArena * prediction *
+- predict * phenotype from * genomic data
+- train XGBoost model for * genomics
+- '* genomic trait prediction using sklearn and xgboost'
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-09'
+  created_at: '2026-04-09'
+  last_updated: '2026-04-09'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260409_000818_608675
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-09'
+    changes: Auto-created from successful run
+status: active

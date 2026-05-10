@@ -1,0 +1,84 @@
+skill_id: cross_modality_cell_matching_siamese
+version: 1.0.0
+name: Cross-Modality Single-Cell Matching via Siamese Networks
+domain: genomics
+description: Integrates scRNA-seq and scATAC-seq data using SVD dimensionality reduction
+  and a Siamese neural network to perform cross-modality cell alignment and matching.
+workflow:
+- step: 1
+  action: execute
+  description: '1. Data exploration: Loaded sparse matrices, understood data structure
+    (9,323 training, 1,647 test, 6 candidates per test cell)
+
+    2. Preprocessing: Applied log1p transformation and L2 normalization to handle
+    high dynamic range
+
+    3. Dimensionality reduction: Used TruncatedSVD (256 components) to reduce high-dimensional
+    sparse features
+
+    4. Model architecture: Implemented dual-encoder MLP Siamese network with shared
+    512-dimensional embedding space
+
+    5. Training: Used triplet margin loss with cosine distan'
+  tools_required:
+  - dev_agent
+  - critic_agent
+  - scipy
+  - numpy
+  - pandas
+  - torch
+  - sklearn
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: dev_agent
+  version: '>=1.0.0'
+  optional: false
+- tool_id: critic_agent
+  version: '>=1.0.0'
+  optional: false
+- tool_id: scipy
+  version: '>=1.0.0'
+  optional: false
+- tool_id: numpy
+  version: '>=1.0.0'
+  optional: false
+- tool_id: pandas
+  version: '>=1.0.0'
+  optional: false
+- tool_id: torch
+  version: '>=1.0.0'
+  optional: false
+- tool_id: sklearn
+  version: '>=1.0.0'
+  optional: false
+tags:
+- genomics
+- scRNA-seq
+- scATAC-seq
+- siamese-network
+- dimensionality-reduction
+- multi-omics
+- deep-learning
+applicable_queries:
+- Cross-modality cell matching between * and *
+- Integrate scRNA-seq and scATAC-seq using *
+- Align multi-omic single-cell profiles with Siamese network
+- Map * profiles to * profiles using SVD and deep learning
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-17'
+  created_at: '2026-04-17'
+  last_updated: '2026-04-17'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260417_155911_7621f1
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-17'
+    changes: Auto-created from successful run
+status: active

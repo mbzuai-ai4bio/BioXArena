@@ -1,0 +1,73 @@
+skill_id: ecg_qa_multimodal_classification
+version: 1.0.0
+name: Multimodal ECG Signal Question Answering
+domain: biomedical_signal_processing
+description: A pipeline for processing 12-lead ECG signals alongside natural language
+  queries to perform automated diagnostic classification and question answering using
+  multimodal deep learning.
+workflow:
+- step: 1
+  action: execute
+  description: '1. Data exploration revealed PTB-XL ECG database with 12-lead 10-second
+    500Hz signals
+
+    2. Implemented multimodal architecture: ClinicalBERT for text encoding + 1D-CNN
+    for ECG signal processing
+
+    3. Multi-label classification for 104 answer classes with pipe-separated outputs
+
+    4. Fixed submission format issues to match sample_submission.csv exactly
+
+    5. Generated all required output files: submission.csv, metrics.json, solution.py,
+    model weights'
+  tools_required:
+  - dev_agent
+  - critic_agent
+  - multi_source_search
+  - search_github_repositories
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: dev_agent
+  version: '>=1.0.0'
+  optional: false
+- tool_id: critic_agent
+  version: '>=1.0.0'
+  optional: false
+- tool_id: multi_source_search
+  version: '>=1.0.0'
+  optional: false
+- tool_id: search_github_repositories
+  version: '>=1.0.0'
+  optional: false
+tags:
+- ecg-analysis
+- multimodal-learning
+- biomedical-signal-processing
+- medical-qa
+- 12-lead-ecg
+- deep-learning
+- clinical-decision-support
+applicable_queries:
+- '*ECG*signal*classification*'
+- '*multimodal*medical*QA*'
+- '*12-lead*ECG*analysis*'
+- '*biomedical*signal*question*answering*'
+- '*ECG-QA*pipeline*'
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-09'
+  created_at: '2026-04-09'
+  last_updated: '2026-04-09'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260409_134649_c2aac1
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-09'
+    changes: Auto-created from successful run
+status: active

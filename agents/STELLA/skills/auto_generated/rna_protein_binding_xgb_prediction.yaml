@@ -1,0 +1,84 @@
+skill_id: rna_protein_binding_xgb_prediction
+version: 1.0.0
+name: RNA-Protein Binding Affinity Prediction with XGBoost
+domain: genomics
+description: Predicts binding affinity between RNA and protein sequences by performing
+  comprehensive sequence feature engineering and training a gradient-boosted regression
+  model.
+workflow:
+- step: 1
+  action: execute
+  description: "1. Data exploration revealed RNA sequences are 7-mers and three proteins\
+    \ (RBFOX2, MBNL1, CELF1)\n2. Designed comprehensive feature engineering:\n   -\
+    \ RNA features: nucleotide composition, dinucleotide frequencies, position encoding,\
+    \ GC content, motif presence\n   - Protein features: one-hot encoding, amino acid\
+    \ composition, length, molecular weight, isoelectric point\n   - Interaction features:\
+    \ RNA-protein length ratio, concentration scaling\n3. Selected XGBoost Regressor\
+    \ for its effectiveness with t"
+  tools_required:
+  - dev_agent
+  - python_interpreter
+  - run_shell_command
+  - pandas
+  - numpy
+  - sklearn
+  - xgboost
+  - biopython
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: dev_agent
+  version: '>=1.0.0'
+  optional: false
+- tool_id: python_interpreter
+  version: '>=1.0.0'
+  optional: false
+- tool_id: run_shell_command
+  version: '>=1.0.0'
+  optional: false
+- tool_id: pandas
+  version: '>=1.0.0'
+  optional: false
+- tool_id: numpy
+  version: '>=1.0.0'
+  optional: false
+- tool_id: sklearn
+  version: '>=1.0.0'
+  optional: false
+- tool_id: xgboost
+  version: '>=1.0.0'
+  optional: false
+- tool_id: biopython
+  version: '>=1.0.0'
+  optional: false
+tags:
+- genomics
+- RNA-protein interaction
+- XGBoost
+- feature engineering
+- biopython
+- binding affinity
+- sequence analysis
+applicable_queries:
+- RNA-protein binding affinity prediction using *
+- predict binding affinity for * sequences using XGBoost
+- sequence-based RNA-protein interaction modeling *
+- feature engineering for RNA-protein binding *
+- machine learning for genomic sequence affinity *
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-09'
+  created_at: '2026-04-09'
+  last_updated: '2026-04-09'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260409_063843_2e4c34
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-09'
+    changes: Auto-created from successful run
+status: active

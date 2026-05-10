@@ -1,0 +1,62 @@
+skill_id: rna_velocity_prediction_regression
+version: 1.0.0
+name: Multi-Output RNA Velocity Prediction
+domain: genomics
+description: Predicts unspliced RNA transcript counts from spliced RNA data using
+  multi-output regression models to model cellular differentiation and kinetics.
+workflow:
+- step: 1
+  action: execute
+  description: '1. Data exploration: Analyzed JSONL.gz files with spliced/unspliced
+    counts. 2. Preprocessing: Applied log1p transformation to handle sparse scRNA-seq
+    data. 3. Model selection: Multi-output MLP with 2000 input, 1024 hidden layers,
+    2000 output. 4. Training: Split train data, used MSE loss, Adam optimizer. 5.
+    Evaluation: Mean Pearson Correlation metric. 6. Prediction: Generated submission.csv
+    with delta_0 to delta_1999 columns.'
+  tools_required:
+  - dev_agent
+  - python_interpreter
+  - run_shell_command
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: dev_agent
+  version: '>=1.0.0'
+  optional: false
+- tool_id: python_interpreter
+  version: '>=1.0.0'
+  optional: false
+- tool_id: run_shell_command
+  version: '>=1.0.0'
+  optional: false
+tags:
+- genomics
+- rna-velocity
+- transcriptomics
+- multi-output-regression
+- single-cell-analysis
+- bioinformatics
+- pearson-correlation
+applicable_queries:
+- Predict * RNA counts from * RNA counts using * regression
+- Model RNA velocity in single-cell data using *
+- Predict unspliced transcript levels from spliced counts
+- Train multi-output model for genomic feature prediction
+- Estimate cellular kinetics from single-cell RNA-seq data
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-07'
+  created_at: '2026-04-07'
+  last_updated: '2026-04-07'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260407_161533_9435c0
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-07'
+    changes: Auto-created from successful run
+status: active

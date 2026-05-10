@@ -1,0 +1,63 @@
+skill_id: protein_go_multilabel_classification
+version: 1.0.0
+name: Protein Sequence GO Biological Process Prediction
+domain: bioinformatics
+description: A workflow for training and evaluating multi-label classification models
+  to predict Gene Ontology (GO) biological process terms directly from protein sequences.
+workflow:
+- step: 1
+  action: execute
+  description: Used amino acid composition features with MultiOutputClassifier and
+    LogisticRegression. Created baseline solution with feature extraction, model training,
+    and output generation.
+  tools_required:
+  - dev_agent
+  - sklearn
+  - pandas
+  - numpy
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: dev_agent
+  version: '>=1.0.0'
+  optional: false
+- tool_id: sklearn
+  version: '>=1.0.0'
+  optional: false
+- tool_id: pandas
+  version: '>=1.0.0'
+  optional: false
+- tool_id: numpy
+  version: '>=1.0.0'
+  optional: false
+tags:
+- bioinformatics
+- protein-sequences
+- gene-ontology
+- multi-label-classification
+- machine-learning
+- proteomics
+- scikit-learn
+applicable_queries:
+- '* classification for GO * prediction from protein sequences'
+- predict * biological process from * sequence
+- multi-label classification for protein *
+- GO term prediction for * proteins
+- protein function prediction using * sequences
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-07'
+  created_at: '2026-04-07'
+  last_updated: '2026-04-07'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260407_151705_1b165c
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-07'
+    changes: Auto-created from successful run
+status: active

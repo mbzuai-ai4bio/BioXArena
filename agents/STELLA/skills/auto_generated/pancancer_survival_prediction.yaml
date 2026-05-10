@@ -1,0 +1,60 @@
+skill_id: pancancer_survival_prediction
+version: 1.0.0
+name: Pan-cancer Survival Analysis and Prediction
+domain: genomics
+description: A workflow for integrating TCGA clinical data with gene expression profiles
+  to build and evaluate survival models using Cox Proportional Hazards or similar
+  estimators.
+workflow:
+- step: 1
+  action: execute
+  description: Implemented Cox Proportional Hazards model for survival prediction.
+    Preprocessed clinical features with LabelEncoder and gene expression with StandardScaler.
+    Generated risk scores for test set.
+  tools_required:
+  - pandas
+  - sklearn
+  - lifelines
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: pandas
+  version: '>=1.0.0'
+  optional: false
+- tool_id: sklearn
+  version: '>=1.0.0'
+  optional: false
+- tool_id: lifelines
+  version: '>=1.0.0'
+  optional: false
+tags:
+- survival-analysis
+- TCGA
+- gene-expression
+- concordance-index
+- bioinformatics
+- lifelines
+- cancer-genomics
+applicable_queries:
+- '*-cancer survival prediction from * data'
+- predict patient outcomes using TCGA *
+- survival analysis of gene expression in *
+- multi-omic survival modeling for *
+- calculate C-index for * cancer prognosis
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-09'
+  created_at: '2026-04-09'
+  last_updated: '2026-04-09'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260409_002929_2a5d10
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-09'
+    changes: Auto-created from successful run
+status: active

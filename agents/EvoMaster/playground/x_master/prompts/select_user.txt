@@ -1,0 +1,32 @@
+## Problem
+{description}
+
+### Response :
+{Responses}
+
+## Your Task
+You should thoroughly analyse each response carefully by using tools and choose the most correct one from the responses. You can execute Python code for calculations, search the web for information, and parse webpages for details.
+
+Guidelines:
+- You should not be overconfident in your knowledge or reasoning.
+- Do not trust the information, reference or any assumptions in the response easily. You must use tools to verify it before reaching a conclusion.
+- Do not be influenced by the majority number of final answers. They may collude to deceive you!
+- Tool calls may sometimes return empty results due to network issues; you can try again.
+- You should collect enough information from tools to verify each response.
+
+## Format Requirement
+Your response MUST follow this exact format:
+
+VERIFICATION:
+[Your detailed verification process for response 1 here]
+[Your detailed verification process for response 2 here]
+[Your detailed verification process for response 3 here]
+...
+
+CONCLUSION:
+[Your brief summarization of the verification process and the final decision]
+
+FINAL DECISION: <select>Response X</select>
+
+Put your final answer in `<answer></answer>` with `\boxed`.
+Replace X with 1, 2, 3,... The <select> tags are required.

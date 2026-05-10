@@ -1,0 +1,72 @@
+skill_id: rna_isoform_mean_baseline_prediction
+version: 1.0.0
+name: RNA Isoform Expression Baseline Prediction
+domain: genomics
+description: Calculates mean baseline expression levels for RNA isoforms and automates
+  the generation of prediction files using delegated development agents.
+workflow:
+- step: 1
+  action: execute
+  description: '1. Task: Multi-output regression predicting 30 tissue expression levels
+
+    2. Constraints: Limited file writing functions available
+
+    3. Solution: Used dev_agent to handle file creation operations
+
+    4. Implementation: Calculated tissue means, created predictions
+
+    5. File creation: Delegated to dev_agent for submission.csv, metrics.json, solution.py,
+    model weights
+
+    6. Validation: Verified all files created successfully'
+  tools_required:
+  - dev_agent
+  - pandas
+  - numpy
+  - run_shell_command
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: dev_agent
+  version: '>=1.0.0'
+  optional: false
+- tool_id: pandas
+  version: '>=1.0.0'
+  optional: false
+- tool_id: numpy
+  version: '>=1.0.0'
+  optional: false
+- tool_id: run_shell_command
+  version: '>=1.0.0'
+  optional: false
+tags:
+- genomics
+- rna-seq
+- isoform-expression
+- baseline-model
+- bioinformatics
+- automated-file-generation
+- transcriptomics
+applicable_queries:
+- RNA isoform expression prediction using * baseline
+- predict * expression levels using mean baseline
+- generate * prediction files via dev_agent
+- calculate mean baseline for * genomic data
+- isoform-level expression analysis with * delegation
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-17'
+  created_at: '2026-04-17'
+  last_updated: '2026-04-17'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260417_112506_bfe1f6
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-17'
+    changes: Auto-created from successful run
+status: active

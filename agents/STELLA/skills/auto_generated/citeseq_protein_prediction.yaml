@@ -1,0 +1,77 @@
+skill_id: citeseq_protein_prediction
+version: 1.0.0
+name: CITE-seq Protein Level Prediction from RNA Expression
+domain: single-cell
+description: A workflow for predicting surface protein abundance from single-cell
+  RNA sequencing data using deep learning models and protein language model embeddings.
+workflow:
+- step: 1
+  action: execute
+  description: '1. Data loading: CSV files and NPZ sparse matrices
+
+    2. Preprocessing: RNA library size normalization + log1p, ADT log1p
+
+    3. Feature engineering: ESM2 protein sequence embeddings
+
+    4. Model: Neural network with RNA encoder + protein context
+
+    5. Training: MSE loss, AdamW, 4 GPU DataParallel, early stopping
+
+    6. Evaluation: Pearson correlation metric
+
+    7. Output: Proper submission format matching sample'
+  tools_required:
+  - pytorch
+  - numpy
+  - pandas
+  - scipy
+  - fair-esm
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: pytorch
+  version: '>=1.0.0'
+  optional: false
+- tool_id: numpy
+  version: '>=1.0.0'
+  optional: false
+- tool_id: pandas
+  version: '>=1.0.0'
+  optional: false
+- tool_id: scipy
+  version: '>=1.0.0'
+  optional: false
+- tool_id: fair-esm
+  version: '>=1.0.0'
+  optional: false
+tags:
+- single-cell
+- CITE-seq
+- multi-omics
+- protein-prediction
+- pytorch
+- fair-esm
+- transcriptomics
+applicable_queries:
+- predict protein levels from * RNA expression
+- CITE-seq * prediction
+- multi-omic * correlation analysis
+- single-cell * protein abundance modeling
+- cross-modal * prediction in single-cell
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-17'
+  created_at: '2026-04-17'
+  last_updated: '2026-04-17'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260417_145809_777853
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-17'
+    changes: Auto-created from successful run
+status: active

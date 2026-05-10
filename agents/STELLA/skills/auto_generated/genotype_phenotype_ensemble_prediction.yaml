@@ -1,0 +1,73 @@
+skill_id: genotype_phenotype_ensemble_prediction
+version: 1.0.0
+name: Ensemble Genotype-to-Phenotype Expression Prediction
+domain: genomics
+description: Predicts gene expression levels by ensembling XGBoost and Neural Networks
+  using genotype principal components, demographic factors, and context-specific expression
+  data.
+workflow:
+- step: 1
+  action: execute
+  description: '1. Data exploration revealed 7,848 training samples, 1,962 test samples,
+    10 target genes, 20 genotype PCs, 10 context gene expressions with ~10% missing
+    values.
+
+    2. Preprocessing: Mean imputation for missing context values, label encoding for
+    categorical features (sex, target_gene), feature engineering (geno_sum, context_nan_count,
+    context_avg), standard scaling.
+
+    3. Model selection: Ensemble of XGBoost (GPU-accelerated) and 4-layer DNN with
+    BatchNorm, SiLU activations, Dropout.
+
+    4. Training: 5-fol'
+  tools_required:
+  - dev_agent
+  - run_shell_command
+  - retrieve_similar_skills
+  - analyze_query_and_load_relevant_tools
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: dev_agent
+  version: '>=1.0.0'
+  optional: false
+- tool_id: run_shell_command
+  version: '>=1.0.0'
+  optional: false
+- tool_id: retrieve_similar_skills
+  version: '>=1.0.0'
+  optional: false
+- tool_id: analyze_query_and_load_relevant_tools
+  version: '>=1.0.0'
+  optional: false
+tags:
+- genomics
+- gene expression
+- ensemble learning
+- XGBoost
+- neural networks
+- genotype-to-phenotype
+- bioinformatics
+applicable_queries:
+- predict gene expression from genotype PCs and *
+- genotype-to-phenotype prediction using * ensemble
+- expression prediction with XGBoost and Neural Network
+- predict * phenotype from genomic principal components
+- multi-modal gene expression modeling with * and sex
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-17'
+  created_at: '2026-04-17'
+  last_updated: '2026-04-17'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260417_180613_9eb460
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-17'
+    changes: Auto-created from successful run
+status: active

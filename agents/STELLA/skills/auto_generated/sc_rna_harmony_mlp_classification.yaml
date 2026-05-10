@@ -1,0 +1,56 @@
+skill_id: sc_rna_harmony_mlp_classification
+version: 1.0.0
+name: Cross-Batch Single-Cell Classification with Harmony and MLP
+domain: single-cell_analysis
+description: A workflow for integrating heterogeneous single-cell RNA-seq datasets
+  using Harmony to remove batch effects followed by training a PyTorch-based Multi-Layer
+  Perceptron for cell type classification.
+workflow:
+- step: 1
+  action: execute
+  description: 1. Analyze data structure (train.csv, test.csv, H5AD). 2. Implement
+    batch integration using Harmony+PCA. 3. Train MLP classifier on integrated features.
+    4. Generate predictions for test set.
+  tools_required:
+  - dev_agent
+  - run_shell_command
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: dev_agent
+  version: '>=1.0.0'
+  optional: false
+- tool_id: run_shell_command
+  version: '>=1.0.0'
+  optional: false
+tags:
+- single-cell RNA-seq
+- batch-effect-correction
+- harmony-integration
+- pytorch
+- deep-learning
+- cell-type-annotation
+- gpu-acceleration
+applicable_queries:
+- Cross-batch cell type classification*
+- Single-cell RNA-seq integration and MLP*
+- Harmony batch correction for scRNA-seq classification*
+- PyTorch MLP for cell type prediction*
+- Integrate and classify single cell data using Harmony*
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-10'
+  created_at: '2026-04-10'
+  last_updated: '2026-04-10'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260410_144927_26ca5d
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-10'
+    changes: Auto-created from successful run
+status: active

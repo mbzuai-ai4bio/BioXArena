@@ -1,0 +1,54 @@
+skill_id: bioxarena_complex_structure_evaluation
+version: 1.0.0
+name: BioXArena Complex Structure Evaluation
+domain: structure
+description: Automated workflow for evaluating complex biological structures using
+  dev_agent to generate predictive models, scoring metrics, and standardized submission
+  files.
+workflow:
+- step: 1
+  action: execute
+  description: Delegated complete implementation to dev_agent to handle path restrictions.
+    Used retrieved skill guidance for RandomForest approach.
+  tools_required:
+  - dev_agent
+  - critic_agent
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: dev_agent
+  version: '>=1.0.0'
+  optional: false
+- tool_id: critic_agent
+  version: '>=1.0.0'
+  optional: false
+tags:
+- structural-biology
+- protein-complexes
+- model-evaluation
+- bioinformatics-pipelines
+- automated-machine-learning
+- bioxarena
+applicable_queries:
+- '*complex structure evaluation*'
+- BioXArena * implementation
+- '* structure prediction and metrics generation'
+- evaluate * protein complex with dev_agent
+- generate submission.csv for * structure task
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-17'
+  created_at: '2026-04-17'
+  last_updated: '2026-04-17'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260417_105136_27d8cc
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-17'
+    changes: Auto-created from successful run
+status: active

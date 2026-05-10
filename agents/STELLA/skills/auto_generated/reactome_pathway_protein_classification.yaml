@@ -1,0 +1,72 @@
+skill_id: reactome_pathway_protein_classification
+version: 1.0.0
+name: Protein Sequence and Expression-based Pathway Classification
+domain: bioinformatics
+description: A workflow that integrates protein sequence embeddings from ESM-2 with
+  tissue-specific expression data to classify proteins into Reactome pathways using
+  machine learning.
+workflow:
+- step: 1
+  action: execute
+  description: "1. Data exploration: Found train.csv, test.csv, sample_submission.csv\n\
+    2. Feature engineering: ESM-2 embeddings for protein sequences (1280-dim \u2192\
+    \ 256-dim PCA) + standardized expression features (10-dim)\n3. Model design: Neural\
+    \ network with 266 input \u2192 512 \u2192 256 \u2192 128 \u2192 8 output layers\n\
+    4. Training: CrossEntropyLoss, Adam optimizer, early stopping, GPU acceleration\n\
+    5. Implementation: Complete pipeline with timing metrics, submission generation,\
+    \ model saving\n6. Output files: submission.csv, metrics."
+  tools_required:
+  - ESM-2
+  - PyTorch
+  - scikit-learn
+  - pandas
+  - numpy
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: ESM-2
+  version: '>=1.0.0'
+  optional: false
+- tool_id: PyTorch
+  version: '>=1.0.0'
+  optional: false
+- tool_id: scikit-learn
+  version: '>=1.0.0'
+  optional: false
+- tool_id: pandas
+  version: '>=1.0.0'
+  optional: false
+- tool_id: numpy
+  version: '>=1.0.0'
+  optional: false
+tags:
+- bioinformatics
+- protein-embeddings
+- esm-2
+- reactome
+- pathway-analysis
+- multi-modal-learning
+- proteomics
+applicable_queries:
+- '*pathway membership classification*'
+- '*protein sequence and expression data*'
+- '*Reactome pathway prediction*'
+- '*ESM-2 protein classification*'
+- '*tissue expression protein analysis*'
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-17'
+  created_at: '2026-04-17'
+  last_updated: '2026-04-17'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260417_074433_9eb5df
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-17'
+    changes: Auto-created from successful run
+status: active

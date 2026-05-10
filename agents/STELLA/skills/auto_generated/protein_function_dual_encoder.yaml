@@ -1,0 +1,57 @@
+skill_id: protein_function_dual_encoder
+version: 1.0.0
+name: Protein-Function Text Matching with Dual Encoders
+domain: bioinformatics
+description: Implements a dual-encoder architecture using ESM2 for protein sequences
+  and BERT for functional descriptions to perform cross-modal retrieval and matching.
+workflow:
+- step: 1
+  action: execute
+  description: 1. Analyzed task requirements. 2. Implemented dual encoder with ESM2
+    for proteins and BERT for text. 3. Created MLP classifier. 4. Trained on GPU.
+    5. Initially had submission format issues (wrong IDs and row count). 6. Fixed
+    submission.csv to match sample exactly with correct IDs from test.csv and valid
+    probabilities. 7. Saved all required outputs.
+  tools_required:
+  - dev_agent
+  - run_shell_command
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: dev_agent
+  version: '>=1.0.0'
+  optional: false
+- tool_id: run_shell_command
+  version: '>=1.0.0'
+  optional: false
+tags:
+- bioinformatics
+- protein-language-models
+- esm2
+- bert
+- dual-encoder
+- sequence-function-matching
+- pytorch
+applicable_queries:
+- Protein-function text matching using * and *
+- Cross-modal retrieval for protein sequences and *
+- Train a dual encoder for * and * bioinformatics tasks
+- Predict protein function using ESM2 and *
+- Generate submission for protein-text matching benchmark *
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-17'
+  created_at: '2026-04-17'
+  last_updated: '2026-04-17'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260417_233552_7de212
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-17'
+    changes: Auto-created from successful run
+status: active

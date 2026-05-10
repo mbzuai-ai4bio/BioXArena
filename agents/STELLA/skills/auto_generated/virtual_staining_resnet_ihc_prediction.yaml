@@ -1,0 +1,73 @@
+skill_id: virtual_staining_resnet_ihc_prediction
+version: 1.0.0
+name: Virtual IHC Staining and Ratio Prediction via ResNet Features
+domain: imaging
+description: A workflow for predicting immunohistochemistry (IHC) positive ratios
+  by extracting features from virtual staining images using pre-trained ResNet architectures
+  integrated with tabular metadata.
+workflow:
+- step: 1
+  action: execute
+  description: '1. Created baseline metadata-only model (RandomForest on stain type
+    + coordinates)
+
+    2. Critic identified need for image features
+
+    3. Implemented improved solution with pre-trained ResNet18 for feature extraction
+
+    4. Used GPU acceleration for feature extraction
+
+    5. Combined image features (PCA-reduced) with metadata
+
+    6. Trained RandomForest on combined features
+
+    7. Achieved improved validation MSE (0.0078 vs 0.012 baseline)
+
+    8. Generated proper submission with all required files'
+  tools_required:
+  - run_shell_command
+  - evaluate_with_critic
+  - retrieve_similar_skills
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: run_shell_command
+  version: '>=1.0.0'
+  optional: false
+- tool_id: evaluate_with_critic
+  version: '>=1.0.0'
+  optional: false
+- tool_id: retrieve_similar_skills
+  version: '>=1.0.0'
+  optional: false
+tags:
+- virtual staining
+- resnet
+- feature extraction
+- ihc positive ratio
+- medical imaging
+- multimodal fusion
+- digital pathology
+applicable_queries:
+- virtual staining * prediction
+- IHC * ratio analysis using *
+- ResNet feature extraction * imaging metadata
+- predict * positive ratio from * images
+- digital pathology * feature extraction
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-17'
+  created_at: '2026-04-17'
+  last_updated: '2026-04-17'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260417_192045_399ede
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-17'
+    changes: Auto-created from successful run
+status: active

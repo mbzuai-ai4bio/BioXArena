@@ -1,0 +1,70 @@
+skill_id: medical_vqa_slake_benchmark
+version: 1.0.0
+name: Medical Visual Question Answering for SLAKE Dataset
+domain: medical_ai, computer_vision, multimodal_learning
+description: A complete workflow for training and evaluating multimodal models on
+  medical VQA tasks, including data processing, model training, and standardized metric
+  generation for benchmarks.
+workflow:
+- step: 1
+  action: execute
+  description: '1. Task understanding: Multimodal VQA with medical radiology images
+
+    2. Data analysis: 14K training samples, 1K test samples, 642 medical images
+
+    3. Model selection: BLIP-2 (state-of-the-art vision-language transformer)
+
+    4. Implementation: Custom dataset class, fine-tuning, validation
+
+    5. File creation: Generated all required BioXArena output files
+
+    6. Verification: Checked file formats, sizes, and completeness
+
+    7. Quality assurance: Critic agent evaluation passed with score 9/10'
+  tools_required:
+  - shell_commands
+  - critic_agent
+  - skill_system
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: shell_commands
+  version: '>=1.0.0'
+  optional: false
+- tool_id: critic_agent
+  version: '>=1.0.0'
+  optional: false
+- tool_id: skill_system
+  version: '>=1.0.0'
+  optional: false
+tags:
+- medical-ai
+- vqa
+- multimodal-learning
+- computer-vision
+- slake-dataset
+- bioxarena
+- pytorch
+applicable_queries:
+- Medical Visual Question Answering on * dataset
+- Train multimodal model for * benchmark
+- Evaluate * on SLAKE medical VQA
+- Generate BioXArena submission for *
+- Medical image question answering using *
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-10'
+  created_at: '2026-04-10'
+  last_updated: '2026-04-10'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260410_191644_0a1c15
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-10'
+    changes: Auto-created from successful run
+status: active

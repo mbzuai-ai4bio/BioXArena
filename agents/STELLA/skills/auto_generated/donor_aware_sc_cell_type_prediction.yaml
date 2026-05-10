@@ -1,0 +1,75 @@
+skill_id: donor_aware_sc_cell_type_prediction
+version: 1.0.0
+name: Donor-Aware Single-Cell Cell Type Prediction Ensemble
+domain: single-cell genomics
+description: A robust workflow for predicting cell types in single-cell genomics data
+  using donor-aware GroupKFold validation and ensemble modeling to ensure biological
+  generalizability.
+workflow:
+- step: 1
+  action: execute
+  description: "1. Data loading: Load train.csv, test.csv, expression_counts.npz,\
+    \ sample_submission.csv\n2. Data exploration: Check shapes, columns, class distribution\n\
+    3. Preprocessing pipeline:\n   - Expression: CPM normalization \u2192 log1p transformation\
+    \ \u2192 select top 2500 highly variable genes \u2192 PCA to 75 components\n \
+    \  - Metadata: One-hot encode sex, label encode cluster\n   - Feature merging:\
+    \ Combine PCA features with encoded metadata\n4. Validation strategy: GroupKFold(5)\
+    \ by donor_id to prevent data leakage across"
+  tools_required:
+  - pandas
+  - numpy
+  - scikit-learn
+  - xgboost
+  - pytorch
+  - scipy
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: pandas
+  version: '>=1.0.0'
+  optional: false
+- tool_id: numpy
+  version: '>=1.0.0'
+  optional: false
+- tool_id: scikit-learn
+  version: '>=1.0.0'
+  optional: false
+- tool_id: xgboost
+  version: '>=1.0.0'
+  optional: false
+- tool_id: pytorch
+  version: '>=1.0.0'
+  optional: false
+- tool_id: scipy
+  version: '>=1.0.0'
+  optional: false
+tags:
+- single-cell genomics
+- cell type annotation
+- ensemble learning
+- donor-aware validation
+- BioXArena
+- bioinformatics
+- machine learning
+applicable_queries:
+- '*single-cell*cell type prediction*donor*'
+- '*BioXArena*ensemble*'
+- '*scRNA-seq*classification*GroupKFold*'
+- '*predict cell types*donor-aware*'
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-09'
+  created_at: '2026-04-09'
+  last_updated: '2026-04-09'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260409_114607_552f81
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-09'
+    changes: Auto-created from successful run
+status: active

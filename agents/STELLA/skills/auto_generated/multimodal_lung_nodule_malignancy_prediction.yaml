@@ -1,0 +1,64 @@
+skill_id: multimodal_lung_nodule_malignancy_prediction
+version: 1.0.0
+name: Multi-Modal Lung Nodule Malignancy Prediction
+domain: medical_imaging
+description: A workflow for benchmarking lung nodule malignancy using multi-modal
+  deep learning, involving data processing, model training with PyTorch, and standardized
+  metric evaluation.
+workflow:
+- step: 1
+  action: execute
+  description: 'Used dev_agent''s tool-based capabilities to:
+
+    1. Explore data structure with shell commands
+
+    2. Implement 3D CNN + MLP multi-modal model for CT images + clinical features
+
+    3. Train on GPU with PyTorch
+
+    4. Generate predictions and save all required benchmark files
+
+    5. Verify outputs meet exact format requirements'
+  tools_required:
+  - dev_agent_tools
+  - pytorch
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: dev_agent_tools
+  version: '>=1.0.0'
+  optional: false
+- tool_id: pytorch
+  version: '>=1.0.0'
+  optional: false
+tags:
+- medical-imaging
+- lung-nodule
+- malignancy-prediction
+- multi-modal-learning
+- pytorch
+- benchmark-evaluation
+- computer-aided-diagnosis
+applicable_queries:
+- '* lung nodule malignancy prediction *'
+- BioXArena * benchmark *
+- '* multi-modal deep learning * medical imaging'
+- predict lung cancer * multi-modal *
+- '* benchmark * submission.csv metrics.json'
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-07'
+  created_at: '2026-04-07'
+  last_updated: '2026-04-07'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260407_175705_e4ae20
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-07'
+    changes: Auto-created from successful run
+status: active

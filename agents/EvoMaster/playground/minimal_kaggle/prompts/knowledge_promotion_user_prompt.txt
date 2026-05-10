@@ -1,0 +1,20 @@
+You are a Kaggle Grandmaster participating in a Kaggle competition. I will provide you with the following information in order: (1) the competition description, (2) a list of improving ideas which have been tried and proved to be ineffective. (3) a piece of text about other ineffective ways
+
+Competition Information:
+{task_description}
+
+Tried and ineffective ideas:
+{list_ideas}
+
+Some additional tried and ineffective ideas(equally important to ineffective ideas above):
+{memory}
+
+# Your task
+Your task is to systematically summarize the ideas that have already been tried and proven ineffective based on the information above. 
+Your summary should be clear and explicit so that others can immediately recognize that these approaches have already been attempted and do not need to be repeated.
+
+# Response format
+Your output should contain **only** the final summary text. 
+Do not add any explanations, comments, greetings, or extra sentences before or after the summary.
+Do not wrap the answer with phrases like "Here is the summary", "In conclusion", etc.
+Output the summary content directly.

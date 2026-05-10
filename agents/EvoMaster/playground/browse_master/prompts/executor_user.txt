@@ -1,0 +1,31 @@
+search target: {search_target}
+
+You can reason or use the following functions:
+
+1. generate_keywords(seed_keyword): this function takes a string seed_keyword as input and generates multiple search keywords based on the input. The generated keywords are returned in the ["tool_result"]["keywords"] field of the output dict.
+2. batch_search(key_words): this function takes a list of keywords as input and performs batch search operations. The search results are returned in the ["tool_result"]["organic"] field of the output dict.
+3. check_condition(content:str, condition:str): This function evaluates whether a given piece of content meets a specified condition with an LLM. The function returns a dict containing a string ("yes", "no", or "unknown") indicating whether the content satisfies the condition in the ['tool_result']['is_relevant'] field. This function helps when searching relevant pages from a multitude of web pages, you can filter out irrelevant pages if "no" without the need to read the page content.
+4. batch_search_and_filter(keyword): this function combines the above primitives into an integrated search solution. It takes a string keyword as input, then it generate multiple search keywords with two strategies: 1. generate keywords with exact match; 2. if time description is included in the keyword, it will generate keywords for each time period. Then it will web_search the web with the generated keywords and filter out the irrelevant results. The output is a dict of the filtered results, where the key ["tool_result"]["yes"] corresponds to the results that satisfy the search target, while the key ["tool_result"]["unknown"] corresponds to the results that can not be judged with the given page snippets. You can use the ["tool_result"]["yes"] to get the results that satisfy the search target.
+
+For specific tools to interact with web content:
+5. web_search(keywords): this function takes string keywords as input, and the output is a dict containing top 10 web information from google search engine. An output example is the following python dict:
+{
+    "tool_result": {
+                "searchParameters": {...},
+                "organic": [
+                    {"title": Title, "link": Link, "snippet": Short description of the content, "position": Position},
+                    ...
+                ]
+            }
+}
+6. web_parse(link:str, query:str): this function takes the link and query as input, and will parse the web page, call an LLM to answer the query based on the page content. The answer is put in the ['tool_result']['content'] field of the output dict. This function is useful when looking into detail information of a page.
+
+
+To use the tools described above, you must call them by writing Python code wrapped in `<code></code>` tags. The code will then be executed, and you can view the output. You can write code multiple times—this is similar to cells in a Jupyter notebook. All code within `<code></code>` blocks will be executed and cached, so you can reuse functions and variables in subsequent steps. To view the output of code or any variable, simply write code to print it.
+
+Notes:
+1. Before starting the search, carefully consider whether your search target is too broad. If it is too broad, you need to reason and add more specific characteristics to the search target.
+2. You need to complete reasoning, use tools through coding, and obtain feedback in a loop until all results are found. After stopping thinking, do not write code anymore.
+
+Output format:
+When you confirm that you have found all results, stop thinking and place the results in `<results>...</results>` tags

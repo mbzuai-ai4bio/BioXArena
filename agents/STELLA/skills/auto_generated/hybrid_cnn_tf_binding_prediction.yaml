@@ -1,0 +1,66 @@
+skill_id: hybrid_cnn_tf_binding_prediction
+version: 1.0.0
+name: Hybrid CNN-Embedding TF Binding Prediction
+domain: genomics
+description: Implements a deep learning architecture combining CNNs for sequence motifs
+  and embedding layers for categorical genomic features to predict multi-label transcription
+  factor binding sites.
+workflow:
+- step: 1
+  action: execute
+  description: '1. Data exploration: Analyzed train.csv (38,124 samples) and test.csv
+    (9,532 samples) with balanced binary classification
+
+    2. Feature engineering: One-hot encoded DNA sequences (350bp), encoded categorical
+    features (tf_name, cell_type, cre_type, chrom), normalized genomic coordinates
+
+    3. Model design: Hybrid architecture with CNN for sequence patterns (3-layer 1D-CNN),
+    embeddings for categorical features, dense classifier
+
+    4. Training: 80/20 train/validation split, binary cross-entropy loss, Adam o'
+  tools_required:
+  - dev_agent
+  - run_shell_command
+  - evaluate_with_critic
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: dev_agent
+  version: '>=1.0.0'
+  optional: false
+- tool_id: run_shell_command
+  version: '>=1.0.0'
+  optional: false
+- tool_id: evaluate_with_critic
+  version: '>=1.0.0'
+  optional: false
+tags:
+- genomics
+- transcription-factors
+- deep-learning
+- cnn
+- embedding-layers
+- multi-label-classification
+- sequence-analysis
+applicable_queries:
+- '*binding prediction*genomic sequences*categorical*'
+- hybrid CNN-embedding model for *
+- multi-TF binding*deep learning*
+- predict * binding sites with sequence and * features
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-09'
+  created_at: '2026-04-09'
+  last_updated: '2026-04-09'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260409_020331_c6ff39
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-09'
+    changes: Auto-created from successful run
+status: active

@@ -1,0 +1,166 @@
+# ============================================
+# LLM Configuration
+# ============================================
+llm:
+  openai:
+    provider: "openai"
+    model: "${GPT_CHAT_MODEL}"
+    api_key: "${OPENAI_API_KEY}"
+    base_url: "${GPT_BASE_URL}"
+    temperature: 0.7
+    max_tokens: 4096
+    timeout: 60
+    max_retries: 3
+    retry_delay: 1.0
+
+  anthropic:
+    provider: "anthropic"
+    model: "claude-haiku-4-5-20251001"
+    api_key: "${ANTHROPIC_API_KEY}"
+    base_url: "${ANTHROPIC_BASE_URL}"
+    temperature: 0.7
+    max_tokens: 16384
+    timeout: 60
+    max_retries: 3
+    retry_delay: 1.0
+
+  default: "openai"
+
+# ============================================
+# Multi-Agent Configuration
+# ============================================
+# In the multi-agent system, each Agent has independent configuration
+
+agents:
+  
+  planner:
+    llm: "openai"
+    max_turns: 10
+    tools:
+        builtin: []
+
+    context:
+      max_tokens: 4096
+      truncation_strategy: "latest_half"
+      preserve_system_messages: true
+      preserve_recent_turns: 5
+
+    # Prompt configuration (relative to playground/browse_master/)
+    system_prompt_file: "prompts/planner_prefix.txt"
+    user_prompt_file: "prompts/planner_user.txt"
+
+  executor:
+    llm: "openai"
+    max_turns: 50
+    tools:
+        builtin: ["*"]     
+        mcp: "mcp_config.json"
+
+    context:
+      max_tokens: 4096
+      truncation_strategy: "latest_half"
+      preserve_system_messages: true
+      preserve_recent_turns: 5
+
+    # Prompt configuration (relative to playground/browse_master/)
+    system_prompt_file: "prompts/executor_prefix.txt"
+    user_prompt_file: "prompts/executor_user.txt"
+
+# ============================================
+# Session Configuration
+# ============================================
+session:
+  # Session type: local or docker
+  type: "local"  # Optional values: "local" or "docker"
+  
+  # Local Session configuration
+  local:
+    working_dir: "./playground/browse_master/workspace"
+    timeout: 60
+    # GPU device configuration (optional)
+    # Optional values:
+    #   - null: No GPU restrictions (use all available GPUs)
+    #   - "2": Use only GPU 2
+    #   - ["0", "1"]: Use GPU 0 and 1
+    gpu_devices: "0"  # Example: Use GPU 0
+    
+    # CPU device configuration (optional)
+    # Optional values:
+    #   - null: No CPU restrictions (use all available CPUs)
+    #   - "0-15": Use CPU 0 to 15
+    #   - [0, 1, 2, 3]: Use CPU 0, 1, 2, 3
+    cpu_devices: "0-15"  # Example: Use CPU 0-15
+    # Symbolic link configuration (optional)
+    # Create symbolic links for all files and folders in the source directory to the specified location in the workspace
+    # Format: {source directory path: target path in workspace}
+    # Target path is a relative path relative to the workspace
+    # Example:
+    # symlinks:
+    #   "/data/exp_data/demo1bench/aerial-cactus-identification/prepared/public/": "input"
+    symlinks: {}
+  
+  # Docker Session configuration
+  docker:
+    # Docker image
+    image: "evomaster/base:latest"
+    
+    # Container name (None for auto-generation)
+    container_name: null
+    
+    # Use existing container (if set, use this container instead of creating a new one)
+    use_existing_container: null
+    
+    # Working directory (inside container)
+    working_dir: "/workspace"
+    
+    # Resource limits
+    memory_limit: "64g"  # Memory limit, e.g. "4g", "8g"
+    cpu_limit: 16.0      # CPU limit (number of cores)
+    gpu_devices: "0"   # GPU devices, optional values:
+                        #   - null: Do not use GPU
+                        #   - "all": Use all GPUs
+                        #   - "0": Use GPU 0
+                        #   - ["0", "1"]: Use GPU 0 and 1
+    
+    # Network mode
+    network_mode: "host"  # bridge, host, none
+    
+    # Mount volumes (mount local directories to container)
+    # Format: {local path: container path}
+    # Example:
+    # volumes:
+    #   "./workspace": "/workspace"
+    volumes: {"./playground/minimal_multi_agent/workspace":"/workspace"}
+    
+    # Environment variables
+    # Example:
+    # env_vars:
+    #   PYTHONPATH: "/workspace"
+    env_vars: {}
+    
+    # Container lifecycle
+    auto_remove: false   # true: Automatically remove container after exit, false: Keep container
+    
+    # Timeout (seconds) - For long-running tasks, the timeout needs to be appropriately extended.
+    timeout: 300
+
+# ============================================
+# LLM Output Display Configuration
+# ============================================
+llm_output:
+  # Whether to display LLM output in real-time in the terminal
+  show_in_console: true
+  
+  # Whether to record LLM output in log files
+  log_to_file: true
+
+# ============================================
+# Logging Configuration
+# ============================================
+logging:
+  level: "INFO"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file: null
+  console: true
+  
+

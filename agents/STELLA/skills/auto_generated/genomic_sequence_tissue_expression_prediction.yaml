@@ -1,0 +1,76 @@
+skill_id: genomic_sequence_tissue_expression_prediction
+version: 1.0.0
+name: DNA Sequence-to-Tissue Expression Modeling
+domain: genomics
+description: A workflow for training deep learning models to predict tissue-specific
+  gene expression levels directly from raw DNA sequences using PyTorch and genomic
+  data processing libraries.
+workflow:
+- step: 1
+  action: execute
+  description: 'Approach:
+
+    1. Used multimodal architecture combining DNA sequence encoders and tissue embeddings
+
+    2. Processed promoter sequences with CNN, cDNA sequences with Transformer
+
+    3. Used attention-based feature fusion
+
+    4. Trained with MSE loss and Pearson correlation validation
+
+    5. Implemented proper data split by gene (not tissue)
+
+    6. Used GPU acceleration with PyTorch DataParallel
+
+    7. Generated all required output files'
+  tools_required:
+  - PyTorch
+  - pandas
+  - numpy
+  - scikit-learn
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: PyTorch
+  version: '>=1.0.0'
+  optional: false
+- tool_id: pandas
+  version: '>=1.0.0'
+  optional: false
+- tool_id: numpy
+  version: '>=1.0.0'
+  optional: false
+- tool_id: scikit-learn
+  version: '>=1.0.0'
+  optional: false
+tags:
+- genomics
+- bioinformatics
+- deep-learning
+- pytorch
+- gene-expression
+- dna-sequencing
+- predictive-modeling
+applicable_queries:
+- '* gene-tissue expression prediction *'
+- predict expression from DNA sequence *
+- BioXArena * genomics challenge
+- '* sequence-based gene expression modeling'
+- train model on genomic sequences for * prediction
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-09'
+  created_at: '2026-04-09'
+  last_updated: '2026-04-09'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260409_012243_178ce1
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-09'
+    changes: Auto-created from successful run
+status: active

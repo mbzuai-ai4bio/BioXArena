@@ -1,0 +1,88 @@
+skill_id: crispr_perturbation_delta_prediction
+version: 1.0.0
+name: CRISPR Perturbation High-Dimensional Expression Prediction
+domain: genomics
+description: A comprehensive pipeline for processing compressed genomic JSONL data
+  to predict high-dimensional (125-D) differential gene expression changes following
+  CRISPR perturbations.
+workflow:
+- step: 1
+  action: execute
+  description: '1. Data exploration revealed JSONL.GZ format for train/test data
+
+    2. Feature engineering: parsing perturbation gene names, handling compressed embeddings
+
+    3. Multi-output regression approach for 125 target dimensions
+
+    4. GPU-accelerated neural network training
+
+    5. Proper chunk expansion handling (40 chunks per perturbation)
+
+    6. Exact submission format matching with id column as {perturbation}__chunk{k}'
+  tools_required:
+  - pandas
+  - numpy
+  - scikit-learn
+  - xgboost
+  - lightgbm
+  - pytorch
+  - json
+  - gzip
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: pandas
+  version: '>=1.0.0'
+  optional: false
+- tool_id: numpy
+  version: '>=1.0.0'
+  optional: false
+- tool_id: scikit-learn
+  version: '>=1.0.0'
+  optional: false
+- tool_id: xgboost
+  version: '>=1.0.0'
+  optional: false
+- tool_id: lightgbm
+  version: '>=1.0.0'
+  optional: false
+- tool_id: pytorch
+  version: '>=1.0.0'
+  optional: false
+- tool_id: json
+  version: '>=1.0.0'
+  optional: false
+- tool_id: gzip
+  version: '>=1.0.0'
+  optional: false
+tags:
+- genomics
+- crispr
+- perturbation-prediction
+- high-dimensional-regression
+- jsonl-processing
+- expression-profiling
+- machine-learning
+applicable_queries:
+- CRISPR perturbation prediction from * data
+- predict *-dimensional delta expression from *
+- genomic perturbation modeling with * output
+- analyze CRISPR effects using * models
+- process *.jsonl.gz for gene expression prediction
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-17'
+  created_at: '2026-04-17'
+  last_updated: '2026-04-17'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260417_111346_a28ef0
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-17'
+    changes: Auto-created from successful run
+status: active

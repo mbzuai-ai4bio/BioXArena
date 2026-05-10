@@ -1,0 +1,86 @@
+skill_id: protein_complex_structure_quality_prediction
+version: 1.0.0
+name: Protein Complex Structure Quality Prediction
+domain: structure
+description: A machine learning pipeline that extracts 3D coordinate features from
+  JSONL/CSV data to predict the structural quality and stability of protein complexes.
+workflow:
+- step: 1
+  action: execute
+  description: '1. Task analysis: Regression predicting DockQ scores (0-1) from protein
+    complex features
+
+    2. Data exploration: CSV metadata + JSONL.gz with 3D structure data
+
+    3. Feature engineering: Extracted geometric features, contact maps, graph features
+    from kNN
+
+    4. Model selection: Gradient boosting for structured tabular data with cross-validation
+
+    5. Implementation: Processed JSONL records, trained regression model, generated
+    predictions
+
+    6. Output: Created submission.csv, metrics.json, solution.py, and model'
+  tools_required:
+  - pandas
+  - numpy
+  - json
+  - gzip
+  - sklearn
+  - xgboost
+  - lightgbm
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: pandas
+  version: '>=1.0.0'
+  optional: false
+- tool_id: numpy
+  version: '>=1.0.0'
+  optional: false
+- tool_id: json
+  version: '>=1.0.0'
+  optional: false
+- tool_id: gzip
+  version: '>=1.0.0'
+  optional: false
+- tool_id: sklearn
+  version: '>=1.0.0'
+  optional: false
+- tool_id: xgboost
+  version: '>=1.0.0'
+  optional: false
+- tool_id: lightgbm
+  version: '>=1.0.0'
+  optional: false
+tags:
+- protein-structure
+- bioinformatics
+- feature-engineering
+- xgboost
+- lightgbm
+- 3d-coordinates
+- structural-biology
+applicable_queries:
+- predict protein complex quality using * features
+- evaluate structural stability of * from JSONL
+- machine learning model for protein * coordinate analysis
+- train model on protein metadata and * coordinates
+- protein structure scoring using * and CSV
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-10'
+  created_at: '2026-04-10'
+  last_updated: '2026-04-10'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260410_160618_49e68d
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-10'
+    changes: Auto-created from successful run
+status: active

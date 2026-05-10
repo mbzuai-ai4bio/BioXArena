@@ -1,0 +1,61 @@
+skill_id: protein_ddg_hybrid_prediction
+version: 1.0.0
+name: Hybrid Sequence-Structure Protein Stability Prediction
+domain: protein_structure
+description: "Predicts protein stability changes (\u0394\u0394G) by integrating structural\
+  \ features with sequence-based representations to optimize performance on BioXArena\
+  \ benchmarks."
+workflow:
+- step: 1
+  action: execute
+  description: '1. Data exploration: Analyze training/test dataset structure; 2. Feature
+    engineering: Combine ESM-2 embeddings with structural features from PDB files;
+    3. Model selection: Hybrid gradient boosting (XGBoost/LightGBM) with GPU acceleration;
+    4. Implementation: Complete pipeline with timing metrics and exact file format
+    compliance'
+  tools_required:
+  - structural_feature_extractor
+  - dev_agent
+  - critic_agent
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: structural_feature_extractor
+  version: '>=1.0.0'
+  optional: false
+- tool_id: dev_agent
+  version: '>=1.0.0'
+  optional: false
+- tool_id: critic_agent
+  version: '>=1.0.0'
+  optional: false
+tags:
+- protein-stability
+- ddg-prediction
+- structural-bioinformatics
+- hybrid-learning
+- bioxarena
+- feature-engineering
+- protein-engineering
+applicable_queries:
+- Protein stability change * prediction * sequence-structure *
+- "\u0394\u0394G prediction for * benchmark"
+- Predict mutation effects on protein stability using * features
+- BioXArena * stability prediction *
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-17'
+  created_at: '2026-04-17'
+  last_updated: '2026-04-17'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260417_172037_688a1a
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-17'
+    changes: Auto-created from successful run
+status: active

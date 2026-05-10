@@ -1,0 +1,60 @@
+skill_id: mitochondria_em_counting_multimodal
+version: 1.0.0
+name: Multi-Modal Mitochondrial Instance Counting in EM
+domain: imaging
+description: A workflow for quantifying mitochondrial instances in electron microscopy
+  images using multi-modal deep learning architectures and regression-based evaluation.
+workflow:
+- step: 1
+  action: execute
+  description: '1. Analyzed dataset structure (train.csv, test.csv, TIFF images, species
+    metadata) 2. Designed multi-modal model: ResNet18 for image features + MLP for
+    species metadata 3. Implemented PyTorch Dataset with TIFF image loading 4. Trained
+    model with L1 loss on 4 GPUs 5. Generated predictions and saved submission.csv'
+  tools_required:
+  - dev_agent
+  - run_shell_command
+  - evaluate_with_critic
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: dev_agent
+  version: '>=1.0.0'
+  optional: false
+- tool_id: run_shell_command
+  version: '>=1.0.0'
+  optional: false
+- tool_id: evaluate_with_critic
+  version: '>=1.0.0'
+  optional: false
+tags:
+- electron microscopy
+- instance counting
+- multi-modal learning
+- bioimage analysis
+- computer vision
+- mitochondria
+- deep learning
+applicable_queries:
+- '* counting in electron microscopy images'
+- mitochondria * quantification using deep learning
+- multi-modal * instance counting in * images
+- organelle counting in * microscopy
+- deep learning for * instance segmentation and counting
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-09'
+  created_at: '2026-04-09'
+  last_updated: '2026-04-09'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260409_003301_b0d350
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-09'
+    changes: Auto-created from successful run
+status: active

@@ -1,0 +1,88 @@
+skill_id: kinase_selectivity_ensemble_prediction
+version: 1.0.0
+name: Ensemble Kinase Selectivity Multi-Label Prediction
+domain: chemical-biology
+description: A multi-label classification workflow for predicting kinase selectivity
+  from SMILES strings using an ensemble of gradient boosting (XGBoost, LightGBM) and
+  Graph Neural Networks with RDKit-based feature engineering.
+workflow:
+- step: 1
+  action: execute
+  description: '1. Data exploration: 30,158 training compounds, 8 kinase targets,
+    imbalanced labels
+
+    2. Feature engineering: Morgan fingerprints (ECFP4, 2048 bits), MACCS keys (166
+    bits), RDKit descriptors (208 features)
+
+    3. Model development: Tested multiple approaches, ensemble performed best
+
+    4. Class imbalance: Handled with class weights and probability calibration
+
+    5. Optimization: Focused on macro ROC-AUC, used validation split
+
+    6. Implementation: Created all required BioXArena output files
+
+    7. GPU utilization:'
+  tools_required:
+  - rdkit
+  - sklearn
+  - xgboost
+  - lightgbm
+  - pytorch
+  - pandas
+  - numpy
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: rdkit
+  version: '>=1.0.0'
+  optional: false
+- tool_id: sklearn
+  version: '>=1.0.0'
+  optional: false
+- tool_id: xgboost
+  version: '>=1.0.0'
+  optional: false
+- tool_id: lightgbm
+  version: '>=1.0.0'
+  optional: false
+- tool_id: pytorch
+  version: '>=1.0.0'
+  optional: false
+- tool_id: pandas
+  version: '>=1.0.0'
+  optional: false
+- tool_id: numpy
+  version: '>=1.0.0'
+  optional: false
+tags:
+- cheminformatics
+- kinase-selectivity
+- multi-label-classification
+- ensemble-learning
+- graph-neural-networks
+- rdkit
+- drug-discovery
+applicable_queries:
+- '* kinase selectivity * prediction * SMILES *'
+- '* multi-label * chemical * ensemble *'
+- BioXArena * prediction * LightGBM * GNN *
+- '* molecular property prediction * RDKit * XGBoost *'
+- '* kinase * SMILES * GNN * ensemble *'
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-07'
+  created_at: '2026-04-07'
+  last_updated: '2026-04-07'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260407_170705_b5ae82
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-07'
+    changes: Auto-created from successful run
+status: active

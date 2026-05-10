@@ -1,0 +1,59 @@
+skill_id: bioxarena_gene_expression_classification
+version: 1.0.0
+name: Bioinformatics Gene Expression-Text Classification
+domain: bioinformatics
+description: A workflow for training and evaluating machine learning models that classify
+  gene expression data using associated textual metadata, ensuring safe module execution
+  and performance tracking.
+workflow:
+- step: 1
+  action: execute
+  description: Used safe approach avoiding forbidden modules. Implemented ClinicalBERT+MLP
+    multimodal model. Trained on 4 GPUs.
+  tools_required:
+  - dev_agent
+  - critic_agent
+  - run_shell_command
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: dev_agent
+  version: '>=1.0.0'
+  optional: false
+- tool_id: critic_agent
+  version: '>=1.0.0'
+  optional: false
+- tool_id: run_shell_command
+  version: '>=1.0.0'
+  optional: false
+tags:
+- bioinformatics
+- gene-expression
+- text-classification
+- machine-learning
+- auc-optimization
+- safe-module-usage
+- genomics
+applicable_queries:
+- BioXArena * classification
+- gene expression * text analysis
+- classify * using gene expression data
+- bioinformatics * model training with safe modules
+- predict * from genomic text data
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-09'
+  created_at: '2026-04-09'
+  last_updated: '2026-04-09'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260409_150831_bf9e8b
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-09'
+    changes: Auto-created from successful run
+status: active

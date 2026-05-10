@@ -1,0 +1,76 @@
+skill_id: gene_expression_text_matching
+version: 1.0.0
+name: Genomic Expression and Text Description Binary Classification
+domain: genomics
+description: A workflow for training transformer-based models to classify the alignment
+  between gene expression profiles and natural language descriptions using PubMedBERT
+  and scikit-learn.
+workflow:
+- step: 1
+  action: execute
+  description: "\n    1. Analyzed the task: Binary classification to determine if\
+    \ a text description matches a gene expression profile (top 50 genes and values).\n\
+    \    2. Identified the data format: Tabular data with text descriptions and comma-separated\
+    \ gene names and expression values.\n    3. Chose a multimodal approach: Formatted\
+    \ the gene expression data into a text string (e.g., 'GeneA (1.5), GeneB (0.8)')\
+    \ and concatenated it with the text description.\n    4. Selected a pre-trained\
+    \ biomedical language model: m"
+  tools_required:
+  - dev_agent
+  - transformers
+  - datasets
+  - pandas
+  - scikit-learn
+  - torch
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: dev_agent
+  version: '>=1.0.0'
+  optional: false
+- tool_id: transformers
+  version: '>=1.0.0'
+  optional: false
+- tool_id: datasets
+  version: '>=1.0.0'
+  optional: false
+- tool_id: pandas
+  version: '>=1.0.0'
+  optional: false
+- tool_id: scikit-learn
+  version: '>=1.0.0'
+  optional: false
+- tool_id: torch
+  version: '>=1.0.0'
+  optional: false
+tags:
+- genomics
+- gene-expression
+- pubmedbert
+- binary-classification
+- nlp-biomedical
+- cellwhisperer
+- model-training
+applicable_queries:
+- '* gene expression * classification'
+- match * profiles with * descriptions
+- train * model for * genomic text matching
+- CellWhisperer * analysis
+- binary classification of * expression data
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-13'
+  created_at: '2026-04-13'
+  last_updated: '2026-04-13'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260413_231544_f125d4
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-13'
+    changes: Auto-created from successful run
+status: active

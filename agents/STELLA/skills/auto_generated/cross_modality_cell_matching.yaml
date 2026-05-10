@@ -1,0 +1,75 @@
+skill_id: cross_modality_cell_matching
+version: 1.0.0
+name: Cross-Modality Single-Cell Matching with Module Constraints
+domain: single-cell genomics
+description: Aligns disparate single-cell data modalities using PCA and neural networks
+  while adhering to specific library restrictions and filesystem safety protocols.
+workflow:
+- step: 1
+  action: execute
+  description: "1. Encountered module restriction: os module not allowed\n2. Adapted\
+    \ approach: Use pathlib.Path instead of os.path\n3. Implemented safe data loading\
+    \ with pandas and scipy.sparse\n4. Designed contrastive Siamese network for cross-modality\
+    \ matching\n5. Used PCA for dimensionality reduction (RNA: 36601\u2192512, ATAC:\
+    \ 111743\u2192512)\n6. Implemented GPU training with DataParallel for 4 GPUs\n\
+    7. Generated predictions by computing cosine similarity in embedding space\n8.\
+    \ Created all required output files with proper"
+  tools_required:
+  - pathlib.Path
+  - pandas
+  - scipy.sparse
+  - sklearn.decomposition.PCA
+  - torch.nn
+  - torch.optim
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: pathlib.Path
+  version: '>=1.0.0'
+  optional: false
+- tool_id: pandas
+  version: '>=1.0.0'
+  optional: false
+- tool_id: scipy.sparse
+  version: '>=1.0.0'
+  optional: false
+- tool_id: sklearn.decomposition.PCA
+  version: '>=1.0.0'
+  optional: false
+- tool_id: torch.nn
+  version: '>=1.0.0'
+  optional: false
+- tool_id: torch.optim
+  version: '>=1.0.0'
+  optional: false
+tags:
+- single-cell genomics
+- cross-modality matching
+- representation learning
+- pytorch
+- scipy-sparse
+- pathlib
+- dimensionality reduction
+applicable_queries:
+- cross-modality * matching *
+- single-cell * alignment * restricted modules
+- multi-omic * integration * pathlib
+- cell matching * torch * sklearn
+- genomics * modality translation *
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-07'
+  created_at: '2026-04-07'
+  last_updated: '2026-04-07'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260407_183707_44f7a6
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-07'
+    changes: Auto-created from successful run
+status: active

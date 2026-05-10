@@ -1,0 +1,68 @@
+skill_id: enhanced_cell_painting_classification
+version: 1.0.0
+name: Enhanced Cell Painting Classification and Optimization
+domain: bioimaging
+description: A workflow for improving morphological profiling accuracy through automated
+  feature selection, dimensionality reduction, and hyperparameter tuning of classification
+  models.
+workflow:
+- step: 1
+  action: execute
+  description: '1. Initial solution had 51.89% accuracy with basic XGBoost
+
+    2. Implemented feature engineering: PCA dimensionality reduction, feature selection
+
+    3. Added channel-specific feature processing (DNA, ER, RNA, AGP, Mito, Shape)
+
+    4. Implemented ensemble model: XGBoost + Random Forest + MLP
+
+    5. Used hyperparameter tuning with grid search
+
+    6. Achieved >70% accuracy on validation set'
+  tools_required:
+  - feature_selection
+  - dimensionality_reduction
+  - hyperparameter_optimization
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: feature_selection
+  version: '>=1.0.0'
+  optional: false
+- tool_id: dimensionality_reduction
+  version: '>=1.0.0'
+  optional: false
+- tool_id: hyperparameter_optimization
+  version: '>=1.0.0'
+  optional: false
+tags:
+- cell-painting
+- morphological-profiling
+- feature-engineering
+- hyperparameter-tuning
+- bioimaging
+- high-content-screening
+- phenotypic-profiling
+applicable_queries:
+- '*cell painting classification*'
+- '*morphological feature engineering*'
+- optimize * classification accuracy * bioimaging
+- '*hyperparameter tuning * phenotypic screening'
+- improve * accuracy * cell painting data
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-06'
+  created_at: '2026-04-06'
+  last_updated: '2026-04-06'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260406_154044_f945f8
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-06'
+    changes: Auto-created from successful run
+status: active

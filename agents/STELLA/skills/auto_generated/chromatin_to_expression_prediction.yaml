@@ -1,0 +1,81 @@
+skill_id: chromatin_to_expression_prediction
+version: 1.0.0
+name: Chromatin-to-Expression Sparse Matrix Prediction
+domain: genomics
+description: A pipeline for predicting gene expression levels from high-dimensional
+  sparse ATAC-seq chromatin accessibility data using regression models and Pearson
+  correlation validation.
+workflow:
+- step: 1
+  action: execute
+  description: '1. Data exploration: Loaded sparse ATAC-seq matrices (116,490 peaks)
+    and RNA targets (2,000 genes, extract top 50)
+
+    2. Preprocessing: TF-IDF normalization for single-cell ATAC-seq data
+
+    3. Dimensionality reduction: TruncatedSVD (128 components) to reduce 116,490 features
+
+    4. Model selection: Multi-output Ridge Regression for multi-target regression
+
+    5. Validation: 10% split with Pearson correlation evaluation (achieved 0.3387)
+
+    6. Output generation: submission.csv, metrics.json, solution.py, model_we'
+  tools_required:
+  - dev_agent
+  - scikit-learn
+  - scipy
+  - pandas
+  - numpy
+  - joblib
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: dev_agent
+  version: '>=1.0.0'
+  optional: false
+- tool_id: scikit-learn
+  version: '>=1.0.0'
+  optional: false
+- tool_id: scipy
+  version: '>=1.0.0'
+  optional: false
+- tool_id: pandas
+  version: '>=1.0.0'
+  optional: false
+- tool_id: numpy
+  version: '>=1.0.0'
+  optional: false
+- tool_id: joblib
+  version: '>=1.0.0'
+  optional: false
+tags:
+- genomics
+- epigenomics
+- ATAC-seq
+- gene expression
+- sparse matrices
+- scikit-learn
+- bioinformatics
+applicable_queries:
+- '* chromatin-to-expression prediction*'
+- Predict gene expression from * ATAC-seq*
+- Analyze * sparse matrices for gene prediction
+- BioXArena * chromatin accessibility*
+- Predict * target genes from * features
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-10'
+  created_at: '2026-04-10'
+  last_updated: '2026-04-10'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260410_151201_205989
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-10'
+    changes: Auto-created from successful run
+status: active

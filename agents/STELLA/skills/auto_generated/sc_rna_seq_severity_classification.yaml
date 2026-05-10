@@ -1,0 +1,75 @@
+skill_id: sc_rna_seq_severity_classification
+version: 1.0.0
+name: Single-Cell RNA-Seq Disease Severity Classification
+domain: genomics
+description: A workflow for processing high-dimensional gene expression features from
+  single-cell sequencing data to perform multi-class classification of disease severity
+  using gradient boosting.
+workflow:
+- step: 1
+  action: execute
+  description: '1. Initial approach with PCA and LightGBM performed poorly (F1: 0.1167)
+
+    2. Identified issues: PCA losing signal, class imbalance, GroupKFold problems
+
+    3. Improved approach: Simple log-transform + standard scaling, Random Forest with
+    class weights, XGBoost ensemble
+
+    4. Used StratifiedKFold for validation
+
+    5. Achieved F1: 0.3346 (3x improvement from baseline)'
+  tools_required:
+  - pandas
+  - numpy
+  - sklearn
+  - xgboost
+  - joblib
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: pandas
+  version: '>=1.0.0'
+  optional: false
+- tool_id: numpy
+  version: '>=1.0.0'
+  optional: false
+- tool_id: sklearn
+  version: '>=1.0.0'
+  optional: false
+- tool_id: xgboost
+  version: '>=1.0.0'
+  optional: false
+- tool_id: joblib
+  version: '>=1.0.0'
+  optional: false
+tags:
+- genomics
+- scRNA-seq
+- gene expression
+- xgboost
+- multi-class classification
+- bioinformatics
+- transcriptomics
+applicable_queries:
+- '* severity classification from * RNA sequencing data'
+- classify * disease stages using gene expression features
+- single-cell RNA-seq analysis with * gene features
+- predict * severity from genomic data using xgboost
+- multi-class classification of * transcriptomic data
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-17'
+  created_at: '2026-04-17'
+  last_updated: '2026-04-17'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260417_170418_c17fff
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-17'
+    changes: Auto-created from successful run
+status: active

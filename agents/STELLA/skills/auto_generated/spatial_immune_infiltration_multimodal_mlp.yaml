@@ -1,0 +1,67 @@
+skill_id: spatial_immune_infiltration_multimodal_mlp
+version: 1.0.0
+name: Multi-Modal Spatial Immune Infiltration Prediction
+domain: genomics
+description: A pipeline for predicting spatial immune cell infiltration by integrating
+  multi-modal genomic data using a multi-output Multi-Layer Perceptron (MLP) architecture.
+workflow:
+- step: 1
+  action: execute
+  description: 1. Data exploration of spatial transcriptomics structure 2. Preprocessing
+    with log1p and HVG selection 3. Multi-output MLP implementation 4. GPU training
+    with PyTorch 5. Output generation with required file formats
+  tools_required:
+  - dev_agent
+  - python_interpreter
+  - multi_source_search
+  - search_github_repositories
+  - retrieve_similar_skills
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: dev_agent
+  version: '>=1.0.0'
+  optional: false
+- tool_id: python_interpreter
+  version: '>=1.0.0'
+  optional: false
+- tool_id: multi_source_search
+  version: '>=1.0.0'
+  optional: false
+- tool_id: search_github_repositories
+  version: '>=1.0.0'
+  optional: false
+- tool_id: retrieve_similar_skills
+  version: '>=1.0.0'
+  optional: false
+tags:
+- genomics
+- spatial-transcriptomics
+- immune-infiltration
+- multi-modal-learning
+- multi-output-mlp
+- deep-learning
+- bioinformatics
+applicable_queries:
+- Spatial * infiltration prediction using * data
+- Multi-modal * prediction with multi-output MLP
+- Predicting * cell distribution in spatial genomics
+- Deep learning pipeline for multi-output * genomics
+- Spatial immune profiling using * and * datasets
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-10'
+  created_at: '2026-04-10'
+  last_updated: '2026-04-10'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260410_130905_716ba3
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-10'
+    changes: Auto-created from successful run
+status: active

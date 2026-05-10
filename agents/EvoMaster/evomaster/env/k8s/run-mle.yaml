@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mle-gpu-pod
+spec:
+  containers:
+  - name: main
+    image: evomaster/mle:latest
+    imagePullPolicy: Never  # Required: use local image
+    command: ["/bin/bash", "-c", "sleep infinity"] # Keep the container running
+    resources:
+      requests:
+        memory: "8Gi"    # Minimum memory
+        cpu: "2"         # Minimum CPU cores
+      limits:
+        memory: "32Gi"   # Maximum memory
+        cpu: "8"         # Maximum CPU cores
+        nvidia.com/gpu: 1 # Request 1 GPU
+  restartPolicy: Never

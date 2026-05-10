@@ -1,0 +1,75 @@
+skill_id: protein_fold_classification_multimodal
+version: 1.0.0
+name: Multimodal Protein Fold Classification
+domain: bioinformatics
+description: A pipeline for classifying protein folds into 1000+ categories by integrating
+  sequence embeddings from ESM models with structural features extracted from mmCIF
+  files.
+workflow:
+- step: 1
+  action: execute
+  description: "1. Data exploration: Analyzed train.csv (13,085 samples) and test.csv\
+    \ (3,174 samples) with 1195 fold classes\n2. Feature engineering: \n   - Sequence\
+    \ features: ESM-2 embeddings (esm2_t6_8M_UR50D, 320-dim), amino acid composition\
+    \ (20 features)\n   - Structural features: Parsed mmCIF files to extract Radius\
+    \ of Gyration, max dimensions, coordinate std dev (6 features)\n3. Model selection:\
+    \ Multi-modal neural network combining sequence and structural features\n4. Training:\
+    \ PyTorch implementation with GPU "
+  tools_required:
+  - dev_agent
+  - run_shell_command
+  - pandas
+  - torch
+  - esm
+  - biopython
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: dev_agent
+  version: '>=1.0.0'
+  optional: false
+- tool_id: run_shell_command
+  version: '>=1.0.0'
+  optional: false
+- tool_id: pandas
+  version: '>=1.0.0'
+  optional: false
+- tool_id: torch
+  version: '>=1.0.0'
+  optional: false
+- tool_id: esm
+  version: '>=1.0.0'
+  optional: false
+- tool_id: biopython
+  version: '>=1.0.0'
+  optional: false
+tags:
+- bioinformatics
+- protein-folding
+- esm-embeddings
+- biopython
+- mmcif-parsing
+- deep-learning
+- structural-biology
+applicable_queries:
+- Protein fold classification with * classes using *
+- Classify protein structures from * files using sequence and 3D data
+- Predict protein superfamily or fold from mmCIF and sequences
+- Multi-class protein structure prediction using ESM and PyTorch
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-09'
+  created_at: '2026-04-09'
+  last_updated: '2026-04-09'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260409_081039_969c9c
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-09'
+    changes: Auto-created from successful run
+status: active

@@ -1,0 +1,52 @@
+skill_id: pathology_vqa_clip
+version: 1.0.0
+name: Pathology Visual Question Answering with CLIP
+domain: computer_vision
+description: Fine-tuning and evaluating CLIP-based models for visual question answering
+  tasks specifically within the pathology domain. This workflow handles medical image
+  processing and text-image alignment for diagnostic Q&A.
+workflow:
+- step: 1
+  action: execute
+  description: Delegated complete implementation to dev_agent. Used CLIP for multimodal
+    understanding, trained with weighted loss for class imbalance, generated predictions,
+    saved all required files.
+  tools_required:
+  - dev_agent
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: dev_agent
+  version: '>=1.0.0'
+  optional: false
+tags:
+- computer-vision
+- pathology
+- CLIP
+- visual-question-answering
+- medical-imaging
+- deep-learning
+- multimodal-learning
+applicable_queries:
+- '* Visual Question Answering * pathology *'
+- '* CLIP model * medical images *'
+- Fine-tune CLIP for * histology *
+- Pathology VQA using *
+- '* medical VQA * vision-language model *'
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-09'
+  created_at: '2026-04-09'
+  last_updated: '2026-04-09'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260409_182844_2459a4
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-09'
+    changes: Auto-created from successful run
+status: active

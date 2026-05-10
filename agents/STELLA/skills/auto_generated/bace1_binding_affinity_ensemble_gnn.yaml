@@ -1,0 +1,77 @@
+skill_id: bace1_binding_affinity_ensemble_gnn
+version: 1.0.0
+name: BACE1 Binding Affinity Prediction with Ensemble ML and GNN
+domain: cheminformatics
+description: A comprehensive cheminformatics workflow for predicting BACE1 binding
+  affinity using an ensemble of gradient boosting machines (XGBoost, LightGBM) and
+  Graph Neural Networks (GNNs) via RDKit and PyTorch Geometric.
+workflow:
+- step: 1
+  action: execute
+  description: '1. Data exploration: 6487 training samples, 1622 test samples. 2.
+    Feature engineering: ECFP4, MACCS keys, molecular descriptors. 3. Model training:
+    XGBoost, LightGBM, GCN ensemble. 4. Output generation: submission.csv, metrics.json,
+    solution.py, model weights.'
+  tools_required:
+  - dev_agent
+  - RDKit
+  - scikit-learn
+  - xgboost
+  - lightgbm
+  - pytorch
+  - pytorch-geometric
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: dev_agent
+  version: '>=1.0.0'
+  optional: false
+- tool_id: RDKit
+  version: '>=1.0.0'
+  optional: false
+- tool_id: scikit-learn
+  version: '>=1.0.0'
+  optional: false
+- tool_id: xgboost
+  version: '>=1.0.0'
+  optional: false
+- tool_id: lightgbm
+  version: '>=1.0.0'
+  optional: false
+- tool_id: pytorch
+  version: '>=1.0.0'
+  optional: false
+- tool_id: pytorch-geometric
+  version: '>=1.0.0'
+  optional: false
+tags:
+- cheminformatics
+- binding-affinity
+- graph-neural-networks
+- ensemble-learning
+- rdkit
+- drug-discovery
+- pytorch-geometric
+applicable_queries:
+- '* binding affinity prediction with * GNN'
+- BioXArena * prediction * ensemble
+- '* BACE1 * machine learning * RDKit'
+- predict * SMILES * binding affinity * xgboost
+- molecular property prediction * graph neural network
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-17'
+  created_at: '2026-04-17'
+  last_updated: '2026-04-17'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260417_075431_9cd95f
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-17'
+    changes: Auto-created from successful run
+status: active

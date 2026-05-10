@@ -1,0 +1,172 @@
+# Minimal Skill Task - RAG Multi-Agent Pipeline (Analyze -> Plan -> Search -> Summarize)
+
+# ============================================
+# LLM Configuration
+# ============================================
+llm:
+  openai:
+    provider: "openai"
+    model: "${GPT_CHAT_MODEL}"
+    api_key: "${OPENAI_API_KEY}"
+    base_url: "${GPT_BASE_URL}"
+    temperature: 0.7
+    max_tokens: 16384
+    timeout: 60
+    max_retries: 3
+    retry_delay: 1.0
+
+  anthropic:
+    provider: "anthropic"
+    model: "claude-haiku-4-5-20251001"
+    api_key: "${ANTHROPIC_API_KEY}"
+    base_url: "${ANTHROPIC_BASE_URL}"
+    temperature: 0.7
+    max_tokens: 16384
+    timeout: 60
+    max_retries: 3
+    retry_delay: 1.0
+
+  local_sglang:
+    provider: "deepseek"
+    model: "deepseek-v3.2"
+    api_key: "${DEEPSEEK_API_KEY}"  # Placeholder can be used for local deployment
+    base_url: "${DEEPSEEK_API_BASE}"
+    temperature: 0.7
+    max_tokens: 16384
+    timeout: 300
+    max_retries: 3
+    retry_delay: 1.0
+
+  default: "local_sglang"
+
+# ============================================
+# Agent Configuration (four Agents: analyze / plan / search / summarize)
+# ============================================
+agents:
+  analyze:
+    llm: "openai"
+    max_turns: 10
+    # Default builtin toolset: execute_bash, str_replace_editor, think, finish; MCP tools not used by default
+    # Skills not used by default
+
+    context:
+      max_tokens: 128000
+      truncation_strategy: "latest_half"
+      preserve_system_messages: true
+      preserve_recent_turns: 5
+
+    system_prompt_file: "prompts/analyze_system_prompt.txt"
+    user_prompt_file: "prompts/analyze_user_prompt.txt"
+
+  plan:
+    llm: "openai"
+    max_turns: 10
+    tools: # Explicitly specify no tools
+    skills:  # Explicitly specify no skills
+
+    context:
+      max_tokens: 128000
+      truncation_strategy: "latest_half"
+      preserve_system_messages: true
+      preserve_recent_turns: 5
+
+    system_prompt_file: "prompts/plan_system_prompt.txt"
+    user_prompt_file: "prompts/plan_user_prompt.txt"
+
+  search:
+    llm: "openai"
+    max_turns: 30
+    tools: "default" # Default builtin toolset: execute_bash, str_replace_editor, think, finish; MCP tools not used by default
+    skills:  # Wildcard -> all skills
+      - "*"
+
+    context:
+      max_tokens: 128000
+      truncation_strategy: "latest_half"
+      preserve_system_messages: true
+      preserve_recent_turns: 5
+
+    system_prompt_file: "prompts/search_system_prompt.txt"
+    user_prompt_file: "prompts/search_user_prompt.txt"
+
+  summarize:
+    llm: "openai"
+    max_turns: 20
+    tools: 
+      builtin: # Specify subset: 
+        - "execute_bash"
+        - "think"
+        - "finish"
+      mcp: [] # Explicitly specify no MCP tools
+
+    skills:  # Specify subset
+      - "rag"
+      - "pdf"
+
+
+    context:
+      max_tokens: 128000
+      truncation_strategy: "latest_half"
+      preserve_system_messages: true
+      preserve_recent_turns: 5
+
+    system_prompt_file: "prompts/summarize_system_prompt.txt"
+    user_prompt_file: "prompts/summarize_user_prompt.txt"
+
+# ============================================
+# Embedding Configuration (used for RAG vector search)
+# Embedding Configuration (used for RAG vector search)
+# ============================================
+embedding:
+  # Type: local (local transformer model) or openai (OpenAI API)
+  type: "openai"
+  
+  # OpenAI embedding configuration (used when type is openai)
+  openai:
+    model: "text-embedding-3-large"
+    api_key: "${OPENAI_API_KEY}"
+    base_url: "${GPT_BASE_URL}"
+    dimensions: 3072  # text-embedding-3-large supports 512, 768, 1024, 2048, 3072
+  
+  # Local model configuration (used when type is local)
+  local:
+    model: "playground/minimal_skill_task/local_models/all-mpnet-base-v2"
+    device: "cpu"
+
+# ============================================
+# Session Configuration
+# ============================================
+session:
+  type: "local"
+
+  local:
+    working_dir: "./playground/minimal_skill_task/workspace"
+    timeout: 300
+    symlinks: {}
+
+  docker:
+    image: "evomaster/base:latest"
+    container_name: null
+    use_existing_container: null
+    working_dir: "/workspace"
+    memory_limit: "64g"
+    cpu_limit: 16.0
+    gpu_devices: "0"
+    network_mode: "host"
+    volumes: {"./playground/minimal_skill_task/workspace": "/workspace"}
+    env_vars: {}
+    auto_remove: false
+    timeout: 300
+
+
+
+llm_output:
+  show_in_console: true
+  log_to_file: true
+
+logging:
+  level: "INFO"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file: null
+  console: true
+

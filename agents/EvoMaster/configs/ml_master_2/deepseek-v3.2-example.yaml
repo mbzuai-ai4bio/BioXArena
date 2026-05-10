@@ -1,0 +1,317 @@
+# ML Master 2 Configuration File
+# An EvoMaster example demonstrating automated ML research with multi-agent workflow
+
+# ============================================
+# MLEBench Task Configuration
+# ============================================
+competition_id: "detecting-insults-in-social-commentary"
+is_lower_better: false
+data_root: "./playground/ml_master_2/data"
+
+# Grading Server Configuration (for submission format validation)
+# When configured, draft/debug/improve stages will call grading_server to validate submissions
+# allowed and used by official MLEBench.
+grading_servers:
+  - "http://127.0.0.1:6666"
+
+# ============================================
+# LLM Configuration
+# ============================================
+llm:
+  openai:
+    provider: "openai"
+    model: "${GPT_CHAT_MODEL}"
+    api_key: "${OPENAI_API_KEY}"
+    base_url: "${GPT_BASE_URL}"
+    temperature: 1
+    max_tokens: 65536
+    timeout: 3600
+    max_retries: 3
+    retry_delay: 1.0
+
+  anthropic:
+    provider: "anthropic"
+    model: "claude-haiku-4-5-20251001"
+    api_key: "${ANTHROPIC_API_KEY}"
+    base_url: "${ANTHROPIC_BASE_URL}"
+    temperature: 1
+    max_tokens: 65536
+    timeout: 3600
+    max_retries: 3
+    retry_delay: 1.0
+
+  # Local LLM configuration example
+  local_sglang:
+    provider: "deepseek"
+    model: "deepseek-v3.2"
+    api_key: "${DEEPSEEK_API_KEY}"  # Use placeholder for local deployment
+    base_url: "${DEEPSEEK_API_BASE}"
+    temperature: 1
+    max_tokens: 65536
+    timeout: 3600
+    max_retries: 3
+    retry_delay: 1.0
+
+  default: "local_sglang"
+
+# ============================================
+# Multi-Agent Configuration
+# ============================================
+# Each agent in the multi-agent system has its own independent configuration
+agents:
+  # Prefetch Agent - Retrieves data and model knowledge from wisdom database
+  prefetch:
+    wisdom_file: "./playground/ml_master_2/wisdom/wisdom.json"
+    llm: "local_sglang"
+    max_turns: 10
+    tools:
+      builtin: []
+
+    context:
+      max_tokens: 128000
+      truncation_strategy: "latest_half"
+      preserve_system_messages: true
+      preserve_recent_turns: 5
+
+    # Prompt configuration
+    system_prompt_file: "prompts/prefetch_system_prompt.txt"
+    user_prompt_file: "prompts/prefetch_user_prompt.txt"
+
+  # Draft Agent - Generates initial solution code
+  draft:
+    llm: "local_sglang"
+    max_turns: 10
+    tools:
+      builtin: []
+
+    context:
+      max_tokens: 128000
+      truncation_strategy: "latest_half"
+      preserve_system_messages: true
+      preserve_recent_turns: 5
+
+    # Prompt configuration
+    system_prompt_file: "prompts/draft_system_prompt.txt"
+    user_prompt_file: "prompts/draft_user_prompt.txt"
+
+  debug:
+    llm: "local_sglang"
+    max_turns: 10
+    tools:
+      builtin: []
+
+    context:
+      max_tokens: 128000
+      truncation_strategy: "latest_half"
+      preserve_system_messages: true
+      preserve_recent_turns: 5
+
+    # Prompt configuration
+    system_prompt_file: "prompts/debug_system_prompt.txt"
+    user_prompt_file: "prompts/debug_user_prompt.txt"
+
+  improve:
+    llm: "local_sglang"
+    max_turns: 10
+    tools:
+      builtin: []
+
+    context:
+      max_tokens: 128000
+      truncation_strategy: "latest_half"
+      preserve_system_messages: true
+      preserve_recent_turns: 5
+
+    # Prompt configuration
+    system_prompt_file: "prompts/improve_system_prompt.txt"
+    user_prompt_file: "prompts/improve_user_prompt.txt"
+
+  reseach:
+    llm: "local_sglang"
+    max_turns: 10
+    tools:
+      builtin: []
+
+    context:
+      max_tokens: 128000
+      truncation_strategy: "latest_half"
+      preserve_system_messages: true
+      preserve_recent_turns: 5
+
+    # Prompt configuration
+    system_prompt_file: "prompts/reseach_system_prompt.txt"
+    user_prompt_file: "prompts/reseach_user_prompt.txt"
+
+  knowledge_promotion:
+    llm: "local_sglang"
+    max_turns: 10
+    tools:
+      builtin: []
+
+    context:
+      max_tokens: 128000
+      truncation_strategy: "latest_half"
+      preserve_system_messages: true
+      preserve_recent_turns: 5
+
+    # Prompt configuration
+    system_prompt_file: "prompts/knowledge_promotion_system_prompt.txt"
+    user_prompt_file: "prompts/knowledge_promotion_user_prompt.txt"
+
+  wisdom_promotion:
+    llm: "local_sglang"
+    max_turns: 10
+    tools:
+      builtin: []
+
+    context:
+      max_tokens: 128000
+      truncation_strategy: "latest_half"
+      preserve_system_messages: true
+      preserve_recent_turns: 5
+
+    # Prompt configuration
+    system_prompt_file: "prompts/wisdom_promotion_system_prompt.txt"
+    user_prompt_file: "prompts/wisdom_promotion_user_prompt.txt"
+
+  # Metric Agent - Evaluates task performance
+  metric:
+    llm: "local_sglang"
+    max_turns: 50
+    tools:
+      builtin: []
+
+    context:
+      max_tokens: 128000
+      truncation_strategy: "latest_half"
+      preserve_system_messages: true
+      preserve_recent_turns: 5
+
+    # Prompt configuration
+    system_prompt_file: "prompts/metric_system_prompt.txt"
+    user_prompt_file: "prompts/metric_user_prompt.txt"
+
+
+# ============================================
+# Session Configuration
+# ============================================
+session:
+  # Session type: local or docker
+  type: "local"  # Options: "local" or "docker"
+
+  # Local Session configuration
+  local:
+    working_dir: "./playground/ml_master_2/workspace"
+    timeout: 86400
+
+    # GPU device configuration (optional)
+    # Options:
+    #   - null: No GPU restriction (use all available GPUs)
+    #   - "2": Use only GPU 2
+    #   - ["0", "1"]: Use GPUs 0 and 1
+    gpu_devices: ["0", "1"]  # Example: Use GPU 0 and 1
+
+    # CPU device configuration (optional)
+    # Options:
+    #   - null: No CPU restriction (use all available CPUs)
+    #   - "0-15": Use CPUs 0 to 15
+    #   - [0, 1, 2, 3]: Use CPUs 0, 1, 2, 3
+    cpu_devices: "0-31"  # Example: Use CPUs 0-31
+
+    # Symlink configuration (optional)
+    # Symlink all files and folders from source directory to specified location in workspace
+    # Format: {source_directory_path: target_path_in_workspace}
+    # Target path is relative to workspace
+    # Example:
+    # symlinks:
+    symlinks: {"./playground/ml_master_2/data/detecting-insults-in-social-commentary/prepared/public": "input"}
+    parallel:
+      enabled: true
+      max_parallel: 2
+      split_workspace_for_exp: true
+  # Docker Session configuration(not supported for ml_master_2 right now)
+  docker:
+    # Docker image
+    image: "evomaster/base:latest"
+
+    # Container name (null for auto-generation)
+    container_name: null
+
+    # Use existing container (if set, use this container instead of creating new one)
+    use_existing_container: null
+
+    # Working directory (inside container)
+    working_dir: "/workspace"
+
+    # Resource limits
+    memory_limit: "64g"  # Memory limit, e.g. "4g", "8g"
+    cpu_limit: 16.0      # CPU limit (number of cores)
+    gpu_devices: "0"   # GPU devices, options:
+                        #   - null: No GPU
+                        #   - "all": Use all GPUs
+                        #   - "0": Use GPU 0
+                        #   - ["0", "1"]: Use GPUs 0 and 1
+
+    # Network mode
+    network_mode: "host"  # bridge, host, none
+
+    # Mount volumes (mount local directories to container)
+    # Format: {local_path: container_path}
+    # Example:
+    # volumes:
+    #   "./workspace": "/workspace"
+    volumes: {"./playground/ml_master_2/workspace":"/workspace"}
+
+    # Environment variables
+    # Example:
+    # env_vars:
+    #   PYTHONPATH: "/workspace"
+    env_vars: {}
+
+    # Container lifecycle
+    auto_remove: false   # true: Auto-remove container after completion, false: Keep container
+
+    # Timeout (seconds) - extend appropriately for long-running tasks
+    timeout: 86400
+
+# ============================================
+# Embedding Configuration (for RAG vector retrieval)
+# ============================================
+embedding:
+  # Type: local (local transformer model) or openai (OpenAI API)
+  type: "openai"
+
+  # OpenAI embedding configuration (used when type is openai)
+  openai:
+    model: "text-embedding-3-large"
+    api_key: "${OPENAI_API_KEY}"
+    base_url: "${GPT_BASE_URL}"
+    dimensions: 3072  # text-embedding-3-large supports 512, 768, 1024, 2048, 3072
+
+  # Local model configuration (used when type is local)
+  local:
+    model: "evomaster/skills/rag/local_models/all-mpnet-base-v2"
+    device: "cpu"
+
+
+# ============================================
+# LLM Output Display Configuration
+# ============================================
+llm_output:
+  # Whether to display LLM output in console in real-time
+  show_in_console: true
+
+  # Whether to log LLM output to file
+  log_to_file: true
+
+# ============================================
+# Logging Configuration
+# ============================================
+logging:
+  level: "INFO"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file: null
+  console: true
+
+
+

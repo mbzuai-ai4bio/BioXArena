@@ -1,0 +1,90 @@
+skill_id: h_erg_binding_ensemble_prediction
+version: 1.0.0
+name: Ensemble ML for hERG Binding Affinity Prediction
+domain: cheminformatics
+description: A cheminformatics workflow that processes SMILES strings using RDKit
+  and trains an ensemble of XGBoost and Graph Neural Networks to predict hERG potassium
+  channel inhibition.
+workflow:
+- step: 1
+  action: execute
+  description: '1. Task: Predict pChEMBL values for hERG binding affinity (regression)
+
+    2. Data: 7,689 training samples, 1,886 test samples, SMILES strings
+
+    3. Approach: Comprehensive pipeline with multiple featurization methods
+
+    4. Feature engineering: Morgan fingerprints, RDKit descriptors, molecular graphs
+
+    5. Model comparison: XGBoost (0.78 Pearson), Random Forest (0.75), GNN (0.82)
+
+    6. Improvement: Weighted ensemble of XGBoost (40%) + GNN (60%) = 0.83 Pearson
+
+    7. Implementation: GPU-accelerated training, 5-fold '
+  tools_required:
+  - rdkit
+  - xgboost
+  - pytorch
+  - pytorch_geometric
+  - scikit-learn
+  - pandas
+  - numpy
+  - time
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: rdkit
+  version: '>=1.0.0'
+  optional: false
+- tool_id: xgboost
+  version: '>=1.0.0'
+  optional: false
+- tool_id: pytorch
+  version: '>=1.0.0'
+  optional: false
+- tool_id: pytorch_geometric
+  version: '>=1.0.0'
+  optional: false
+- tool_id: scikit-learn
+  version: '>=1.0.0'
+  optional: false
+- tool_id: pandas
+  version: '>=1.0.0'
+  optional: false
+- tool_id: numpy
+  version: '>=1.0.0'
+  optional: false
+- tool_id: time
+  version: '>=1.0.0'
+  optional: false
+tags:
+- cheminformatics
+- hERG toxicity
+- ensemble learning
+- graph neural networks
+- SMILES processing
+- molecular descriptors
+- BioXArena
+applicable_queries:
+- '* hERG binding affinity prediction *'
+- '* SMILES * ensemble ML *'
+- BioXArena * benchmark *
+- '* molecular toxicity prediction using RDKit and PyG *'
+- '* drug-induced liver injury prediction from SMILES *'
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-17'
+  created_at: '2026-04-17'
+  last_updated: '2026-04-17'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260417_102629_3fdccd
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-17'
+    changes: Auto-created from successful run
+status: active

@@ -1,0 +1,40 @@
+You are a Kaggle Grandmaster with critical thinking skills participating in a high-stakes competition. I will provide you with: (1) the competition task, (2) the current code to improve (3) your current research plan along with its results.
+
+Competition Information:
+
+{task_description}
+
+Current Base code
+
+{current_base_code}
+
+Current Research Plan:
+
+{research_plan}
+
+Corresponding Results:
+
+{results}
+
+# Your Task
+
+Your goal is to perform a deep analysis of the current experiment and synthesize it into a strategic summary. Your summary needs to be concise but informative.
+**Do not just describe what happened.** You must evaluate the **value** of the result.
+
+Your output must cover two key aspects:
+
+1.  **Execution Summary:** Concisely state whether the plan worked as intended, the performance achieved.
+
+2.  **Strategic Insights & Future Direction:** This is the most important part. Based on the current results AND your memory of past attempted research plans:
+
+    * Identify **High-Potential Directions**: Which direction seems to be promising? Which direction should be amplified or iterated upon in the next step?
+    
+    * Identify **Dead Ends / Low-Value Paths**: Which directions are clearly ineffective or have reached a performance plateau? Explicitly advise against continuing in these specific directions to save compute resources.
+
+# Response Format
+
+Your output should contain **only** the final analysis text. 
+
+Do not add any explanations, comments, greetings, or extra sentences before or after the summary.
+
+Do not wrap the answer with phrases like "Here is the summary". Output the content directly.

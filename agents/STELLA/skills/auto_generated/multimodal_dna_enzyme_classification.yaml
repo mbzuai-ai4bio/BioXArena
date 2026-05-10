@@ -1,0 +1,76 @@
+skill_id: multimodal_dna_enzyme_classification
+version: 1.0.0
+name: Multi-Modal DNA Enzyme Function Classification
+domain: genomics
+description: A workflow for classifying DNA enzyme functions by integrating genomic
+  sequences, textual functional descriptions, and taxonomic organism data into a unified
+  predictive model.
+workflow:
+- step: 1
+  action: execute
+  description: '1. Data exploration: Analyzed 40,700 training samples, 3,296 test
+    samples, 233 EC classes
+
+    2. Feature engineering: Combined DNA statistics (GC content, length), TF-IDF text
+    embeddings (5000 features), and organism classification
+
+    3. Model architecture: Deep Neural Network with 1024-512-256 layers, batch normalization,
+    dropout, class weighting
+
+    4. Training: Used AdamW optimizer, ReduceLROnPlateau scheduler, DataParallel for
+    4 GPU acceleration
+
+    5. Validation: Achieved 100% accuracy and F1-score
+
+    6. Out'
+  tools_required:
+  - dev_agent
+  - critic_agent
+  - run_shell_command
+  - evaluate_with_critic
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: dev_agent
+  version: '>=1.0.0'
+  optional: false
+- tool_id: critic_agent
+  version: '>=1.0.0'
+  optional: false
+- tool_id: run_shell_command
+  version: '>=1.0.0'
+  optional: false
+- tool_id: evaluate_with_critic
+  version: '>=1.0.0'
+  optional: false
+tags:
+- genomics
+- enzyme-classification
+- multi-modal-learning
+- dna-sequence-analysis
+- bioinformatics
+- taxonomic-classification
+- deep-learning
+applicable_queries:
+- '*enzyme function classification*multi-modal*'
+- classify DNA sequences using * and text descriptions
+- predict enzyme activity from * sequence and organism data
+- multi-modal approach for * genomic classification
+- functional annotation of * using DNA and metadata
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-17'
+  created_at: '2026-04-17'
+  last_updated: '2026-04-17'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260417_204126_c6fadd
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-17'
+    changes: Auto-created from successful run
+status: active

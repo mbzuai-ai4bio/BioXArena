@@ -1,0 +1,76 @@
+skill_id: label_free_cell_counting
+version: 1.0.0
+name: Label-Free Microscopy Cell Counting
+domain: imaging
+description: A workflow for training and evaluating computer vision models to perform
+  automated cell counting on label-free microscopy images using deep learning and
+  regression metrics.
+workflow:
+- step: 1
+  action: execute
+  description: '1. Analyzed data: 520x704 TIF images + metadata (cell_type, well,
+    plate, timepoint, hours_elapsed, site)
+
+    2. Designed multi-modal model: ResNet18 for images + MLP for metadata + fusion
+    layer
+
+    3. Implemented data pipeline with augmentation and preprocessing
+
+    4. Trained with multi-GPU support, Huber loss, early stopping
+
+    5. Generated predictions in exact required format'
+  tools_required:
+  - pytorch
+  - torchvision
+  - sklearn
+  - pandas
+  - numpy
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: pytorch
+  version: '>=1.0.0'
+  optional: false
+- tool_id: torchvision
+  version: '>=1.0.0'
+  optional: false
+- tool_id: sklearn
+  version: '>=1.0.0'
+  optional: false
+- tool_id: pandas
+  version: '>=1.0.0'
+  optional: false
+- tool_id: numpy
+  version: '>=1.0.0'
+  optional: false
+tags:
+- microscopy
+- cell counting
+- label-free imaging
+- computer vision
+- pytorch
+- biomedical imaging
+- LIVECell
+applicable_queries:
+- Label-free cell counting from * microscopy images
+- Automated cell segmentation and counting on * dataset
+- Deep learning for * cell density estimation
+- Quantifying * cells in phase-contrast images
+- Training a pytorch model for * cell detection
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-07'
+  created_at: '2026-04-07'
+  last_updated: '2026-04-07'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260407_025023_4ba08d
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-07'
+    changes: Auto-created from successful run
+status: active

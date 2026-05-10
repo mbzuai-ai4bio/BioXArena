@@ -1,0 +1,61 @@
+skill_id: dna_enzyme_multimodal_classification
+version: 1.0.0
+name: Multi-Modal DNA Enzyme Function Classification
+domain: genomics
+description: A workflow for classifying DNA enzyme functions using multi-modal neural
+  networks, integrating sequence data and structural features to predict enzymatic
+  activity.
+workflow:
+- step: 1
+  action: execute
+  description: 1. Created solution.py with complete training pipeline. 2. Implemented
+    DNA k-mer feature extraction. 3. Used TF-IDF for text embeddings. 4. Built two-branch
+    neural network with regularization. 5. Generated submission.csv predictions. 6.
+    Created metrics.json with required fields. 7. Saved model weights.
+  tools_required:
+  - run_shell_command
+  - evaluate_with_critic
+  - save_successful_skill
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: run_shell_command
+  version: '>=1.0.0'
+  optional: false
+- tool_id: evaluate_with_critic
+  version: '>=1.0.0'
+  optional: false
+- tool_id: save_successful_skill
+  version: '>=1.0.0'
+  optional: false
+tags:
+- genomics
+- enzyme-classification
+- multi-modal-learning
+- neural-networks
+- bioinformatics
+- dna-analysis
+- deep-learning
+applicable_queries:
+- '*enzyme function classification*'
+- '*multi-modal neural network*genomics*'
+- classify DNA*sequences*deep learning*
+- predict enzyme activity*multi-modal*
+- '*BioXArena*genomics*task*'
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-09'
+  created_at: '2026-04-09'
+  last_updated: '2026-04-09'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260409_120212_d26739
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-09'
+    changes: Auto-created from successful run
+status: active

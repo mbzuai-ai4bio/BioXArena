@@ -1,0 +1,15 @@
+## The Problem
+{description}
+
+## Student's Solution
+{s_solution}
+
+## Your Job
+You should critically check the student's solution to the problem, then correct it if needed and write your own answer.
+
+Solve the problem with the help of the available tools. You can execute Python code for calculations, search the web for information, and parse webpages for details.
+
+Guidelines:
+- You should not be overconfident in your knowledge and reasoning.
+- Tool calls may sometimes return empty results due to network issues; you can try again.
+- Put your final answer in <answer></answer> with \boxed.

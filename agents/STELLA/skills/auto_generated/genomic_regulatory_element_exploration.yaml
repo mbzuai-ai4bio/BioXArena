@@ -1,0 +1,49 @@
+skill_id: genomic_regulatory_element_exploration
+version: 1.0.0
+name: Genomic Regulatory Element Dataset Analysis
+domain: genomics
+description: A workflow for analyzing DNA sequence datasets focused on regulatory
+  element detection, including sequence length verification, class distribution profiling,
+  and dataset partitioning.
+workflow:
+- step: 1
+  action: execute
+  description: 1. List files, 2. Analyze data format, 3. Check sequence length distribution,
+    4. Analyze class imbalance (74% dELS), 5. Propose CNN-Transformer hybrid model
+  tools_required:
+  - dev_agent
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: dev_agent
+  version: '>=1.0.0'
+  optional: false
+tags:
+- genomics
+- regulatory-elements
+- dna-sequences
+- sequence-classification
+- dataset-profiling
+- bioinformatics
+applicable_queries:
+- Explore * dataset with DNA sequences * length
+- Analyze * class classification dataset for genomics
+- Profile regulatory element detection data *
+- Investigate DNA sequence distribution for * classification
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-09'
+  created_at: '2026-04-09'
+  last_updated: '2026-04-09'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260409_032323_09d77d
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-09'
+    changes: Auto-created from successful run
+status: active

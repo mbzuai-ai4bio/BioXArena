@@ -1,0 +1,63 @@
+skill_id: herg_binding_affinity_prediction
+version: 1.0.0
+name: Machine Learning for hERG Binding Affinity Prediction
+domain: cheminformatics
+description: A workflow for predicting pChEMBL values from SMILES strings using machine
+  learning models, including cross-validation and test set inference for cardiotoxicity
+  assessment.
+workflow:
+- step: 1
+  action: execute
+  description: 1. Explored dataset structure and identified regression task. 2. Created
+    basic SMILES feature engineering without RDKit (10 features). 3. Evaluated multiple
+    models (XGBoost, Random Forest, LightGBM, CatBoost) with 5-fold CV. 4. Selected
+    LightGBM as best model based on Pearson correlation. 5. Trained final model and
+    generated predictions. 6. Saved submission.csv, metrics.json, solution.py, and
+    model weights.
+  tools_required:
+  - run_shell_command
+  - dev_agent
+  - evaluate_with_critic
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: run_shell_command
+  version: '>=1.0.0'
+  optional: false
+- tool_id: dev_agent
+  version: '>=1.0.0'
+  optional: false
+- tool_id: evaluate_with_critic
+  version: '>=1.0.0'
+  optional: false
+tags:
+- cheminformatics
+- SMILES
+- hERG
+- pChEMBL
+- machine-learning
+- molecular-modeling
+- cardiotoxicity
+applicable_queries:
+- Predict * binding affinity from SMILES strings*
+- Train a machine learning model for * pChEMBL values*
+- Estimate cardiotoxicity for a list of SMILES*
+- Calculate Pearson correlation for * molecular property prediction*
+- Generate predictions for * test samples using cheminformatics tools
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-07'
+  created_at: '2026-04-07'
+  last_updated: '2026-04-07'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260407_030618_8da4eb
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-07'
+    changes: Auto-created from successful run
+status: active

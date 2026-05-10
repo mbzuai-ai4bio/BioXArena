@@ -1,0 +1,71 @@
+skill_id: genomics_expression_prediction_validation
+version: 1.0.0
+name: Validated Gene-Tissue Expression Prediction
+domain: genomics
+description: A robust workflow for predicting gene expression across tissues using
+  attention-based neural networks with strict ID validation and data integrity checks.
+workflow:
+- step: 1
+  action: execute
+  description: "Key improvements made:\n    1. Fixed ID mismatch issue by ensuring\
+    \ submission.csv matches sample_submission.csv exactly\n    2. Increased model\
+    \ complexity to 1.2M parameters with better architecture\n    3. Added proper\
+    \ validation metrics (Pearson correlation, MSE)\n    4. Ensured all required files\
+    \ are in correct output directory\n    5. Improved multimodal architecture with\
+    \ attention fusion\n    \n    Architecture:\n    - Promoter CNN: 4 convolutional\
+    \ layers\n    - cDNA Transformer: 4 attention heads\n "
+  tools_required:
+  - PyTorch
+  - pandas
+  - numpy
+  - scikit-learn
+  - attention mechanisms
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: PyTorch
+  version: '>=1.0.0'
+  optional: false
+- tool_id: pandas
+  version: '>=1.0.0'
+  optional: false
+- tool_id: numpy
+  version: '>=1.0.0'
+  optional: false
+- tool_id: scikit-learn
+  version: '>=1.0.0'
+  optional: false
+- tool_id: attention mechanisms
+  version: '>=1.0.0'
+  optional: false
+tags:
+- genomics
+- gene-expression
+- pytorch
+- attention-mechanism
+- id-validation
+- bioinformatics
+- predictive-modeling
+applicable_queries:
+- '* gene-tissue expression prediction *'
+- BioXArena * model improvement
+- '* gene ID validation * genomics'
+- predict expression levels * attention model
+- genomic data processing with zero ID mismatches
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-09'
+  created_at: '2026-04-09'
+  last_updated: '2026-04-09'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260409_013333_ec983e
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-09'
+    changes: Auto-created from successful run
+status: active

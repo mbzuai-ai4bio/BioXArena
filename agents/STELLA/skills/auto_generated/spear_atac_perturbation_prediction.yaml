@@ -1,0 +1,65 @@
+skill_id: spear_atac_perturbation_prediction
+version: 1.0.0
+name: Spear-ATAC Chromatin Accessibility Perturbation Prediction
+domain: genomics
+description: Predicts chromatin accessibility changes following genetic perturbations
+  using Ridge regression on integrated metadata and PCA-reduced genomic features.
+workflow:
+- step: 1
+  action: execute
+  description: '1. Explored data structure: train.jsonl.gz (10215 samples), test.jsonl.gz
+    (3405 samples), 256 delta_accessibility targets
+
+    2. Extracted 42 features: nFrags, nMonoFrags, nMultiFrags, TSSEnrichment, FRIP,
+    NucleosomeRatio, PromoterRatio, sgCounts, sgTotal, sgSpec, pc_0 through pc_31
+
+    3. Applied StandardScaler normalization to all features
+
+    4. Used Ridge regression (alpha=1.0) for multi-output prediction (256 targets)
+
+    5. Generated submission.csv with exact format matching sample_submission.csv
+
+    6. Saved'
+  tools_required:
+  - run_shell_command
+  - dev_agent
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: run_shell_command
+  version: '>=1.0.0'
+  optional: false
+- tool_id: dev_agent
+  version: '>=1.0.0'
+  optional: false
+tags:
+- genomics
+- epigenetics
+- Spear-ATAC
+- chromatin accessibility
+- ridge regression
+- dimensionality reduction
+- perturbation prediction
+applicable_queries:
+- '*ATAC* chromatin accessibility perturbation*'
+- '*prediction using Ridge regression on PCA features*'
+- Spear-ATAC* genomic data analysis*
+- '*predicting cellular response to genetic perturbations*'
+- '*regression modeling for single-cell epigenomics*'
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-17'
+  created_at: '2026-04-17'
+  last_updated: '2026-04-17'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260417_152955_d304e8
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-17'
+    changes: Auto-created from successful run
+status: active

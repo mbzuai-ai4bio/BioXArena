@@ -1,0 +1,70 @@
+skill_id: bioxarena_grn_inference
+version: 1.0.0
+name: BioXArena Gene Regulatory Network Inference
+domain: genomics
+description: Infers gene regulatory networks (GRN) from single-cell RNA sequencing
+  data by integrating gene expression profiles with pseudotime trajectories using
+  the BioXArena framework.
+workflow:
+- step: 1
+  action: execute
+  description: '1. Used shell commands to explore data files avoiding forbidden modules
+
+    2. Delegate implementation to dev_agent with detailed requirements
+
+    3. Implemented GRN inference using ensemble of GRNBoost2 and attention-based GNN
+
+    4. Feature engineering: correlation, mutual information, pseudotime derivatives
+
+    5. GPU acceleration for deep learning components
+
+    6. Generated predictions matching sample_submission.csv format
+
+    7. Created all required output files: submission.csv, metrics.json, solution.py,
+    model w'
+  tools_required:
+  - dev_agent
+  - run_shell_command
+  - evaluate_with_critic
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: dev_agent
+  version: '>=1.0.0'
+  optional: false
+- tool_id: run_shell_command
+  version: '>=1.0.0'
+  optional: false
+- tool_id: evaluate_with_critic
+  version: '>=1.0.0'
+  optional: false
+tags:
+- genomics
+- single-cell
+- gene-regulatory-networks
+- pseudotime
+- BioXArena
+- scRNA-seq
+- bioinformatics
+applicable_queries:
+- BioXArena gene regulatory network inference from *
+- infer GRN using BioXArena with * data
+- reconstruct gene networks from single-cell expression and pseudotime *
+- BioXArena analysis for * gene regulation
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-10'
+  created_at: '2026-04-10'
+  last_updated: '2026-04-10'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260410_124255_a47331
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-10'
+    changes: Auto-created from successful run
+status: active

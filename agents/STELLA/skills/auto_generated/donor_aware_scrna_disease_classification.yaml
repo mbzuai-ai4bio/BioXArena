@@ -1,0 +1,71 @@
+skill_id: donor_aware_scrna_disease_classification
+version: 1.0.0
+name: Donor-Aware Single-Cell RNA-seq Disease Staging
+domain: genomics
+description: Implements a robust ensemble modeling pipeline for classifying disease
+  stages from high-dimensional single-cell transcriptomics while accounting for donor-level
+  variability to prevent data leakage.
+workflow:
+- step: 1
+  action: execute
+  description: '1. Data exploration: Loaded parquet files, examined class distribution
+    and donor effects
+
+    2. Preprocessing: Applied log1p transformation to gene expression, selected top
+    2000 genes by variance, one-hot encoded cell_type
+
+    3. Validation strategy: Used GroupKFold (5 folds) by donor_id to ensure generalization
+    across donors
+
+    4. Model selection: Tried multiple approaches (RandomForest, XGBoost, Neural Networks)
+
+    5. Final solution: Ensemble of RandomForest and MLP neural network with class
+    weighting
+
+    6. Im'
+  tools_required:
+  - dev_agent
+  - run_shell_command
+  - python_interpreter
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: dev_agent
+  version: '>=1.0.0'
+  optional: false
+- tool_id: run_shell_command
+  version: '>=1.0.0'
+  optional: false
+- tool_id: python_interpreter
+  version: '>=1.0.0'
+  optional: false
+tags:
+- single-cell RNA-seq
+- Alzheimer's disease
+- donor-aware modeling
+- ensemble learning
+- transcriptomics
+- feature selection
+- bioinformatics
+applicable_queries:
+- '* disease staging classification from single-cell RNA-seq *'
+- '* donor-aware ensemble modeling * gene features'
+- '* classification of * from scRNA-seq data using donor-robust methods'
+- Analyze * transcriptomics data with * gene features for disease progression
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-07'
+  created_at: '2026-04-07'
+  last_updated: '2026-04-07'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260407_173809_dbbb3b
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-07'
+    changes: Auto-created from successful run
+status: active

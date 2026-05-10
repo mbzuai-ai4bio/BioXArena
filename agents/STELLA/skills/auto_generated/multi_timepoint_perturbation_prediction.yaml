@@ -1,0 +1,75 @@
+skill_id: multi_timepoint_perturbation_prediction
+version: 1.0.0
+name: Multi-Timepoint Gene Expression Perturbation Prediction
+domain: genomics
+description: A machine learning pipeline for predicting high-dimensional gene expression
+  responses to drug perturbations across multiple time points using regression models.
+workflow:
+- step: 1
+  action: execute
+  description: '1. Data exploration: Loaded JSONL.gz files with pandas, identified
+    nested structure with drug, cell_line, dose, time_points, profiles
+
+    2. Feature engineering: Created categorical embeddings for drug and cell_line,
+    extracted numerical dose and time, computed baseline expression
+
+    3. Model selection: PyTorch MLP with 2 hidden layers (1024 neurons each), BatchNorm,
+    Dropout, multi-output regression for 978 genes
+
+    4. Training strategy: MSE loss, Adam optimizer, ReduceLROnPlateau scheduler, early
+    stopping'
+  tools_required:
+  - dev_agent
+  - pandas
+  - torch
+  - numpy
+  - sklearn
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: dev_agent
+  version: '>=1.0.0'
+  optional: false
+- tool_id: pandas
+  version: '>=1.0.0'
+  optional: false
+- tool_id: torch
+  version: '>=1.0.0'
+  optional: false
+- tool_id: numpy
+  version: '>=1.0.0'
+  optional: false
+- tool_id: sklearn
+  version: '>=1.0.0'
+  optional: false
+tags:
+- genomics
+- perturbation-prediction
+- gene-expression
+- bioinformatics
+- time-series-analysis
+- drug-response
+- machine-learning
+applicable_queries:
+- predicting *-dimensional gene expression changes after * treatment
+- multi-timepoint perturbation prediction for * benchmark
+- gene expression response modeling for * drug
+- temporal gene expression prediction across * time points
+- BioXArena benchmark prediction for * dataset
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-10'
+  created_at: '2026-04-10'
+  last_updated: '2026-04-10'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260410_125429_12f930
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-10'
+    changes: Auto-created from successful run
+status: active

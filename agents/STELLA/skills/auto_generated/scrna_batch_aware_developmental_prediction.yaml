@@ -1,0 +1,79 @@
+skill_id: scrna_batch_aware_developmental_prediction
+version: 1.0.0
+name: Batch-Aware Developmental Stage Prediction from scRNA-seq
+domain: genomics
+description: A pipeline for predicting developmental stages from single-cell RNA-seq
+  H5AD files, incorporating batch effect handling and cross-validation to ensure robust
+  biological classification.
+workflow:
+- step: 1
+  action: execute
+  description: '1. Identified batch-stage confounding issue in training data
+
+    2. Implemented batch-aware Highly Variable Gene selection using scanpy.pp.highly_variable_genes
+    with batch_key parameter
+
+    3. Applied PCA dimensionality reduction to top 2,000 HVGs (50 components)
+
+    4. Used regularized Logistic Regression (C=0.1) to prevent overfitting
+
+    5. Implemented Stratified 5-Fold Cross-Validation for realistic accuracy estimation
+
+    6. Generated all required BioXArena outputs: submission.csv, metrics.json, solution.py
+
+    7.'
+  tools_required:
+  - dev_agent
+  - scanpy
+  - sklearn
+  - pandas
+  - numpy
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: dev_agent
+  version: '>=1.0.0'
+  optional: false
+- tool_id: scanpy
+  version: '>=1.0.0'
+  optional: false
+- tool_id: sklearn
+  version: '>=1.0.0'
+  optional: false
+- tool_id: pandas
+  version: '>=1.0.0'
+  optional: false
+- tool_id: numpy
+  version: '>=1.0.0'
+  optional: false
+tags:
+- genomics
+- scRNA-seq
+- batch-effect
+- developmental-biology
+- machine-learning
+- scanpy
+- h5ad
+applicable_queries:
+- Predict * stage from single-cell * data
+- Classify * using scRNA-seq with batch correction
+- Developmental stage prediction from * H5AD
+- Handle batch effects in * classification for genomics
+- Train * model on single-cell metadata with batch handling
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-17'
+  created_at: '2026-04-17'
+  last_updated: '2026-04-17'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260417_165741_43c512
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-17'
+    changes: Auto-created from successful run
+status: active

@@ -1,0 +1,11 @@
+## The Problem
+{description}
+
+## Your Task
+Solve the problem with the help of the available tools. You can execute Python code for calculations, search the web for information, and parse webpages for details.
+
+Guidelines:
+- You should not be overconfident in your knowledge and reasoning.
+- Tool calls may sometimes return empty results due to network issues; you can try again.
+- You may call tools multiple times to gather new information or verify your reasoning.
+- Put your final answer in <answer></answer> with \boxed.

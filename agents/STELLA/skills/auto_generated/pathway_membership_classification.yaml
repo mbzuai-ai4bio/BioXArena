@@ -1,0 +1,54 @@
+skill_id: pathway_membership_classification
+version: 1.0.0
+name: Multi-Modal Pathway Membership Classification
+domain: genomics
+description: Integrates protein sequence data and tissue-specific expression profiles
+  to classify genes into biological pathways using machine learning and cross-validation.
+workflow:
+- step: 1
+  action: execute
+  description: Used basic amino acid composition features combined with normalized
+    expression data. Handled missing sequences with zero vectors. Implemented XGBoost
+    with GPU acceleration and cross-validation.
+  tools_required:
+  - run_shell_command
+  - python_interpreter
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: run_shell_command
+  version: '>=1.0.0'
+  optional: false
+- tool_id: python_interpreter
+  version: '>=1.0.0'
+  optional: false
+tags:
+- genomics
+- pathway-analysis
+- protein-sequences
+- tissue-expression
+- multi-modal-learning
+- bioinformatics
+- classification
+applicable_queries:
+- '* classification using protein sequences *'
+- '* pathway membership * expression data'
+- Predict * pathway from * sequence and * expression
+- Analyze gene pathways using * and * data
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-09'
+  created_at: '2026-04-09'
+  last_updated: '2026-04-09'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260409_031616_e304bd
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-09'
+    changes: Auto-created from successful run
+status: active

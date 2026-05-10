@@ -1,0 +1,69 @@
+skill_id: kegg_enzyme_reaction_prediction
+version: 1.0.0
+name: Constraint-Aware KEGG Enzyme-Reaction Prediction
+domain: network_biology
+description: A workflow for predicting enzyme-reaction relationships using feature
+  engineering and shell-based file verification to ensure data integrity and model
+  performance.
+workflow:
+- step: 1
+  action: execute
+  description: '1. Faced module access restrictions (posixpath not allowed)
+
+    2. Used dev_agent with comprehensive instructions for complete implementation
+
+    3. Employed shell commands via run_shell_command for file verification
+
+    4. Focused on simple but effective features: amino acid composition, dipeptide
+    frequencies
+
+    5. Implemented proper validation and model selection
+
+    6. Ensured all output files created with correct formats'
+  tools_required:
+  - dev_agent
+  - run_shell_command
+  - evaluate_with_critic
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: dev_agent
+  version: '>=1.0.0'
+  optional: false
+- tool_id: run_shell_command
+  version: '>=1.0.0'
+  optional: false
+- tool_id: evaluate_with_critic
+  version: '>=1.0.0'
+  optional: false
+tags:
+- network_biology
+- KEGG
+- enzyme-reaction
+- feature_engineering
+- constraint_aware
+- shell_verification
+- bioinformatics
+applicable_queries:
+- KEGG * prediction with * constraints
+- enzyme-reaction mapping using * feature engineering
+- biological network prediction with shell-based validation
+- metabolic pathway analysis using * shell commands
+- constraint-aware * modeling for KEGG databases
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-10'
+  created_at: '2026-04-10'
+  last_updated: '2026-04-10'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260410_110936_1a479b
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-10'
+    changes: Auto-created from successful run
+status: active

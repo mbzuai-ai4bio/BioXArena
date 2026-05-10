@@ -1,0 +1,71 @@
+skill_id: gpcr_multiclass_binding_classification
+version: 1.0.0
+name: GPCR Binding Multi-Class Classification Pipeline
+domain: cheminformatics
+description: A high-performance machine learning workflow for classifying GPCR binding
+  affinity using SMILES strings and pChEMBL values, optimized with GPU-accelerated
+  XGBoost.
+workflow:
+- step: 1
+  action: execute
+  description: '1. Data exploration: 4,520 training samples, 3 classes (Class_A 59.7%,
+    Class_B 21.2%, Class_C 19.1%), imbalanced distribution.
+
+    2. Feature engineering: ECFP4 fingerprints (2048 bits), MACCS keys (167 bits),
+    molecular descriptors (MW, LogP, TPSA, etc.), pChEMBL values, one-hot encoded
+    assay types.
+
+    3. Model selection: XGBoost with GPU acceleration, class weighting for imbalance
+    handling, multi:softprob objective.
+
+    4. Validation: 5-fold stratified cross-validation with Macro F1 score optimization.
+
+    5.'
+  tools_required:
+  - dev_agent
+  - run_shell_command
+  - evaluate_with_critic
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: dev_agent
+  version: '>=1.0.0'
+  optional: false
+- tool_id: run_shell_command
+  version: '>=1.0.0'
+  optional: false
+- tool_id: evaluate_with_critic
+  version: '>=1.0.0'
+  optional: false
+tags:
+- cheminformatics
+- GPCR
+- SMILES
+- XGBoost
+- multi-class classification
+- pChEMBL
+- GPU acceleration
+- molecular descriptors
+applicable_queries:
+- '*binding multi-class classification*SMILES*'
+- '*GPCR*pChEMBL*classification*'
+- '*assay type*classification*SMILES*'
+- '*molecular binding*XGBoost*pipeline*'
+- '*cheminformatics*classification*SMILES*'
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-17'
+  created_at: '2026-04-17'
+  last_updated: '2026-04-17'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260417_101718_b39c18
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-17'
+    changes: Auto-created from successful run
+status: active

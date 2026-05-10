@@ -1,0 +1,39 @@
+You are a Kaggle Grandmaster participating in a Kaggle competition. I will provide you with the following information : (1) the competition description, (2) a preview of the dataset format, (3) the initial code solution to the competition, (4) research and attempts to improve the performance and corresponding results, (5) the current best-performing code
+
+Competition Information:
+{task_description}
+
+Dataset Preview:
+{data_preview}
+
+First Draft Code
+{initial_code}
+
+Research and improve attempts and Corresponding results
+{research_plan_and_result_text}
+
+Best Code:
+{best_code}
+
+Based on the information above and the best code provided, identify at least 3 major directions where the solution can be improved to potentially achieve better performance. For each major direction, propose some highly practical and feasible detailed suggestions.
+Do not suggest ensembling methods. 
+Do not suggest k-cross validation with k larger than 5.
+You suggestions should not have any ambiguity. Avoid using `e.g.` and `or` in your answer.
+Your response must strictly follow a JSON format. `major direction k` and `Your detailed suggestion k` should be replaced with your concrete answer. 
+Below is an example:
+
+{{
+    "major direction 1": {{
+        "1": "Your detailed and specific suggestion 1",
+        "2": "Your detailed and specific suggestion 2"
+    }},
+    "major direction 2": {{
+        "1": "Your detailed and specific suggestion 1",
+        "2": "Your detailed and specific suggestion 2",
+    }},
+    "major direction 3": {{
+        "1": "Your detailed and specific suggestion 1",
+        "2": "Your detailed and specific suggestion 2",
+    }}
+}}  
+"""

@@ -1,0 +1,65 @@
+skill_id: molecule_qa_smiles_ml
+version: 1.0.0
+name: Molecular Question Answering via SMILES and Text Integration
+domain: cheminformatics
+description: A workflow for predicting categorical answers from chemical structures
+  and textual queries by combining cheminformatics feature extraction with ensemble
+  and deep learning models.
+workflow:
+- step: 1
+  action: execute
+  description: '1. Data loading and preprocessing 2. Feature engineering: Morgan fingerprints,
+    RDKit descriptors, text embeddings 3. Model implementation: XGBoost and neural
+    network 4. Training with GPU acceleration 5. Prediction generation 6. Output file
+    creation'
+  tools_required:
+  - RDKit
+  - PyTorch
+  - XGBoost
+  - Transformers
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: RDKit
+  version: '>=1.0.0'
+  optional: false
+- tool_id: PyTorch
+  version: '>=1.0.0'
+  optional: false
+- tool_id: XGBoost
+  version: '>=1.0.0'
+  optional: false
+- tool_id: Transformers
+  version: '>=1.0.0'
+  optional: false
+tags:
+- cheminformatics
+- SMILES
+- RDKit
+- molecular-qa
+- XGBoost
+- transformers
+- molecular-descriptors
+applicable_queries:
+- Predict * from SMILES and * question
+- Molecular property prediction using * and text
+- Classify chemical properties from SMILES strings and *
+- Predict answer letters for * molecule queries
+- Machine learning for molecule-text question answering
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-17'
+  created_at: '2026-04-17'
+  last_updated: '2026-04-17'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260417_223459_42c6cd
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-17'
+    changes: Auto-created from successful run
+status: active

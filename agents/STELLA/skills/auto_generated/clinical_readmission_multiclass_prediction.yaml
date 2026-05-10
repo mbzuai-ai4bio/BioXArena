@@ -1,0 +1,82 @@
+skill_id: clinical_readmission_multiclass_prediction
+version: 1.0.0
+name: Multiclass Clinical Readmission Prediction
+domain: healthcare
+description: A robust machine learning pipeline for predicting patient readmission
+  categories using large-scale electronic health record (EHR) data, featuring imbalanced
+  class handling and ensemble modeling.
+workflow:
+- step: 1
+  action: execute
+  description: '1. Data exploration: Identified key challenges - missing values (weight
+    97% missing), ICD-9 code complexity, class imbalance (NO: ~50%, >30: ~35%, <30:
+    ~15%).
+
+    2. Preprocessing strategy: Dropped weight column, imputed other missing values,
+    encoded categorical variables (one-hot for low-cardinality, target encoding for
+    high-cardinality like medical_specialty).
+
+    3. Feature engineering: Grouped ICD-9 diagnosis codes into clinical categories
+    (circulatory, respiratory, etc.), created comorbidity count,'
+  tools_required:
+  - pandas
+  - numpy
+  - scikit-learn
+  - xgboost
+  - lightgbm
+  - imbalanced-learn
+  - joblib
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: pandas
+  version: '>=1.0.0'
+  optional: false
+- tool_id: numpy
+  version: '>=1.0.0'
+  optional: false
+- tool_id: scikit-learn
+  version: '>=1.0.0'
+  optional: false
+- tool_id: xgboost
+  version: '>=1.0.0'
+  optional: false
+- tool_id: lightgbm
+  version: '>=1.0.0'
+  optional: false
+- tool_id: imbalanced-learn
+  version: '>=1.0.0'
+  optional: false
+- tool_id: joblib
+  version: '>=1.0.0'
+  optional: false
+tags:
+- healthcare-analytics
+- multiclass-classification
+- imbalanced-learning
+- clinical-data-science
+- xgboost
+- lightgbm
+- ehr-modeling
+applicable_queries:
+- '* hospital readmission prediction *'
+- '* multiclass classification * clinical data *'
+- Diabetes * readmission * 130 US hospitals *
+- '* patient outcome prediction * imbalanced-learn *'
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-08'
+  created_at: '2026-04-08'
+  last_updated: '2026-04-08'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260408_231331_c328fc
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-08'
+    changes: Auto-created from successful run
+status: active

@@ -1,0 +1,83 @@
+skill_id: sc_rna_cross_batch_classification
+version: 1.0.0
+name: Single-Cell RNA-seq Cross-Batch Cell Type Classification
+domain: genomics
+description: A workflow for training and evaluating deep learning models to classify
+  cell types across multiple heterogeneous scRNA-seq batches while mitigating batch
+  effects.
+workflow:
+- step: 1
+  action: execute
+  description: '1. Data exploration: Loaded H5AD file with scanpy, analyzed batch
+    distribution
+
+    2. Feature engineering: Used pre-computed PCA (50 components) from obsm[''X_pca'']
+
+    3. Batch effect handling: Implemented neural network with batch normalization
+
+    4. Model selection: Multi-Layer Perceptron (MLP) with dropout and batch normalization
+
+    5. Training strategy: Split by batch for validation, used early stopping
+
+    6. Implementation: PyTorch with CUDA, efficient batch processing
+
+    7. Output generation: Created submissi'
+  tools_required:
+  - dev_agent
+  - scanpy
+  - torch
+  - sklearn
+  - pandas
+  - numpy
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: dev_agent
+  version: '>=1.0.0'
+  optional: false
+- tool_id: scanpy
+  version: '>=1.0.0'
+  optional: false
+- tool_id: torch
+  version: '>=1.0.0'
+  optional: false
+- tool_id: sklearn
+  version: '>=1.0.0'
+  optional: false
+- tool_id: pandas
+  version: '>=1.0.0'
+  optional: false
+- tool_id: numpy
+  version: '>=1.0.0'
+  optional: false
+tags:
+- genomics
+- single-cell RNA-seq
+- batch-integration
+- cell-type-annotation
+- deep-learning
+- scanpy
+- bioinformatics
+applicable_queries:
+- '* batch integration: single-cell RNA-seq * classification'
+- cross-batch cell type prediction with * training batches
+- BioXArena * cell type classification * batches
+- scRNA-seq model training for * test batches
+- evaluate cell type classifier on * unseen batches
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-17'
+  created_at: '2026-04-17'
+  last_updated: '2026-04-17'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260417_134353_ca156b
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-17'
+    changes: Auto-created from successful run
+status: active

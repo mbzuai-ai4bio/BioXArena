@@ -1,0 +1,78 @@
+skill_id: clinical_readmission_prediction_optimization
+version: 1.0.0
+name: Clinical Readmission Prediction with Hyperparameter Optimization
+domain: clinical_ml
+description: A workflow for predicting patient hospital readmission using large-scale
+  clinical datasets, featuring automated feature engineering and Optuna-driven XGBoost
+  hyperparameter tuning for multi-class classification.
+workflow:
+- step: 1
+  action: execute
+  description: '1. Data exploration and analysis of UCI Diabetes 130-US Hospitals
+    dataset
+
+    2. Research existing implementations from GitHub repositories
+
+    3. Feature engineering: ICD-9 diagnosis grouping, medication pattern analysis,
+    temporal feature extraction
+
+    4. Address class imbalance with multi-class weighting strategies
+
+    5. Hyperparameter optimization using Bayesian optimization (Optuna)
+
+    6. XGBoost model training with GPU acceleration
+
+    7. Ensemble approach evaluation and final model selection
+
+    8. Generate predic'
+  tools_required:
+  - hyperparameter_optimization_tuner
+  - XGBoost
+  - Optuna
+  - scikit-learn
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: hyperparameter_optimization_tuner
+  version: '>=1.0.0'
+  optional: false
+- tool_id: XGBoost
+  version: '>=1.0.0'
+  optional: false
+- tool_id: Optuna
+  version: '>=1.0.0'
+  optional: false
+- tool_id: scikit-learn
+  version: '>=1.0.0'
+  optional: false
+tags:
+- clinical-ml
+- diabetes-readmission
+- xgboost
+- optuna-tuning
+- multi-class-classification
+- feature-engineering
+- healthcare-analytics
+applicable_queries:
+- '* hospital readmission prediction * clinical data'
+- Diabetes * classification * samples * features
+- predicting * readmission * using XGBoost and Optuna
+- 3-class classification * clinical dataset * Macro F1
+- '* patient data * classification * hyperparameter optimization'
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-17'
+  created_at: '2026-04-17'
+  last_updated: '2026-04-17'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260417_171702_5d7480
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-17'
+    changes: Auto-created from successful run
+status: active

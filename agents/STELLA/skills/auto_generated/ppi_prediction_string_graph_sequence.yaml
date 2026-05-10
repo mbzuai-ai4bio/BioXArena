@@ -1,0 +1,91 @@
+skill_id: ppi_prediction_string_graph_sequence
+version: 1.0.0
+name: Protein-Protein Interaction Prediction with Graph and Sequence Features
+domain: bioinformatics
+description: A bioinformatics pipeline that integrates STRING database graph topological
+  features with protein sequence data to predict interactions using Gradient Boosting
+  classifiers.
+workflow:
+- step: 1
+  action: execute
+  description: '1. Data exploration revealed ~40% missing sequence data, necessitating
+    heavy reliance on graph features
+
+    2. Feature engineering: Created binary indicators for missing sequences, extracted
+    amino acid composition when available
+
+    3. Created interaction features from graph metrics (ratios, differences, sums)
+
+    4. Evaluated multiple models: XGBoost, RandomForest, GradientBoosting, Neural
+    Network
+
+    5. Used 5-fold cross-validation with ROC-AUC scoring
+
+    6. Selected GradientBoosting as best model (0.8992 ROC-AU'
+  tools_required:
+  - dev_agent
+  - pandas
+  - numpy
+  - sklearn
+  - gradient_boosting
+  - xgboost
+  - random_forest
+  - neural_network
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: dev_agent
+  version: '>=1.0.0'
+  optional: false
+- tool_id: pandas
+  version: '>=1.0.0'
+  optional: false
+- tool_id: numpy
+  version: '>=1.0.0'
+  optional: false
+- tool_id: sklearn
+  version: '>=1.0.0'
+  optional: false
+- tool_id: gradient_boosting
+  version: '>=1.0.0'
+  optional: false
+- tool_id: xgboost
+  version: '>=1.0.0'
+  optional: false
+- tool_id: random_forest
+  version: '>=1.0.0'
+  optional: false
+- tool_id: neural_network
+  version: '>=1.0.0'
+  optional: false
+tags:
+- bioinformatics
+- protein-protein interaction
+- STRING database
+- gradient boosting
+- graph-based features
+- sequence analysis
+- machine learning
+applicable_queries:
+- Protein-protein interaction prediction using * features
+- Predict PPI using * database and * classifier
+- Graph-based protein interaction analysis with *
+- Sequence-based PPI prediction using Gradient Boosting
+- Integrative protein interaction modeling with * and *
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-09'
+  created_at: '2026-04-09'
+  last_updated: '2026-04-09'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260409_032512_8d8e29
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-09'
+    changes: Auto-created from successful run
+status: active

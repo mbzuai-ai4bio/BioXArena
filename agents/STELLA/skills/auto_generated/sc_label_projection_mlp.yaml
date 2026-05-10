@@ -1,0 +1,86 @@
+skill_id: sc_label_projection_mlp
+version: 1.0.0
+name: Single-Cell Label Projection with MLP
+domain: single-cell_analysis
+description: A robust pipeline for projecting cell-type labels across datasets with
+  batch effects using Scanpy for preprocessing and a PyTorch-based Multi-Layer Perceptron
+  for classification.
+workflow:
+- step: 1
+  action: execute
+  description: '1. Data exploration: Checked directory structure and file formats
+
+    2. Data loading: Used scanpy for H5AD files, pandas for CSV metadata
+
+    3. Preprocessing: Log1p transformation, HVG selection (top 1000 genes), standardization
+
+    4. Model selection: 4-layer MLP with BatchNorm and Dropout for regularization
+
+    5. Training: AdamW optimizer with ReduceLROnPlateau scheduler, cross-entropy loss
+
+    6. Evaluation: 94.93% validation accuracy with stratified split
+
+    7. Output generation: Created submission.csv, metrics'
+  tools_required:
+  - dev_agent
+  - run_shell_command
+  - scanpy
+  - torch
+  - sklearn
+  - pandas
+  - numpy
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: dev_agent
+  version: '>=1.0.0'
+  optional: false
+- tool_id: run_shell_command
+  version: '>=1.0.0'
+  optional: false
+- tool_id: scanpy
+  version: '>=1.0.0'
+  optional: false
+- tool_id: torch
+  version: '>=1.0.0'
+  optional: false
+- tool_id: sklearn
+  version: '>=1.0.0'
+  optional: false
+- tool_id: pandas
+  version: '>=1.0.0'
+  optional: false
+- tool_id: numpy
+  version: '>=1.0.0'
+  optional: false
+tags:
+- single-cell
+- label-transfer
+- batch-effects
+- pytorch
+- mlp
+- bioinformatics
+- scanpy
+applicable_queries:
+- Single-cell label projection with * neural network
+- Cell type classification for * benchmark
+- Transfer learning for single-cell data with batch effects
+- Train MLP on * scRNA-seq data
+- BioXArena benchmark * implementation
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-17'
+  created_at: '2026-04-17'
+  last_updated: '2026-04-17'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260417_081907_1508ef
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-17'
+    changes: Auto-created from successful run
+status: active

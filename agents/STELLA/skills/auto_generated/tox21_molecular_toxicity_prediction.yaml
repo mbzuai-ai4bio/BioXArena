@@ -1,0 +1,55 @@
+skill_id: tox21_molecular_toxicity_prediction
+version: 1.0.0
+name: Molecular Toxicity Prediction via SMILES Classification
+domain: drug_discovery
+description: Predicts chemical toxicity from SMILES strings using machine learning
+  ensembles and cross-validation, specifically optimized for Tox21 datasets and ROC-AUC
+  metrics.
+workflow:
+- step: 1
+  action: execute
+  description: 1. Explored data and found imbalanced binary classification task (16%
+    positive). 2. Used RDKit to extract Morgan fingerprints (radius=2, 2048 bits)
+    from SMILES strings. 3. Trained an XGBoost classifier ensemble using 5-fold Stratified
+    Cross-Validation. 4. Handled class imbalance using scale_pos_weight. 5. Used GPU
+    acceleration for training. 6. Generated predictions by averaging probabilities
+    across folds. 7. Saved submission.csv, metrics.json, solution.py, and model weights.
+  tools_required:
+  - dev_agent
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: dev_agent
+  version: '>=1.0.0'
+  optional: false
+tags:
+- drug-discovery
+- smiles
+- toxicity-prediction
+- xgboost
+- tox21
+- binary-classification
+- cheminformatics
+applicable_queries:
+- Predict toxicity of * from SMILES strings using *
+- Train a binary classifier for Tox21 * dataset
+- Calculate ROC-AUC for small molecule * prediction
+- Evaluate * toxicity using machine learning and SMILES
+- Predict * activity from SMILES using ensemble models
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-13'
+  created_at: '2026-04-13'
+  last_updated: '2026-04-13'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260413_195036_cfa505
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-13'
+    changes: Auto-created from successful run
+status: active

@@ -1,0 +1,24 @@
+Here is the kaggle task description and the final high performance code of the task.
+
+Based on these information. Your job is to 
+
+1. summarize the key point about the data loading and preprocessing of the best code.
+
+2. summarize the key point about the model selection and the model training of the best code.
+
+Your response should be concise but not too short. Do not omit any parameters. You should make sure an code engineer can basically reproduce the code with your summarization.
+
+Kaggle task description:
+
+{task_description}
+
+Final code:
+
+{best_solution}
+
+Your answer should follow the format below:
+
+{{
+    "DATA LOADING AND PREPROCESSING SUMMARY":"YOUR ANSWER",
+    "MODEL SELECTION AND MODEL TRAINING SUMMARY":"YOUR ANSWER",
+}}

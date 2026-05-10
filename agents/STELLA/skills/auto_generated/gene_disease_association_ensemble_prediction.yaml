@@ -1,0 +1,70 @@
+skill_id: gene_disease_association_ensemble_prediction
+version: 1.0.0
+name: Ensemble Gene-Disease Association Strength Prediction
+domain: genomics
+description: Predicts the strength of associations between genes and diseases using
+  an ensemble of XGBoost and MLP neural networks validated through 5-fold cross-validation.
+workflow:
+- step: 1
+  action: execute
+  description: '1. Data exploration revealed low linear correlations (<0.03) between
+    features and target, suggesting need for non-linear models
+
+    2. Implemented ensemble approach combining XGBoost (for non-linear relationships)
+    and MLP (for complex interactions)
+
+    3. Used target encoding for categorical variables (gene_symbol, disease_name)
+    due to high cardinality
+
+    4. Scaled numerical features with StandardScaler
+
+    5. Used 5-fold cross-validation with Pearson correlation as evaluation metric
+
+    6. Implemented GPU acceler'
+  tools_required:
+  - dev_agent
+  - multi_source_search
+  - retrieve_similar_skills
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: dev_agent
+  version: '>=1.0.0'
+  optional: false
+- tool_id: multi_source_search
+  version: '>=1.0.0'
+  optional: false
+- tool_id: retrieve_similar_skills
+  version: '>=1.0.0'
+  optional: false
+tags:
+- genomics
+- ensemble-learning
+- xgboost
+- mlp-neural-network
+- cross-validation
+- bioinformatics
+- predictive-modeling
+applicable_queries:
+- gene-disease association strength prediction using *
+- predict * association using ensemble of * and *
+- genomic association prediction with 5-fold cross-validation
+- XGBoost and MLP ensemble for * prediction
+- calculate Pearson correlation for gene-disease * models
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-09'
+  created_at: '2026-04-09'
+  last_updated: '2026-04-09'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260409_022905_acc1a2
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-09'
+    changes: Auto-created from successful run
+status: active

@@ -1,0 +1,54 @@
+skill_id: pathvqa_blip_generative_solution
+version: 1.0.0
+name: PathVQA Solution with BLIP Generative Model
+domain: computer_vision
+description: A workflow for implementing a visual question answering solution on pathology
+  datasets using the BLIP generative architecture for medical image-text reasoning.
+workflow:
+- step: 1
+  action: execute
+  description: Used simple direct approach with dev_agent. BLIP model for generative
+    VQA. Achieved 41.5% accuracy.
+  tools_required:
+  - dev_agent
+  - critic_agent
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: dev_agent
+  version: '>=1.0.0'
+  optional: false
+- tool_id: critic_agent
+  version: '>=1.0.0'
+  optional: false
+tags:
+- computer-vision
+- pathology
+- vqa
+- blip-model
+- generative-ai
+- medical-imaging
+- pytorch
+applicable_queries:
+- '*PathVQA solution*'
+- '*BLIP model for medical VQA*'
+- Implement * generative model for * pathology
+- Visual question answering on * dataset
+- Train BLIP on * medical images
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-09'
+  created_at: '2026-04-09'
+  last_updated: '2026-04-09'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260409_183911_3b9732
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-09'
+    changes: Auto-created from successful run
+status: active

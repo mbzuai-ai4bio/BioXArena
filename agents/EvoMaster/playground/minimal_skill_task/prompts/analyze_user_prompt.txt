@@ -1,0 +1,3 @@
+# Database paths
+vec_dir: {vec_dir}
+nodes_data: {nodes_data}

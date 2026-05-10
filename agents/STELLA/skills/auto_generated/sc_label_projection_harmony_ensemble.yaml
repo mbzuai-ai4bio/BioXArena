@@ -1,0 +1,88 @@
+skill_id: sc_label_projection_harmony_ensemble
+version: 1.0.0
+name: Single-Cell Label Projection with Harmony Batch Correction
+domain: single-cell genomics
+description: A workflow for projecting cell-type labels across datasets by integrating
+  Harmony batch correction with an ensemble of MLP and Random Forest classifiers.
+workflow:
+- step: 1
+  action: execute
+  description: '1. Analyzed task requirements for single-cell classification with
+    batch effects
+
+    2. Retrieved similar skills for single-cell genomics
+
+    3. Research showed need for batch correction methods
+
+    4. Initial implementation had issues (wrong model, missing HVG selection)
+
+    5. Critic evaluation identified gaps
+
+    6. Created specialized tool for single-cell ensemble optimization
+
+    7. Implemented correct solution with: log1p transformation, HVG selection, Harmony
+    batch correction, MLP+RF ensemble, GPU training
+
+    8. Gen'
+  tools_required:
+  - dev_agent
+  - critic_agent
+  - create_new_tool
+  - scanpy
+  - harmonypy
+  - torch
+  - sklearn
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: dev_agent
+  version: '>=1.0.0'
+  optional: false
+- tool_id: critic_agent
+  version: '>=1.0.0'
+  optional: false
+- tool_id: create_new_tool
+  version: '>=1.0.0'
+  optional: false
+- tool_id: scanpy
+  version: '>=1.0.0'
+  optional: false
+- tool_id: harmonypy
+  version: '>=1.0.0'
+  optional: false
+- tool_id: torch
+  version: '>=1.0.0'
+  optional: false
+- tool_id: sklearn
+  version: '>=1.0.0'
+  optional: false
+tags:
+- single-cell genomics
+- batch effect correction
+- harmony
+- ensemble learning
+- label projection
+- scanpy
+- pytorch
+applicable_queries:
+- Single-cell label projection with * batch correction
+- Transfer cell type labels using * and *
+- Ensemble classification for single-cell data with *
+- Integrate scRNA-seq datasets using Harmony and predict *
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-09'
+  created_at: '2026-04-09'
+  last_updated: '2026-04-09'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260409_003252_825b06
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-09'
+    changes: Auto-created from successful run
+status: active

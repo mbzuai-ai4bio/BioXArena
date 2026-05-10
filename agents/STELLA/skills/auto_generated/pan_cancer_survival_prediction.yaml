@@ -1,0 +1,76 @@
+skill_id: pan_cancer_survival_prediction
+version: 1.0.0
+name: Pan-Cancer Survival Prediction from Multi-Omics Data
+domain: genomics
+description: A workflow for integrating TCGA clinical data and gene expression profiles
+  to predict patient survival outcomes using Cox Proportional Hazards or gradient
+  boosting models.
+workflow:
+- step: 1
+  action: execute
+  description: "1. Analyzed task: survival prediction with C-index evaluation\n2.\
+    \ Retrieved similar survival analysis skills\n3. Researched survival prediction\
+    \ libraries (lifelines, scikit-survival, xgboost)\n4. Implemented comprehensive\
+    \ pipeline:\n   - Data loading and exploration\n   - Survival-specific preprocessing\
+    \ (censored data handling)\n   - Clinical feature encoding + gene expression normalization\n\
+    \   - Multiple model comparison (Cox, RSF, XGBoost)\n   - Selected XGBoost with\
+    \ survival:cox objective\n   - 5-fold"
+  tools_required:
+  - pandas
+  - numpy
+  - scikit-learn
+  - xgboost
+  - lifelines
+  - joblib
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: pandas
+  version: '>=1.0.0'
+  optional: false
+- tool_id: numpy
+  version: '>=1.0.0'
+  optional: false
+- tool_id: scikit-learn
+  version: '>=1.0.0'
+  optional: false
+- tool_id: xgboost
+  version: '>=1.0.0'
+  optional: false
+- tool_id: lifelines
+  version: '>=1.0.0'
+  optional: false
+- tool_id: joblib
+  version: '>=1.0.0'
+  optional: false
+tags:
+- genomics
+- survival-analysis
+- tcga
+- gene-expression
+- cox-proportional-hazards
+- c-index
+- bioinformatics
+applicable_queries:
+- '* survival prediction from * gene expression'
+- predict * cancer outcomes using TCGA *
+- multi-omics survival analysis for *
+- pan-cancer * clinical and genomic data integration
+- calculate C-index for * survival models
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-09'
+  created_at: '2026-04-09'
+  last_updated: '2026-04-09'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260409_002442_b83b6b
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-09'
+    changes: Auto-created from successful run
+status: active

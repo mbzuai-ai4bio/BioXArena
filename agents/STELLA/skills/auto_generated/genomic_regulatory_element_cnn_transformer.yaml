@@ -1,0 +1,61 @@
+skill_id: genomic_regulatory_element_cnn_transformer
+version: 1.0.0
+name: Hybrid CNN-Transformer Genomic Sequence Classification
+domain: genomics
+description: Implements a hybrid deep learning architecture combining CNNs for local
+  motif extraction and Transformers for long-range dependencies to classify regulatory
+  elements in DNA sequences.
+workflow:
+- step: 1
+  action: execute
+  description: 1. Data exploration revealed severe class imbalance (74% dELS) 2. Retrieved
+    similar skills suggested CNN-Transformer hybrid 3. Implemented one-hot encoding
+    for DNA sequences 4. Used class weights for imbalance handling 5. Multi-GPU training
+    with PyTorch 6. Generated predictions with macro-F1 validation
+  tools_required:
+  - dev_agent
+  - run_shell_command
+  - evaluate_with_critic
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: dev_agent
+  version: '>=1.0.0'
+  optional: false
+- tool_id: run_shell_command
+  version: '>=1.0.0'
+  optional: false
+- tool_id: evaluate_with_critic
+  version: '>=1.0.0'
+  optional: false
+tags:
+- genomics
+- deep-learning
+- cnn-transformer-hybrid
+- dna-sequence-analysis
+- regulatory-elements
+- bioinformatics
+- sequence-modeling
+applicable_queries:
+- '*regulatory element detection*DNA*'
+- '*CNN-Transformer*genomic sequence*'
+- '*classify DNA sequences*hybrid model*'
+- '*predict transcription factor binding*deep learning*'
+- '*genomic sequence classification*transformer*'
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-17'
+  created_at: '2026-04-17'
+  last_updated: '2026-04-17'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260417_114855_073142
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-17'
+    changes: Auto-created from successful run
+status: active

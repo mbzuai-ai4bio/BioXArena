@@ -1,0 +1,76 @@
+skill_id: protein_complex_classification_esm2
+version: 1.0.0
+name: Protein Complex Classification with ESM-2 Embeddings
+domain: bioinformatics
+description: A high-performance bioinformatics pipeline that leverages ESM-2 650M
+  language model embeddings and advanced MLP architectures for classifying protein-protein
+  interactions and complexes.
+workflow:
+- step: 1
+  action: execute
+  description: "1. Used ESM-2 650M model (esm2_t33_650M_UR50D) for high-quality protein\
+    \ sequence embeddings\n2. Extracted full 1280-dimensional embeddings without aggressive\
+    \ PCA to preserve information\n3. Built advanced MLP classifier: 1280\u2192512\u2192\
+    256\u219210 with batch normalization and dropout\n4. Implemented label smoothing\
+    \ (0.1) for better generalization\n5. Used AdamW optimizer with cosine annealing\
+    \ scheduler and warmup\n6. Applied gradient checkpointing to manage GPU memory\
+    \ with 4 GPUs\n7. Generated all required outpu"
+  tools_required:
+  - PyTorch
+  - fair-esm (ESM-2)
+  - scikit-learn
+  - pandas
+  - numpy
+  - gradient_checkpointing
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: PyTorch
+  version: '>=1.0.0'
+  optional: false
+- tool_id: fair-esm (ESM-2)
+  version: '>=1.0.0'
+  optional: false
+- tool_id: scikit-learn
+  version: '>=1.0.0'
+  optional: false
+- tool_id: pandas
+  version: '>=1.0.0'
+  optional: false
+- tool_id: numpy
+  version: '>=1.0.0'
+  optional: false
+- tool_id: gradient_checkpointing
+  version: '>=1.0.0'
+  optional: false
+tags:
+- bioinformatics
+- protein-embeddings
+- ESM-2
+- pytorch
+- protein-complexes
+- deep-learning
+- gradient-checkpointing
+applicable_queries:
+- Protein * classification using ESM-2 *
+- Predicting protein complexes with * embeddings
+- Deep learning for protein * classification
+- Bioinformatics pipeline for * using fair-esm
+- Training MLP on protein sequence embeddings *
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-17'
+  created_at: '2026-04-17'
+  last_updated: '2026-04-17'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260417_101817_ee67dc
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-17'
+    changes: Auto-created from successful run
+status: active

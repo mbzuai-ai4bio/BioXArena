@@ -1,0 +1,64 @@
+skill_id: chromatin_to_expression_regression
+version: 1.0.0
+name: Single-Cell ATAC-to-RNA Expression Prediction
+domain: genomics
+description: Predicts single-cell gene expression levels from chromatin accessibility
+  data using regression models like XGBoost to bridge multi-omic modalities.
+workflow:
+- step: 1
+  action: execute
+  description: '1. Retrieved existing successful skill using Ridge Regression with
+    TruncatedSVD
+
+    2. Implemented streamlined solution based on proven approach
+
+    3. Enhanced with XGBoost for better performance
+
+    4. Added validation split and Pearson correlation metrics
+
+    5. Generated all required BioXArena output files
+
+    6. Verified submission format matches sample exactly
+
+    7. Used TF-IDF normalization and dimensionality reduction for high-dimensional
+    sparse data'
+  tools_required:
+  - dev_agent
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: dev_agent
+  version: '>=1.0.0'
+  optional: false
+tags:
+- genomics
+- single-cell
+- ATAC-seq
+- RNA-seq
+- multi-omics
+- regression
+- XGBoost
+- bioinformatics
+applicable_queries:
+- '*chromatin-to-expression prediction*'
+- single-cell ATAC-seq to RNA-seq*
+- '*predict gene expression from accessibility*'
+- BioXArena * regression
+- '*multi-omic modality translation*'
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-17'
+  created_at: '2026-04-17'
+  last_updated: '2026-04-17'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260417_144423_113f82
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-17'
+    changes: Auto-created from successful run
+status: active

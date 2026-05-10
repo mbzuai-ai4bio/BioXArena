@@ -1,0 +1,71 @@
+skill_id: lung_nodule_malignancy_prediction_optimization
+version: 1.0.0
+name: Optimized Lung Nodule Malignancy Prediction
+domain: medical_imaging
+description: A medical imaging workflow that utilizes MONAI and PyTorch to predict
+  lung nodule malignancy, incorporating class balancing and cross-validation for robust
+  model performance.
+workflow:
+- step: 1
+  action: execute
+  description: 'Addressing critic feedback:
+
+    1. Implemented class balancing with weighted loss (higher weights for classes
+    4-5)
+
+    2. Used advanced 3D ResNet architecture from MONAI
+
+    3. Added patient-wise 5-fold cross-validation
+
+    4. Ensured all 5 prediction classes are represented
+
+    5. Fixed missing solution.py file issue
+
+    6. Added comprehensive validation and early stopping'
+  tools_required:
+  - hyperparameter_optimization_and_cv_tool
+  - monai
+  - pytorch
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: hyperparameter_optimization_and_cv_tool
+  version: '>=1.0.0'
+  optional: false
+- tool_id: monai
+  version: '>=1.0.0'
+  optional: false
+- tool_id: pytorch
+  version: '>=1.0.0'
+  optional: false
+tags:
+- medical-imaging
+- lung-nodule-analysis
+- monai
+- pytorch
+- class-balancing
+- cross-validation
+- hyperparameter-optimization
+applicable_queries:
+- '*lung nodule malignancy prediction*'
+- '*medical imaging classification with class balancing*'
+- '*cross-validation for lung cancer detection*'
+- '*optimized MONAI model for nodule analysis*'
+- '*improving lung nodule prediction accuracy*'
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-07'
+  created_at: '2026-04-07'
+  last_updated: '2026-04-07'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260407_184329_87effb
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-07'
+    changes: Auto-created from successful run
+status: active

@@ -1,0 +1,59 @@
+skill_id: eclip_binding_signal_prediction
+version: 1.0.0
+name: RNA-Protein Interaction Binding Signal Prediction
+domain: sequence
+description: Trains a deep learning model using 1D CNNs and sequence embeddings to
+  predict continuous eCLIP binding affinity scores from RNA sequences and genomic
+  context.
+workflow:
+- step: 1
+  action: execute
+  description: 1. Analyzed the dataset and found extreme outliers in the target score.
+    2. Designed a PyTorch model with a 1D CNN for 101-nt RNA sequences and Embedding
+    layers for categorical features (protein_id, cell_line, strand). 3. Used HuberLoss
+    to robustly handle the extreme outliers during training. 4. Trained the model
+    using AdamW optimizer and DataParallel for multi-GPU support. 5. Generated predictions
+    and saved them in the required format.
+  tools_required:
+  - dev_agent
+  - python_interpreter
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: dev_agent
+  version: '>=1.0.0'
+  optional: false
+- tool_id: python_interpreter
+  version: '>=1.0.0'
+  optional: false
+tags:
+- RNA-protein interaction
+- eCLIP
+- 1D CNN
+- sequence modeling
+- genomics
+- binding affinity
+- deep learning
+applicable_queries:
+- Predict * binding signal score for * interactions
+- Train a model to predict * eCLIP *
+- Predict continuous * scores from RNA sequence
+- Analyze RNA-protein binding using genomic context
+- Develop a deep learning model for * sequence-based regression
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-13'
+  created_at: '2026-04-13'
+  last_updated: '2026-04-13'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260413_204024_e809cd
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-13'
+    changes: Auto-created from successful run
+status: active

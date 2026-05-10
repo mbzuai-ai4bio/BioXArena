@@ -1,0 +1,115 @@
+# Minimal OpenClaw Skill Agent Configuration File
+# Minimal OpenClaw Skill Agent with support for TypeScript-based Feishu skills
+
+# ============================================
+# LLM Configuration
+# ============================================
+llm:
+  openai:
+    provider: "openai"
+    model: "${GPT_CHAT_MODEL}"
+    api_key: "${OPENAI_API_KEY}"
+    base_url: "${GPT_BASE_URL}"
+    temperature: 0.7
+    max_tokens: 16384
+    timeout: 60
+    max_retries: 3
+    retry_delay: 1.0
+
+  anthropic:
+    provider: "anthropic"
+    model: "${ANTHROPIC_MODEL}"
+    api_key: "${ANTHROPIC_API_KEY}"
+    base_url: "${ANTHROPIC_BASE_URL}"
+    temperature: 0.7
+    max_tokens: 16384
+    timeout: 60
+    max_retries: 3
+    retry_delay: 1.0
+  
+  local_sglang:
+    provider: "deepseek"
+    model: "deepseek-v3.2"
+    api_key: "${DEEPSEEK_API_KEY}"  # Placeholder can be used for local deployment
+    base_url: "${DEEPSEEK_API_BASE}"
+    temperature: 0.7
+    max_tokens: 16384
+    timeout: 300  
+    max_retries: 3
+    retry_delay: 1.0
+
+  default: "local_sglang"
+
+# ============================================
+# Agent Configuration
+# ============================================
+agents:
+  general:
+    llm: "local_sglang"
+    max_turns: 50
+    finish_on_text_response: false
+    tools:
+      builtin: ["*"]
+      openclaw:
+        plugins:
+          - feishu
+
+    skills:
+      - feishu-doc
+      - feishu-drive
+      - feishu-perm
+      - feishu-wiki
+      
+    context:
+      max_tokens: 128000
+      truncation_strategy: "summary"
+      preserve_system_messages: true
+      preserve_recent_turns: 5
+
+    system_prompt_file: "prompts/system_prompt.txt"
+    user_prompt_file: "prompts/user_prompt.txt"
+
+
+# ============================================
+# Session Configuration
+# ============================================
+session:
+  type: "local"
+
+  local:
+    working_dir: "./playground/minimal_openclaw_skill/workspace"
+    timeout: 60
+    gpu_devices: "0"
+    cpu_devices: "0-15"
+    symlinks: {}
+
+  docker:
+    image: "evomaster/base:latest"
+    container_name: null
+    use_existing_container: null
+    working_dir: "/workspace"
+    memory_limit: "64g"
+    cpu_limit: 16.0
+    gpu_devices: "0"
+    network_mode: "host"
+    volumes: {"./playground/chat_agent/workspace": "/workspace"}
+    env_vars: {}
+    auto_remove: false
+    timeout: 300
+
+
+# ============================================
+# LLM Output Display Configuration
+# ============================================
+llm_output:
+  show_in_console: true
+  log_to_file: true
+
+# ============================================
+# Logging Configuration
+# ============================================
+logging:
+  level: "INFO"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file: null
+  console: true

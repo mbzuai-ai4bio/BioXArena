@@ -1,0 +1,73 @@
+skill_id: crispr_perturbation_prediction_training
+version: 1.0.0
+name: CRISPR Perturbation Effect Prediction and Model Training
+domain: genomics
+description: A workflow for building and training machine learning models to predict
+  the phenotypic outcomes of CRISPR-based genetic perturbations using genomic datasets.
+workflow:
+- step: 1
+  action: execute
+  description: '1. Identified and fixed critical issue: training loop had artificial
+    break after 10 batches
+
+    2. Implemented proper training with full epochs and early stopping
+
+    3. Used proper validation split (80/20) and loss monitoring
+
+    4. Trained for sufficient time (325 seconds) with actual learning
+
+    5. Achieved validation loss of 0.045 with proper convergence
+
+    6. Generated all required files with correct formats
+
+    7. Ensured scientific validity of the approach'
+  tools_required:
+  - pytorch
+  - pandas
+  - numpy
+  - sklearn
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: pytorch
+  version: '>=1.0.0'
+  optional: false
+- tool_id: pandas
+  version: '>=1.0.0'
+  optional: false
+- tool_id: numpy
+  version: '>=1.0.0'
+  optional: false
+- tool_id: sklearn
+  version: '>=1.0.0'
+  optional: false
+tags:
+- crispr-cas9
+- perturbation-prediction
+- genomic-deep-learning
+- pytorch-training
+- functional-genomics
+- bioinformatics-modeling
+applicable_queries:
+- predict CRISPR * effects with *
+- train model for gene perturbation *
+- CRISPR knockout * prediction
+- genomic perturbation * training
+- predict cellular response to * perturbation
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-09'
+  created_at: '2026-04-09'
+  last_updated: '2026-04-09'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260409_053833_3da451
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-09'
+    changes: Auto-created from successful run
+status: active

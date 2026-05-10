@@ -1,0 +1,76 @@
+skill_id: medical_vqa_slake_multimodal
+version: 1.0.0
+name: Medical Visual Question Answering with SLAKE Dataset
+domain: biomedical_ml
+description: A complete workflow for training and evaluating multimodal deep learning
+  models on medical imaging datasets, including image preprocessing, text tokenization,
+  and performance metric calculation.
+workflow:
+- step: 1
+  action: execute
+  description: '1. Data exploration: Analyzed train.csv (5972 samples), test.csv (1060
+    samples), 642 medical images. 2. Preprocessing: Image resizing/normalization,
+    ClinicalBERT tokenization for medical text. 3. Model architecture: ResNet50 vision
+    encoder + ClinicalBERT text encoder + MLP fusion. 4. Training: 5 epochs with cross-entropy
+    loss, Adam optimizer, GPU acceleration. 5. Inference: Generated predictions for
+    all test samples. 6. Output: Created submission.csv matching sample format, metrics.json
+    with tim'
+  tools_required:
+  - torch
+  - transformers
+  - pandas
+  - PIL
+  - sklearn
+  - torchvision
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: torch
+  version: '>=1.0.0'
+  optional: false
+- tool_id: transformers
+  version: '>=1.0.0'
+  optional: false
+- tool_id: pandas
+  version: '>=1.0.0'
+  optional: false
+- tool_id: PIL
+  version: '>=1.0.0'
+  optional: false
+- tool_id: sklearn
+  version: '>=1.0.0'
+  optional: false
+- tool_id: torchvision
+  version: '>=1.0.0'
+  optional: false
+tags:
+- biomedical-ml
+- vqa
+- multimodal-learning
+- pytorch
+- transformers
+- medical-imaging
+- slake-dataset
+applicable_queries:
+- Medical Visual Question Answering on * dataset
+- Multimodal deep learning for * medical images
+- VQA task on * with torch and transformers
+- Train medical VQA model on * dataset
+- Biomedical image-text analysis using *
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-17'
+  created_at: '2026-04-17'
+  last_updated: '2026-04-17'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260417_220711_e0f6f6
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-17'
+    changes: Auto-created from successful run
+status: active

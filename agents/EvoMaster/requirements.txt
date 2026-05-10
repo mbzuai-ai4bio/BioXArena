@@ -1,0 +1,20 @@
+# EvoMaster core dependencies
+
+# Configuration and data validation
+pydantic
+PyYAML
+
+# LLM API clients
+openai
+anthropic
+google-genai
+
+# MCP (Model Context Protocol)
+mcp
+
+# viewer
+flask
+
+humanize
+pandas
+genson

@@ -1,0 +1,72 @@
+skill_id: cyp_enzyme_inhibition_prediction
+version: 1.0.0
+name: Multi-Label CYP Inhibition Neural Network Prediction
+domain: cheminformatics
+description: A workflow for building multi-label neural network models to predict
+  Cytochrome P450 enzyme inhibition from SMILES strings using RDKit descriptors and
+  PyTorch.
+workflow:
+- step: 1
+  action: execute
+  description: '1. Safe directory exploration avoiding forbidden modules
+
+    2. Feature engineering with RDKit descriptors and Morgan fingerprints
+
+    3. Model comparison: Neural Network outperformed tree-based methods (0.85 ROC-AUC)
+
+    4. GPU acceleration with DataParallel on 4 GPUs
+
+    5. Multi-label training with masked binary cross-entropy loss
+
+    6. Comprehensive file generation and format validation'
+  tools_required:
+  - rdkit
+  - pytorch
+  - scikit-learn
+  - pandas
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: rdkit
+  version: '>=1.0.0'
+  optional: false
+- tool_id: pytorch
+  version: '>=1.0.0'
+  optional: false
+- tool_id: scikit-learn
+  version: '>=1.0.0'
+  optional: false
+- tool_id: pandas
+  version: '>=1.0.0'
+  optional: false
+tags:
+- cheminformatics
+- multi-label-classification
+- pytorch
+- rdkit
+- molecular-descriptors
+- cyp-inhibition
+- deep-learning
+applicable_queries:
+- '* enzyme inhibition * prediction * SMILES *'
+- multi-label * neural network * cheminformatics *
+- predict * CYP450 * inhibition *
+- molecular property prediction * pytorch * rdkit *
+- ADMET * prediction * SMILES *
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-07'
+  created_at: '2026-04-07'
+  last_updated: '2026-04-07'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260407_162014_a73384
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-07'
+    changes: Auto-created from successful run
+status: active

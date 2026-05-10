@@ -1,0 +1,68 @@
+skill_id: tf_regulatory_network_prediction
+version: 1.0.0
+name: Multi-Modal Transcription Factor Regulatory Network Prediction
+domain: network-biology
+description: Predicts transcription factor-gene interactions by integrating protein
+  sequences, ChIP-seq data, motif scores, and network topology using gradient boosting
+  models.
+workflow:
+- step: 1
+  action: execute
+  description: Analyzed low signal in tabular features, identified need for sequence
+    feature extraction, created sequence_feature_extractor tool, implemented XGBoost
+    model combining tabular and sequence features, generated all required output files
+  tools_required:
+  - sequence_feature_extractor
+  - XGBoost
+  - pandas
+  - numpy
+  - sklearn
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: sequence_feature_extractor
+  version: '>=1.0.0'
+  optional: false
+- tool_id: XGBoost
+  version: '>=1.0.0'
+  optional: false
+- tool_id: pandas
+  version: '>=1.0.0'
+  optional: false
+- tool_id: numpy
+  version: '>=1.0.0'
+  optional: false
+- tool_id: sklearn
+  version: '>=1.0.0'
+  optional: false
+tags:
+- transcription-factors
+- regulatory-networks
+- multi-modal-learning
+- bioinformatics
+- xgboost
+- genomics
+- chip-seq
+applicable_queries:
+- '*regulatory network prediction*multi-modal*'
+- predict TF binding sites using * and *
+- gene regulatory network inference * sequence features
+- TF-target interaction prediction * ChIP-seq *
+- network-biology * transcription factor * features
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-17'
+  created_at: '2026-04-17'
+  last_updated: '2026-04-17'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260417_104226_60e82c
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-17'
+    changes: Auto-created from successful run
+status: active

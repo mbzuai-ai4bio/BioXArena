@@ -1,0 +1,81 @@
+skill_id: cell_painting_morphological_classification
+version: 1.0.0
+name: Cell Painting Morphological Perturbation Classification
+domain: chemical-biology
+description: High-dimensional classification of chemical perturbations using morphological
+  features extracted from Cell Painting assays. This workflow handles feature-rich
+  biological datasets to map phenotypic profiles to specific compound classes.
+workflow:
+- step: 1
+  action: execute
+  description: '1. Direct delegation to dev_agent for complete implementation
+
+    2. Data loading from CSV files in public directory
+
+    3. Feature preprocessing and normalization for 904 morphological features
+
+    4. Label encoding for 303 classes (302 compounds + DMSO)
+
+    5. Model selection: Random Forest for high-dimensional tabular data
+
+    6. Training with validation split and hyperparameter optimization
+
+    7. Prediction generation for test set
+
+    8. Output file generation with exact format matching
+
+    9. Timing measurement for metri'
+  tools_required:
+  - dev_agent
+  - scikit-learn
+  - pandas
+  - numpy
+  - time
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: dev_agent
+  version: '>=1.0.0'
+  optional: false
+- tool_id: scikit-learn
+  version: '>=1.0.0'
+  optional: false
+- tool_id: pandas
+  version: '>=1.0.0'
+  optional: false
+- tool_id: numpy
+  version: '>=1.0.0'
+  optional: false
+- tool_id: time
+  version: '>=1.0.0'
+  optional: false
+tags:
+- cell-painting
+- morphological-profiling
+- phenotypic-screening
+- compound-classification
+- high-dimensional-data
+- chemical-biology
+- supervised-learning
+applicable_queries:
+- Cell painting * classification from * features
+- Predict * mechanism of action from morphological features
+- Classify compound perturbations from * phenotypic profiles
+- Multi-class classification of * morphological features to * classes
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-06'
+  created_at: '2026-04-06'
+  last_updated: '2026-04-06'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260406_180131_26c847
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-06'
+    changes: Auto-created from successful run
+status: active

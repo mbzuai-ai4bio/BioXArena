@@ -1,0 +1,62 @@
+skill_id: bioxarena_protein_function_matching
+version: 1.0.0
+name: BioXArena Protein-Function Text Matching
+domain: bioinformatics
+description: Automated workflow for matching protein sequences to functional descriptions
+  using CSV datasets within the BioXArena benchmarking framework.
+workflow:
+- step: 1
+  action: execute
+  description: Loaded CSV data, extracted protein and text features, trained classification
+    model, generated predictions
+  tools_required:
+  - dev_agent
+  - critic_agent
+  - retrieve_similar_skills
+  - multi_source_search
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: dev_agent
+  version: '>=1.0.0'
+  optional: false
+- tool_id: critic_agent
+  version: '>=1.0.0'
+  optional: false
+- tool_id: retrieve_similar_skills
+  version: '>=1.0.0'
+  optional: false
+- tool_id: multi_source_search
+  version: '>=1.0.0'
+  optional: false
+tags:
+- bioinformatics
+- protein-function
+- text-matching
+- bioxarena
+- csv-processing
+- benchmarking
+- proteomics
+applicable_queries:
+- BioXArena * protein-function *
+- '* matching protein * from CSV'
+- run BioXArena benchmark *
+- protein function text matching *
+- '* functional annotation from CSV files'
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-09'
+  created_at: '2026-04-09'
+  last_updated: '2026-04-09'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260409_185714_cb2f86
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-09'
+    changes: Auto-created from successful run
+status: active

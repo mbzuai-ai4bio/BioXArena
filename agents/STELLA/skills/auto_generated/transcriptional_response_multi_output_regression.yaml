@@ -1,0 +1,75 @@
+skill_id: transcriptional_response_multi_output_regression
+version: 1.0.0
+name: High-Dimensional Drug Transcriptional Response Prediction
+domain: genomics
+description: A workflow for training multi-output regression models to predict high-dimensional
+  gene expression changes (5000+ dimensions) in response to drug perturbations.
+workflow:
+- step: 1
+  action: execute
+  description: '1. Data exploration of JSONL.gz files
+
+    2. Feature engineering: categorical encoding for drug/cell_line, numerical scaling
+
+    3. Model selection: PyTorch MLP with embeddings for multi-output regression
+
+    4. GPU-accelerated training with 4 GPUs
+
+    5. Prediction generation in exact submission format
+
+    6. File saving: submission.csv, metrics.json, solution.py, model.pt
+
+    7. Quality verification through critic evaluation
+
+    8. Iterative improvement based on feedback'
+  tools_required:
+  - dev_agent
+  - critic_agent
+  - shell commands
+  - file verification
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: dev_agent
+  version: '>=1.0.0'
+  optional: false
+- tool_id: critic_agent
+  version: '>=1.0.0'
+  optional: false
+- tool_id: shell commands
+  version: '>=1.0.0'
+  optional: false
+- tool_id: file verification
+  version: '>=1.0.0'
+  optional: false
+tags:
+- genomics
+- transcriptomics
+- multi-output regression
+- drug response prediction
+- BioXArena
+- high-dimensional data
+- bioinformatics
+applicable_queries:
+- '* drug transcriptional response prediction *'
+- '* multi-output regression * gene dimensions'
+- BioXArena * prediction
+- '* predict gene expression changes * drug'
+- transcriptomic response modeling * 5000 genes
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-17'
+  created_at: '2026-04-17'
+  last_updated: '2026-04-17'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260417_113828_b9d227
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-17'
+    changes: Auto-created from successful run
+status: active

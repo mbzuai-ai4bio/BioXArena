@@ -1,0 +1,67 @@
+skill_id: synthetic_lethality_prediction_xgboost
+version: 1.0.0
+name: Synthetic Lethality Prediction with Network and Expression Features
+domain: network_biology
+description: Predicts synthetic lethal gene pairs by integrating biological network
+  topology with gene expression profiles using an optimized XGBoost classifier.
+workflow:
+- step: 1
+  action: execute
+  description: 1. Data exploration and preprocessing 2. Feature engineering with interaction
+    terms 3. XGBoost with GPU acceleration 4. Cross-validation and model evaluation
+    5. Submission generation
+  tools_required:
+  - XGBoost
+  - scikit-learn
+  - pandas
+  - numpy
+  - GPU acceleration
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: XGBoost
+  version: '>=1.0.0'
+  optional: false
+- tool_id: scikit-learn
+  version: '>=1.0.0'
+  optional: false
+- tool_id: pandas
+  version: '>=1.0.0'
+  optional: false
+- tool_id: numpy
+  version: '>=1.0.0'
+  optional: false
+- tool_id: GPU acceleration
+  version: '>=1.0.0'
+  optional: false
+tags:
+- synthetic-lethality
+- network-biology
+- xgboost
+- gene-expression
+- bioinformatics
+- gpu-acceleration
+- predictive-modeling
+applicable_queries:
+- predict synthetic lethality using * and *
+- network-based prediction of * interactions
+- XGBoost model for * gene pair classification
+- multi-omic feature integration for * prediction
+- synthetic lethal screening using * features
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-09'
+  created_at: '2026-04-09'
+  last_updated: '2026-04-09'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260409_041404_2ecac7
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-09'
+    changes: Auto-created from successful run
+status: active

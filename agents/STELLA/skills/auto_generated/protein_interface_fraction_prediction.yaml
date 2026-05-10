@@ -1,0 +1,52 @@
+skill_id: protein_interface_fraction_prediction
+version: 1.0.0
+name: Protein Interface Fraction Prediction via Sequence-Based Random Forest
+domain: structure
+description: Predicts the fraction of protein-protein interface residues using sequence-derived
+  features and a Random Forest regression model. This workflow automates feature extraction
+  and machine learning inference for structural bioinformatics tasks.
+workflow:
+- step: 1
+  action: execute
+  description: 1. Used run_shell_command to explore data directory 2. Created simple
+    sequence-based features (lengths, hydrophobic ratios) 3. Used RandomForestRegressor
+    with 50 trees 4. Saved submission.csv, metrics.json, and solution.py
+  tools_required:
+  - run_shell_command
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: run_shell_command
+  version: '>=1.0.0'
+  optional: false
+tags:
+- protein-protein interaction
+- random forest
+- sequence-based prediction
+- structural bioinformatics
+- regression analysis
+- interface fraction
+- machine learning
+applicable_queries:
+- Protein-protein interface * prediction using * features
+- Predict * interface fraction from sequence using *
+- RandomForest regression for protein * analysis
+- Sequence-based prediction of protein interaction *
+- Calculate interface residues fraction for * using machine learning
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-09'
+  created_at: '2026-04-09'
+  last_updated: '2026-04-09'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260409_084701_97cd31
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-09'
+    changes: Auto-created from successful run
+status: active

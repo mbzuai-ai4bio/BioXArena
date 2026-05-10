@@ -1,0 +1,87 @@
+skill_id: scrna_cell_type_prediction_xgboost
+version: 1.0.0
+name: scRNA-seq Cell Type Classification with XGBoost
+domain: single-cell genomics
+description: A workflow for predicting cell types from single-cell RNA-seq expression
+  data using XGBoost, including data preprocessing with Scanpy and model evaluation.
+workflow:
+- step: 1
+  action: execute
+  description: '1. Data exploration: Loaded train.csv/test.csv metadata and expression_counts.npz
+    sparse matrix
+
+    2. Preprocessing: Normalized expression counts, log1p transformation, selected
+    top 2000 HVGs
+
+    3. Feature engineering: Used ''cluster'' metadata (Label Encoding) combined with
+    expression features
+
+    4. Model selection: XGBoost Classifier with GPU acceleration (tree_method=''hist'',
+    device=''cuda'')
+
+    5. Training: Achieved 100% training accuracy (potential overfitting concern)
+
+    6. Output generation: Created submissi'
+  tools_required:
+  - dev_agent
+  - xgboost
+  - scanpy
+  - pandas
+  - numpy
+  - joblib
+  - scikit-learn
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: dev_agent
+  version: '>=1.0.0'
+  optional: false
+- tool_id: xgboost
+  version: '>=1.0.0'
+  optional: false
+- tool_id: scanpy
+  version: '>=1.0.0'
+  optional: false
+- tool_id: pandas
+  version: '>=1.0.0'
+  optional: false
+- tool_id: numpy
+  version: '>=1.0.0'
+  optional: false
+- tool_id: joblib
+  version: '>=1.0.0'
+  optional: false
+- tool_id: scikit-learn
+  version: '>=1.0.0'
+  optional: false
+tags:
+- single-cell genomics
+- cell type annotation
+- xgboost
+- transcriptomics
+- machine learning
+- scanpy
+- bioinformatics
+applicable_queries:
+- Predict * cell types from * expression data
+- Classify scRNA-seq data using *
+- Train XGBoost model on * genomics data
+- BioXArena * cell type prediction
+- Supervised cell type annotation for * dataset
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-17'
+  created_at: '2026-04-17'
+  last_updated: '2026-04-17'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260417_135020_bdb73f
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-17'
+    changes: Auto-created from successful run
+status: active

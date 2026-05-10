@@ -1,0 +1,56 @@
+skill_id: mitochondria_em_instance_counting
+version: 1.0.0
+name: Mitochondria Instance Counting in Electron Microscopy
+domain: imaging
+description: Automated quantification of mitochondria from electron microscopy imagery
+  using multi-modal deep learning regression techniques to predict instance counts.
+workflow:
+- step: 1
+  action: execute
+  description: 1. Data exploration revealed TIFF EM images with species metadata.
+    2. Designed multi-modal ResNet18 architecture with species embedding. 3. Implemented
+    PyTorch Dataset with TIFF loading and augmentation. 4. Trained regression model
+    with MSE loss on GPU. 5. Generated predictions matching submission format.
+  tools_required:
+  - dev_agent
+  - run_shell_command
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: dev_agent
+  version: '>=1.0.0'
+  optional: false
+- tool_id: run_shell_command
+  version: '>=1.0.0'
+  optional: false
+tags:
+- electron microscopy
+- mitochondria
+- instance counting
+- deep learning
+- regression
+- bioimage analysis
+- multi-modal learning
+applicable_queries:
+- '* instance counting in electron microscopy *'
+- Mitochondria * counting using * deep learning
+- quantifying * organelles in EM images
+- multi-modal regression for * image analysis
+- automated * counting in biological imaging
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-17'
+  created_at: '2026-04-17'
+  last_updated: '2026-04-17'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260417_163250_983815
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-17'
+    changes: Auto-created from successful run
+status: active

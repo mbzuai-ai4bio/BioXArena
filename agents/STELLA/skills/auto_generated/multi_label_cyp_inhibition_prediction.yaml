@@ -1,0 +1,75 @@
+skill_id: multi_label_cyp_inhibition_prediction
+version: 1.0.0
+name: Multi-Label CYP Inhibition Prediction with Gradient Boosting
+domain: drug_discovery
+description: Predicts multi-label Cytochrome P450 (CYP) inhibition profiles from SMILES
+  strings by generating RDKit molecular fingerprints and training an ensemble of XGBoost
+  or LightGBM models.
+workflow:
+- step: 1
+  action: execute
+  description: 1. Data exploration revealed high missingness (-1 labels) for 5 CYP
+    isoforms. 2. Used RDKit to extract Morgan fingerprints (ECFP4, 2048 bits) from
+    SMILES. 3. Implemented individual classifiers for each CYP isoform due to high
+    missingness. 4. Used XGBoost with scale_pos_weight to handle class imbalance.
+    5. 5-fold cross-validation for robust evaluation. 6. Generated probabilities for
+    test set. 7. Saved submission.csv, metrics.json, solution.py, and model weights.
+  tools_required:
+  - dev_agent
+  - RDKit
+  - pandas
+  - numpy
+  - scikit-learn
+  - xgboost
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: dev_agent
+  version: '>=1.0.0'
+  optional: false
+- tool_id: RDKit
+  version: '>=1.0.0'
+  optional: false
+- tool_id: pandas
+  version: '>=1.0.0'
+  optional: false
+- tool_id: numpy
+  version: '>=1.0.0'
+  optional: false
+- tool_id: scikit-learn
+  version: '>=1.0.0'
+  optional: false
+- tool_id: xgboost
+  version: '>=1.0.0'
+  optional: false
+tags:
+- drug-discovery
+- cheminformatics
+- multi-label-classification
+- rdkit
+- xgboost
+- molecular-fingerprints
+- admet-prediction
+applicable_queries:
+- '* prediction from SMILES strings using * fingerprints'
+- Multi-label * inhibition prediction *
+- Predict * properties using XGBoost and RDKit
+- Build * ensemble model for drug discovery *
+- Classify * molecular activity using LightGBM
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-17'
+  created_at: '2026-04-17'
+  last_updated: '2026-04-17'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260417_082744_bc69f1
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-17'
+    changes: Auto-created from successful run
+status: active

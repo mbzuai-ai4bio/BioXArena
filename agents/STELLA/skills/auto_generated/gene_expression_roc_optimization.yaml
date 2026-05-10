@@ -1,0 +1,64 @@
+skill_id: gene_expression_roc_optimization
+version: 1.0.0
+name: High-Performance Gene Expression Classification
+domain: biomedical_ml
+description: A workflow for optimizing gene expression classification models using
+  feature engineering and ROC-AUC maximization through multi-source data integration
+  and iterative evaluation.
+workflow:
+- step: 1
+  action: execute
+  description: 1. Start with simple models (XGBoost/RF) for baseline, 2. Implement
+    comprehensive feature engineering for gene expression data, 3. Use domain-specific
+    text embeddings (BioBERT), 4. Apply hyperparameter optimization with cross-validation,
+    5. Use ensemble methods for final prediction, 6. Target ROC-AUC >0.85
+  tools_required:
+  - multi_source_search
+  - retrieve_similar_skills
+  - dev_agent
+  - evaluate_with_critic
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: multi_source_search
+  version: '>=1.0.0'
+  optional: false
+- tool_id: retrieve_similar_skills
+  version: '>=1.0.0'
+  optional: false
+- tool_id: dev_agent
+  version: '>=1.0.0'
+  optional: false
+- tool_id: evaluate_with_critic
+  version: '>=1.0.0'
+  optional: false
+tags:
+- biomedical-ml
+- gene-expression
+- roc-auc-optimization
+- feature-engineering
+- classification
+- bioinformatics
+- model-evaluation
+applicable_queries:
+- '*gene expression classification*'
+- '*optimize ROC-AUC*biomedical*'
+- '*high-performance*genomic*model*'
+- '*classify*gene*data*validation*'
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-17'
+  created_at: '2026-04-17'
+  last_updated: '2026-04-17'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260417_212519_5dc72a
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-17'
+    changes: Auto-created from successful run
+status: active

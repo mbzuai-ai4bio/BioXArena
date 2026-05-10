@@ -1,0 +1,13 @@
+# Plan Agent output (including parameters for this round and the multi-round retrieval strategy)
+{plan_output}
+
+# Initial retrieval parameters for the current round (can be adjusted later under the multi-round strategy)
+
+query: {query}
+top_k: {top_k}
+threshold: {threshold}
+vec_dir: {vec_dir}
+nodes_data: {nodes_data}
+embedding_type: {embedding_type}
+embedding_dimensions: {embedding_dimensions}
+

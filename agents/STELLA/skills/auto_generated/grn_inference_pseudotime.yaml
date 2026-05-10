@@ -1,0 +1,80 @@
+skill_id: grn_inference_pseudotime
+version: 1.0.0
+name: Gene Regulatory Network Inference with Pseudotime
+domain: genomics
+description: Infers gene regulatory networks from single-cell RNA sequencing data
+  by integrating pseudotime trajectories with tree-based ensemble regressors like
+  GRNBoost2 and XGBoost.
+workflow:
+- step: 1
+  action: execute
+  description: "1. Analyzed task requirements: GRN inference from scRNA-seq with pseudotime\n\
+    2. Researched state-of-the-art methods: GRNBoost2, SINCERITIES, correlation features\n\
+    3. Designed ensemble approach combining multiple inference methods\n4. Implemented\
+    \ data loading from JSONL.gz format\n5. Created feature engineering pipeline:\n\
+    \   - GRNBoost2 regulatory scores\n   - SINCERITIES pseudotime-based scores\n\
+    \   - Correlation features (Pearson, Spearman, time-lagged)\n   - Statistical\
+    \ features\n6. Trained XGBoost mode"
+  tools_required:
+  - xgboost
+  - grnboost2
+  - arboreto
+  - pandas
+  - numpy
+  - scipy
+  - sklearn
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: xgboost
+  version: '>=1.0.0'
+  optional: false
+- tool_id: grnboost2
+  version: '>=1.0.0'
+  optional: false
+- tool_id: arboreto
+  version: '>=1.0.0'
+  optional: false
+- tool_id: pandas
+  version: '>=1.0.0'
+  optional: false
+- tool_id: numpy
+  version: '>=1.0.0'
+  optional: false
+- tool_id: scipy
+  version: '>=1.0.0'
+  optional: false
+- tool_id: sklearn
+  version: '>=1.0.0'
+  optional: false
+tags:
+- genomics
+- single-cell
+- gene-regulatory-networks
+- pseudotime
+- arboreto
+- xgboost
+- bioinformatics
+applicable_queries:
+- BioXArena gene regulatory network inference*
+- infer GRN from single-cell expression*
+- reconstruct gene networks using pseudotime*
+- GRNBoost2 network inference from scRNA-seq*
+- gene regulatory network analysis with arboreto*
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-17'
+  created_at: '2026-04-17'
+  last_updated: '2026-04-17'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260417_125132_b96b80
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-17'
+    changes: Auto-created from successful run
+status: active

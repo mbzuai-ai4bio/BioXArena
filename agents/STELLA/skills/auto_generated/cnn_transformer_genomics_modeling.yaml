@@ -1,0 +1,56 @@
+skill_id: cnn_transformer_genomics_modeling
+version: 1.0.0
+name: CNN-Transformer Hybrid Modeling for DNA Sequences
+domain: genomics
+description: A workflow for building and training hybrid deep learning architectures
+  that combine convolutional layers for local motif detection with transformers for
+  long-range genomic dependencies.
+workflow:
+- step: 1
+  action: execute
+  description: 1. Data exploration, 2. One-hot encoding of DNA sequences, 3. CNN for
+    motif detection, 4. Transformer for sequence context, 5. Class weights for imbalance,
+    6. GPU training, 7. Generate predictions
+  tools_required:
+  - dev_agent
+  - critic_agent
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: dev_agent
+  version: '>=1.0.0'
+  optional: false
+- tool_id: critic_agent
+  version: '>=1.0.0'
+  optional: false
+tags:
+- genomics
+- deep-learning
+- cnn-transformer
+- regulatory-elements
+- dna-sequence-analysis
+- bioinformatics
+- pytorch-tensorflow
+applicable_queries:
+- Implement * hybrid model for * DNA sequences
+- Detect regulatory elements from * genomic data
+- Train a CNN-Transformer on * sequence motifs
+- Build a deep learning pipeline for * sequence classification
+- Predict * from DNA sequences using hybrid architectures
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-09'
+  created_at: '2026-04-09'
+  last_updated: '2026-04-09'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260409_035012_3783ff
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-09'
+    changes: Auto-created from successful run
+status: active

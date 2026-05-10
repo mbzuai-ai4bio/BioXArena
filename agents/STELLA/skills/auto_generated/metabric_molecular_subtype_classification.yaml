@@ -1,0 +1,77 @@
+skill_id: metabric_molecular_subtype_classification
+version: 1.0.0
+name: Multi-Modal Breast Cancer Subtype Classification
+domain: genomics
+description: A machine learning workflow that integrates clinical data and gene expression
+  profiles from the METABRIC dataset to classify breast cancer molecular subtypes.
+workflow:
+- step: 1
+  action: execute
+  description: '1. Data exploration to understand structure of 17 clinical + 200 gene
+    expression features
+
+    2. Separate preprocessing for clinical (categorical encoding, missing value handling)
+    vs gene expression (normalization)
+
+    3. Feature engineering considering multi-modal nature
+
+    4. Model selection: Ensemble methods (XGBoost/Random Forest) or neural networks
+    for 7-class classification
+
+    5. GPU acceleration for deep learning models
+
+    6. Macro F1 score optimization
+
+    7. Proper file generation with submission.csv, metri'
+  tools_required:
+  - dev_agent
+  - multi_source_search
+  - search_github_repositories
+  - run_shell_command
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: dev_agent
+  version: '>=1.0.0'
+  optional: false
+- tool_id: multi_source_search
+  version: '>=1.0.0'
+  optional: false
+- tool_id: search_github_repositories
+  version: '>=1.0.0'
+  optional: false
+- tool_id: run_shell_command
+  version: '>=1.0.0'
+  optional: false
+tags:
+- genomics
+- breast-cancer
+- metabric
+- multi-modal-learning
+- gene-expression
+- clinical-data-integration
+- molecular-classification
+- bioinformatics-pipeline
+applicable_queries:
+- '* cancer molecular subtype classification *'
+- '* METABRIC dataset * gene expression *'
+- Predict * subtypes using multi-modal * data
+- Classify * cancer using clinical and genomic features
+- Machine learning pipeline for * genomic datasets
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-17'
+  created_at: '2026-04-17'
+  last_updated: '2026-04-17'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260417_155435_c0575f
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-17'
+    changes: Auto-created from successful run
+status: active

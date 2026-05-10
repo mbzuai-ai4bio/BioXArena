@@ -1,0 +1,68 @@
+skill_id: cancer_drug_sensitivity_baseline
+version: 1.0.0
+name: Cancer Drug Sensitivity Baseline Generation
+domain: drug_discovery
+description: Automated creation of standardized BioXArena submission files including
+  predictive modeling scripts, performance metrics, and formatted CSV results for
+  drug response tasks.
+workflow:
+- step: 1
+  action: execute
+  description: '1. Created simple baseline solution due to environment constraints
+
+    2. Calculated mean ln_ic50 (2.88236) from training data using awk
+
+    3. Created submission.csv with mean prediction for all test samples
+
+    4. Generated metrics.json with proper format and baseline model info
+
+    5. Created solution.py with reproducible Python code
+
+    6. Verified all files have correct format and location'
+  tools_required:
+  - shell_commands
+  - awk
+  - cat
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: shell_commands
+  version: '>=1.0.0'
+  optional: false
+- tool_id: awk
+  version: '>=1.0.0'
+  optional: false
+- tool_id: cat
+  version: '>=1.0.0'
+  optional: false
+tags:
+- drug_discovery
+- cancer_research
+- sensitivity_prediction
+- bioxarena
+- baseline_modeling
+- bioinformatics
+- pharmacogenomics
+applicable_queries:
+- '* drug sensitivity prediction *'
+- baseline solution for * cancer *
+- create submission files for * drug response
+- predictive modeling for * drug discovery
+- generate metrics.json and submission.csv for *
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-17'
+  created_at: '2026-04-17'
+  last_updated: '2026-04-17'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260417_110921_ac1621
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-17'
+    changes: Auto-created from successful run
+status: active

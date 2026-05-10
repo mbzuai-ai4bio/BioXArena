@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "esModuleInterop": true,
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
+    "strict": false,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "paths": {
+      "openclaw/plugin-sdk/feishu": ["./openclaw-compat/plugin-sdk/feishu.ts"],
+      "openclaw/plugin-sdk/compat": ["./openclaw-compat/plugin-sdk/compat.ts"],
+      "openclaw/plugin-sdk/account-id": ["./openclaw-compat/plugin-sdk/account-id.ts"]
+    }
+  },
+  "include": ["bridge/**/*.ts", "openclaw-compat/**/*.ts", "plugins/**/*.ts"]
+}

@@ -1,0 +1,70 @@
+skill_id: cancer_drug_sensitivity_lightgbm
+version: 1.0.0
+name: Cancer Drug Sensitivity Prediction with LightGBM
+domain: drug_discovery
+description: Predicts drug response in cancer cell lines using LightGBM regression
+  with automated feature engineering and Spearman correlation evaluation.
+workflow:
+- step: 1
+  action: execute
+  description: '1. Data exploration revealed 203,972 training samples with 13 features
+
+    2. Feature engineering: categorical encoding, numerical scaling, drug-cancer type
+    interactions
+
+    3. Model selection: LightGBM outperformed alternatives for tabular regression
+
+    4. Implementation: 5-fold cross-validation for robust evaluation
+
+    5. Results: 0.9879 Spearman correlation, excellent predictive performance'
+  tools_required:
+  - dev_agent
+  - pandas
+  - sklearn
+  - lightgbm
+  parameters: {}
+  agent: manager
+tools_required:
+- tool_id: dev_agent
+  version: '>=1.0.0'
+  optional: false
+- tool_id: pandas
+  version: '>=1.0.0'
+  optional: false
+- tool_id: sklearn
+  version: '>=1.0.0'
+  optional: false
+- tool_id: lightgbm
+  version: '>=1.0.0'
+  optional: false
+tags:
+- drug-discovery
+- lightgbm
+- cancer-informatics
+- sensitivity-prediction
+- feature-engineering
+- bioinformatics
+- machine-learning
+applicable_queries:
+- '* drug sensitivity prediction *'
+- Predict cancer drug response using *
+- '* LightGBM * drug discovery *'
+- Analyze * drug resistance with feature engineering
+- Build * model for IC50 prediction *
+quality_metrics:
+  success_count: 2
+  failure_count: 0
+  avg_completion_time_sec: 0
+  avg_critic_score: 0.7
+  last_used: '2026-04-09'
+  created_at: '2026-04-09'
+  last_updated: '2026-04-09'
+provenance:
+  created_by: auto_summarizer
+  source_run_id: run_20260409_043003_5de149
+  parent_skill_id: null
+  changelog:
+  - version: 1.0.0
+    date: '2026-04-09'
+    changes: Auto-created from successful run
+status: active
