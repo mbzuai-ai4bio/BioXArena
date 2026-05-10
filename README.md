@@ -244,7 +244,7 @@ metrics.json
 
 #### Extending to new agents
 
-To integrate a new agent into the BioXArena evaluation pipeline, ensure the following (you may refer to the existing agent runner Python scripts under `training/`):
+To integrate a new agent into the BioXArena evaluation pipeline, ensure the following (you may refer to the existing agent runner scripts under `training/`):
 
 1. Outputs follow the standardized directory structure:
 
