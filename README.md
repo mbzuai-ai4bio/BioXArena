@@ -15,7 +15,7 @@ This repository contains the evaluation code for **BioXArena**, our benchmark fo
 
 ## 📰 News
 
-- **[2026.05.10]** We open-sourced the **BioXArena** codebase and released the [project page](https://leagein.github.io/BioXArena-ProjectPage/).
+- **[2026.05.10]** We open-sourced the **BioXArena** codebase and released the [project page](https://mbzuai-ai4bio.github.io/BioXArena-ProjectPage/).
 
 ## How to Use
 
@@ -23,12 +23,12 @@ This repository contains the evaluation code for **BioXArena**, our benchmark fo
 
 Before running any evaluation, download **BioXArena-Data-Public** from Hugging Face:
 
-https://huggingface.co/datasets/Leagein/BioXArena-Data-Public
+https://huggingface.co/datasets/mbzuai-ai4bio/BioXArena-Data-Public
 
 Use the following commands:
 
 ```bash
-wget "https://huggingface.co/datasets/Leagein/BioXArena-Data-Public/resolve/main/BioXArena-Data-Public.tar.gz" -O BioXArena-Data-Public.tar.gz
+wget "https://huggingface.co/datasets/mbzuai-ai4bio/BioXArena-Data-Public/resolve/main/BioXArena-Data-Public.tar.gz" -O BioXArena-Data-Public.tar.gz
 tar -xzf BioXArena-Data-Public.tar.gz
 ```
 
@@ -59,7 +59,7 @@ conda activate bioxbench
 First, clone the repository and move into it:
 
 ```bash
-git clone git@github.com:Leagein/BioXArena.git
+git clone git@github.com:mbzuai-ai4bio/BioXArena.git
 cd BioXArena
 ```
 
