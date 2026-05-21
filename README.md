@@ -144,7 +144,12 @@ You can also add more agents, including your own LLM agents, by following the sa
 
 #### Special notes
 
-For the **Biomni** agent, you must download the Biomni data lake in advance and place `biomni_data/` under `PREFIX_DIR`.
+For the **Biomni** agent, you must download the Biomni data lake in advance and place `biomni_data/` under `PREFIX_DIR`. 
+You may either use the shared `bioxbench` environment or create its dedicated environment (`biomni_e1`) as follows.
+```bash
+cd BioXArena/agents/Biomni/biomni_env
+conda env create -f environment.yml
+```
 
 For **MLEvolve** or **mlmaster2.0**, you may either use the shared `bioxbench` environment or create their dedicated environments as follows.
 
