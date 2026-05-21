@@ -262,17 +262,20 @@ def get_llm(
         # For Anthropic models via OpenRouter, force routing to the native
         # Anthropic provider so that assistant-message prefill is supported.
         extra_kwargs = {}
+        model_kwargs = {}
         if "openrouter.ai" in (base_url or "") and "anthropic" in (model or "").lower():
-            extra_kwargs["extra_headers"] = {
+            model_kwargs["extra_headers"] = {
                 "HTTP-Referer": "https://bioxarena.github.io",
                 "X-Title": "BioXArena",
             }
-            extra_kwargs["extra_body"] = {
+            model_kwargs["extra_body"] = {
                 "provider": {
                     "order": ["Anthropic"],
                     "allow_fallbacks": False,
                 },
             }
+        if model_kwargs:
+            extra_kwargs["model_kwargs"] = model_kwargs
         llm = ChatOpenAI(
             model=model,
             temperature=temperature,

@@ -1,5 +1,6 @@
 import base64
 import io
+import re
 import sys
 from io import StringIO
 
@@ -18,7 +19,9 @@ def run_python_repl(command: str) -> str:
     def execute_in_repl(command: str) -> str:
         """Helper function to execute the command in the persistent environment."""
         old_stdout = sys.stdout
+        old_stderr = sys.stderr
         sys.stdout = mystdout = StringIO()
+        sys.stderr = mystderr = StringIO()
 
         # Use the persistent namespace
         global _persistent_namespace
@@ -26,22 +29,52 @@ def run_python_repl(command: str) -> str:
         try:
             # Apply matplotlib monkey patches before execution
             _apply_matplotlib_patches()
+            _suppress_noisy_native_logs()
 
             # Execute the command in the persistent namespace
             exec(command, _persistent_namespace)
-            output = mystdout.getvalue()
+            output = _merge_and_filter_repl_output(mystdout.getvalue(), mystderr.getvalue())
 
             # Capture any matplotlib plots that were generated
             # _capture_matplotlib_plots()
 
         except Exception as e:
+            filtered_stderr = _filter_repl_stderr(mystderr.getvalue())
             output = f"Error: {str(e)}"
+            if filtered_stderr:
+                output = filtered_stderr + "\n" + output
         finally:
             sys.stdout = old_stdout
+            sys.stderr = old_stderr
         return output
 
     command = command.strip("```").strip()
     return execute_in_repl(command)
+
+
+def _filter_repl_stderr(stderr_text: str) -> str:
+    """Remove known-noisy RDKit deprecation spam while preserving other stderr output."""
+    if not stderr_text:
+        return ""
+    pattern = re.compile(r"^\[\d{2}:\d{2}:\d{2}\] DEPRECATION WARNING: please use MorganGenerator$")
+    kept_lines = [line for line in stderr_text.splitlines() if not pattern.match(line.strip())]
+    return "\n".join(kept_lines).strip()
+
+
+def _merge_and_filter_repl_output(stdout_text: str, stderr_text: str) -> str:
+    filtered_stderr = _filter_repl_stderr(stderr_text)
+    parts = [part for part in (stdout_text.strip(), filtered_stderr) if part]
+    return "\n".join(parts)
+
+
+def _suppress_noisy_native_logs():
+    """Silence known-noisy native library warnings that bypass Python stderr."""
+    try:
+        from rdkit import rdBase
+
+        rdBase.DisableLog("rdApp.warning")
+    except Exception:
+        pass
 
 
 def _capture_matplotlib_plots():

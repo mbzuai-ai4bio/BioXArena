@@ -147,6 +147,9 @@ class A1:
         print("=" * 50 + "\n")
 
         self.path = path
+        self.llm_model = llm
+        self.llm_source = source
+        self.llm_base_url = base_url
 
         if not os.path.exists(path):
             os.makedirs(path)
@@ -202,8 +205,11 @@ class A1:
             api_key=api_key,
             config=default_config,
         )
+        self.token_usage = {"input_tokens": 0, "output_tokens": 0}
+        self._install_usage_tracker()
         self.module2api = module2api
         self.use_tool_retriever = use_tool_retriever
+        self.observations_as_user_messages = self._requires_user_terminal_messages()
 
         if self.use_tool_retriever:
             self.tool_registry = ToolRegistry(module2api)
@@ -221,6 +227,88 @@ class A1:
         # Add timeout parameter
         self.timeout_seconds = timeout_seconds  # 10 minutes default timeout
         self.configure()
+
+    def _requires_user_terminal_messages(self) -> bool:
+        """Return True for models that reject assistant-prefill requests."""
+        model_name = str(
+            getattr(self.llm, "model_name", "")
+            or getattr(self.llm, "model", "")
+            or self.llm_model
+            or ""
+        ).lower()
+        source = str(self.llm_source or "").lower()
+        base_url = str(
+            self.llm_base_url
+            or getattr(self.llm, "openai_api_base", "")
+            or getattr(self.llm, "base_url", "")
+            or ""
+        ).lower()
+
+        is_claude_46 = "claude" in model_name and "4.6" in model_name
+        is_anthropic_route = "anthropic" in model_name or source == "anthropic" or "openrouter.ai" in base_url
+        return is_claude_46 and is_anthropic_route
+
+    def _observation_message(self, observation: str) -> BaseMessage:
+        if self.observations_as_user_messages:
+            return HumanMessage(content=observation)
+        return AIMessage(content=observation)
+
+    @staticmethod
+    def _safe_int(value) -> int:
+        try:
+            if value is None:
+                return 0
+            return int(value)
+        except (TypeError, ValueError):
+            return 0
+
+    def _extract_token_usage(self, response) -> dict[str, int]:
+        usage = getattr(response, "usage_metadata", None)
+        if not usage:
+            response_metadata = getattr(response, "response_metadata", None) or {}
+            usage = response_metadata.get("token_usage") or response_metadata.get("usage") or {}
+
+        input_tokens = self._safe_int(
+            usage.get("input_tokens")
+            or usage.get("prompt_tokens")
+            or usage.get("input_token_count")
+            or usage.get("prompt_token_count")
+        )
+        output_tokens = self._safe_int(
+            usage.get("output_tokens")
+            or usage.get("completion_tokens")
+            or usage.get("output_token_count")
+            or usage.get("completion_token_count")
+        )
+        return {"input_tokens": input_tokens, "output_tokens": output_tokens}
+
+    def _record_token_usage_from_response(self, response) -> None:
+        usage = self._extract_token_usage(response)
+        self.token_usage["input_tokens"] += usage["input_tokens"]
+        self.token_usage["output_tokens"] += usage["output_tokens"]
+
+    def _install_usage_tracker(self) -> None:
+        try:
+            original_invoke = self.llm.invoke
+        except AttributeError:
+            return
+
+        if getattr(original_invoke, "_biomni_usage_tracked", False):
+            return
+
+        def invoke_with_usage(*args, **kwargs):
+            response = original_invoke(*args, **kwargs)
+            self._record_token_usage_from_response(response)
+            return response
+
+        invoke_with_usage._biomni_usage_tracked = True
+        object.__setattr__(self.llm, "invoke", invoke_with_usage)
+
+    def get_token_usage(self) -> dict[str, int]:
+        return {
+            "input_tokens": int(self.token_usage.get("input_tokens", 0)),
+            "output_tokens": int(self.token_usage.get("output_tokens", 0)),
+        }
 
     def add_tool(self, api):
         """Add a new tool to the agent's tool registry and make it available for retrieval.
@@ -1547,8 +1635,8 @@ Each library is listed with its description to help you understand its functiona
                 }
                 self._execution_results.append(execution_entry)
 
-                observation = f"\n<observation>{result}</observation>"
-                state["messages"].append(AIMessage(content=observation.strip()))
+                observation = f"\n<observation>{result}</observation>".strip()
+                state["messages"].append(self._observation_message(observation))
 
             return state
 
