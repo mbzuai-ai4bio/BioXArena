@@ -13,6 +13,20 @@ This repository contains the evaluation code for **BioXArena**, our benchmark fo
   <p><strong>Join our WeChat group for discussions and updates!</strong></p>
 </div>
 
+
+## 📧 Contact
+
+For any questions, suggestions, submission evaluations, or collaboration opportunities, please feel free to reach:
+
+**Loka Li**  
+📧 Email:  [loka.li@mbzuai.ac.ae](mailto:loka.li@mbzuai.ac.ae)
+
+**Duzhen Zhang**  
+📧 Email:  [duzhen.zhang@mbzuai.ac.ae](mailto:duzhen.zhang@mbzuai.ac.ae)
+
+**Xingbo Du**  
+📧 Email:  [xingbo.du@mbzuai.ac.ae](mailto:xingbo.du@mbzuai.ac.ae)
+
 ## 📰 News
 
 - **[2026.05.10]** We open-sourced the **BioXArena** codebase and released the [project page](https://mbzuai-ai4bio.github.io/BioXArena-ProjectPage/).
