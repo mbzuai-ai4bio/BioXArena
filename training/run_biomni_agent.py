@@ -138,6 +138,42 @@ def build_biomni_prompt(prompt_template: str, task_spec: TaskSpec) -> str:
     return prompt
 
 
+def _coerce_float(value: Any) -> float:
+    try:
+        if value is None:
+            return 0.0
+        return float(value)
+    except (TypeError, ValueError):
+        return 0.0
+
+
+def _backfill_metrics(output_dir: Path, duration_sec: float, token_usage: dict[str, int] | None) -> None:
+    metrics_path = output_dir / "metrics.json"
+    if not metrics_path.exists():
+        return
+
+    try:
+        metrics = json.loads(metrics_path.read_text(encoding="utf-8"))
+    except Exception:
+        return
+
+    train_time = max(0.0, _coerce_float(metrics.get("train_time_sec")))
+    test_time = max(0.0, _coerce_float(metrics.get("test_time_sec")))
+    code_total_time = round(max(0.0, duration_sec), 2)
+    solution_generation_time = round(max(0.0, code_total_time - train_time - test_time), 2)
+
+    metrics["solution_generation_time_sec"] = solution_generation_time
+    metrics["train_time_sec"] = round(train_time, 2)
+    metrics["test_time_sec"] = round(test_time, 2)
+    metrics["code_total_time_sec"] = code_total_time
+
+    if token_usage is not None:
+        metrics["input_tokens"] = int(token_usage.get("input_tokens", 0))
+        metrics["output_tokens"] = int(token_usage.get("output_tokens", 0))
+
+    metrics_path.write_text(json.dumps(metrics, indent=2), encoding="utf-8")
+
+
 # ---------------------------------------------------------------------------
 # Biomni agent runner
 # ---------------------------------------------------------------------------
@@ -211,15 +247,18 @@ def run_single_task(
 
         # Run agent
         log, final_response = agent.go(prompt)
+        token_usage = agent.get_token_usage()
 
         # Save agent log
         (task_spec.output_dir / "biomni_log.txt").write_text(
             "\n".join(str(entry) for entry in log), encoding="utf-8"
         )
 
+        duration = time.time() - task_start
+        _backfill_metrics(task_spec.output_dir, duration, token_usage)
+
         # Check required outputs
         missing = [f for f in REQUIRED_OUTPUT_LABELS if not (task_spec.output_dir / f).exists()]
-        duration = time.time() - task_start
 
         if missing:
             status = "failed"
