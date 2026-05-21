@@ -18,14 +18,9 @@ This repository contains the evaluation code for **BioXArena**, our benchmark fo
 
 For any questions, suggestions, submission evaluations, or collaboration opportunities, please feel free to reach:
 
-**Loka Li**  
-📧 Email:  [loka.li@mbzuai.ac.ae](mailto:loka.li@mbzuai.ac.ae)
-
-**Duzhen Zhang**  
-📧 Email:  [duzhen.zhang@mbzuai.ac.ae](mailto:duzhen.zhang@mbzuai.ac.ae)
-
-**Xingbo Du**  
-📧 Email:  [xingbo.du@mbzuai.ac.ae](mailto:xingbo.du@mbzuai.ac.ae)
+| **Loka Li** | **Duzhen Zhang** | **Xingbo Du** |
+|:---:|:---:|:---:|
+| 📧 [loka.li@mbzuai.ac.ae](mailto:loka.li@mbzuai.ac.ae) | 📧 [duzhen.zhang@mbzuai.ac.ae](mailto:duzhen.zhang@mbzuai.ac.ae) | 📧 [xingbo.du@mbzuai.ac.ae](mailto:xingbo.du@mbzuai.ac.ae) |
 
 ## 📰 News
 
@@ -290,4 +285,3 @@ At the moment, we have **not yet publicly released** the ground-truth `answers.c
 If you run evaluations for your agents, you can package the contents under `BioXArena-Output/` and send them to us. If the outputs are large, you do **not** need to include all intermediate files—please ensure that for each task, the root directory contains at least the required files (`submission.csv`, `solution.py`, and `metrics.json`), with `submission.csv` being the minimum requirement. You can package only these files and send them to us.
 
 We will compute the final scores using your outputs together with the private answers, return the results to you, and optionally include your submission on our leaderboard.
-
