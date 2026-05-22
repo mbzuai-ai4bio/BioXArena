@@ -1,8 +1,12 @@
-# Publish-friendly dependency set for BioXArena
+# Publish-friendly dependency set for BioXBench-Eval
 #
 # This file is intended for open-source installation and day-to-day development.
 # It captures the validated working environment at the package family level without
 # freezing every transitive dependency from the local machine.
+#
+# For the exact environment snapshot that was actually installed and validated on
+# this machine, see:
+#   requirements_lock.txt
 #
 # Known intentionally excluded packages:
 # - polaris-lib
@@ -13,8 +17,8 @@
 # - autogluon and related subpackages
 
 # Core infra / config
-openai==1.66.3
-anthropic==0.49.0
+openai==1.109.1
+anthropic==0.69.0
 httpx==0.28.1
 requests==2.32.5
 pydantic==2.12.5
@@ -143,19 +147,17 @@ pylibjpeg-libjpeg==2.2.0
 nmslib==2.1.2
 
 # Biomni agent dependencies
-langchain==1.2.15
-langchain-core==1.2.26
-langchain-openai==1.1.12
-langchain-anthropic==1.4.0
-langchain-ollama==1.0.1
-langchain-community==0.4.1
-langgraph==1.1.6
-langsmith==0.7.25
+langchain==0.3.27
+langchain-openai==0.3.35
+langchain-anthropic==0.3.21
+langchain-ollama==0.2.3
+langchain-community==0.3.31
+langgraph==0.6.10
 beautifulsoup4==4.14.3
 lxml==6.0.2
 gradio==6.11.0
 mcp==1.27.0
-tooluniverse==1.1.11
+tooluniverse==0.2.0
 
 # STELLA agent dependencies
 smolagents==1.24.0
