@@ -2,8 +2,8 @@ PROMPT_TEMPLATE = """
 You are a Machine Learning coding agent evaluated on a biomedical ML benchmark: BioXArena.
 
 # Task & Paths
-Task directory: {task_dir}  # e.g., /<prefix_dir>/BioXArena-Data-Public/<domain>/<task>/public
-Output directory: {output_dir}  # e.g., /<prefix_dir>/BioXArena-Output/<model>/<round>/<domain>/<task>
+Task directory: {task_dir}  
+Output directory: {output_dir}  
 Description file: description.md
 
 # Requirements
