@@ -30,6 +30,7 @@ def run_python_repl(command: str) -> str:
             # Apply matplotlib monkey patches before execution
             _apply_matplotlib_patches()
             _suppress_noisy_native_logs()
+            _apply_sklearn_compat_patches()
 
             # Execute the command in the persistent namespace
             exec(command, _persistent_namespace)
@@ -75,6 +76,51 @@ def _suppress_noisy_native_logs():
         rdBase.DisableLog("rdApp.warning")
     except Exception:
         pass
+
+
+def _apply_sklearn_compat_patches():
+    """Restore `mean_squared_error(..., squared=False)` for sklearn>=1.6.
+
+    sklearn 1.6 removed the `squared` kwarg in favor of a dedicated
+    `root_mean_squared_error`. LLM-generated code still routinely writes
+    `squared=False`, which raises a confusing TypeError that burns the
+    agent's iteration budget. Patch once, idempotently, and only when
+    the kwarg is actually missing — so envs with sklearn<1.6 are untouched.
+    """
+    try:
+        import inspect
+
+        import numpy as np
+        from sklearn import metrics as _skm
+    except ImportError:
+        return
+    if getattr(_skm, "_biomni_compat_patched", False):
+        return
+    orig_mse = _skm.mean_squared_error
+    try:
+        params = inspect.signature(orig_mse).parameters
+    except (TypeError, ValueError):
+        params = {}
+    if "squared" not in params:
+
+        def mean_squared_error_compat(
+            y_true,
+            y_pred,
+            *,
+            sample_weight=None,
+            multioutput="uniform_average",
+            squared=True,
+        ):
+            mse = orig_mse(
+                y_true,
+                y_pred,
+                sample_weight=sample_weight,
+                multioutput=multioutput,
+            )
+            return mse if squared else np.sqrt(mse)
+
+        _skm.mean_squared_error = mean_squared_error_compat
+    _skm._biomni_compat_patched = True
 
 
 def _capture_matplotlib_plots():

@@ -1469,10 +1469,42 @@ Each library is listed with its description to help you understand its functiona
         def generate(state: AgentState) -> AgentState:
             # Add OpenAI-specific formatting reminders if using OpenAI models
             system_prompt = self.system_prompt
-            if hasattr(self.llm, "model_name") and (
-                "gpt" in str(self.llm.model_name).lower() or "openai" in str(type(self.llm)).lower()
-            ):
-                system_prompt += "\n\nIMPORTANT FOR GPT MODELS: You MUST use XML tags <execute> or <solution> in EVERY response. Do not use markdown code blocks (```) - use <execute> tags instead."
+            # Gate strictly on model name, not on the LLM class. Under the
+            # Custom + OpenRouter setup every backend (Claude, Gemini, Qwen,
+            # DeepSeek, GLM, ...) is wrapped in ChatOpenAI, so a class-based
+            # check would leak this GPT-specific prompt to all of them.
+            model_name_lower = str(getattr(self.llm, "model_name", "")).lower()
+            is_gpt_model = (
+                "gpt" in model_name_lower
+                or model_name_lower.startswith("openai/")
+                or any(tag in model_name_lower for tag in ("o1-", "o3-", "o4-"))
+            )
+            if is_gpt_model:
+                system_prompt += (
+                    "\n\nIMPORTANT FOR GPT MODELS: You MUST use XML tags <execute> or <solution> "
+                    "in EVERY response. Do not use markdown code blocks (```) - use <execute> tags "
+                    "instead.\n"
+                    "CRITICAL EXECUTION FORMAT: The content inside <execute>...</execute> is passed "
+                    "DIRECTLY to Python's exec(). It is NOT a shell. The following patterns are "
+                    "FORBIDDEN inside <execute> and will cause `SyntaxError: invalid syntax` or "
+                    "`NameError: name 'python' is not defined`:\n"
+                    "  - Shell heredocs such as `python - << 'PY' ... PY` or `python <<EOF ... EOF`\n"
+                    "  - Shell invocations such as `python script.py`, `python -c \"...\"`, "
+                    "`python -m module`, `pip install ...`, `bash run.sh`, `sh run.sh`\n"
+                    "  - Markdown fences such as ```python ... ```\n"
+                    "Write raw Python statements directly. CORRECT example:\n"
+                    "<execute>\nimport pandas as pd\ndf = pd.read_csv('train.csv')\n"
+                    "print(df.head())\n</execute>\n"
+                    "If you genuinely need a shell command (e.g. `pip install`), start the block "
+                    "with `#!BASH` on its own first line, e.g. "
+                    "<execute>#!BASH\npip install rdkit-pypi</execute>.\n"
+                    "ENVIRONMENT QUIRK: This sklearn version does NOT accept "
+                    "`mean_squared_error(..., squared=False)` — that kwarg was removed in "
+                    "sklearn>=1.6. For RMSE, either call "
+                    "`sklearn.metrics.root_mean_squared_error(y_true, y_pred)` if available, "
+                    "or compute it manually as "
+                    "`float(np.sqrt(((y_true - y_pred) ** 2).mean()))`."
+                )
 
             messages = [SystemMessage(content=system_prompt)] + state["messages"]
             response = self.llm.invoke(messages)
@@ -1597,12 +1629,43 @@ Each library is listed with its description to help you understand its functiona
                         result = run_with_timeout(run_bash_script, [bash_script], timeout=timeout)
                 # Otherwise, run as Python code
                 else:
-                    # Clear any previous plots before execution
-                    self._clear_execution_plots()
+                    # Defensive fallback for GPT-style mistakes: GPT models sometimes
+                    # wrap their Python in a shell heredoc (`python - << 'PY' ... PY`)
+                    # or invoke it as a shell command (`python script.py`,
+                    # `pip install ...`). Without correction these would be exec'd as
+                    # Python and fail with a confusing "invalid syntax" / NameError,
+                    # burning the agent's iteration budget. Detect those forms and
+                    # either unwrap the heredoc or route to bash. The patterns are
+                    # strict enough that they cannot match well-formed Python.
+                    py_code = code
+                    routed_to_bash = False
+                    stripped_code = code.strip()
+                    heredoc_match = re.match(
+                        r"^python[23]?\s+-\s*<<\s*['\"]?(\w+)['\"]?\s*\n(.*?)\n\s*\1\s*$",
+                        stripped_code,
+                        re.DOTALL,
+                    )
+                    if heredoc_match:
+                        py_code = heredoc_match.group(2)
+                    else:
+                        first_line = stripped_code.split("\n", 1)[0].strip()
+                        if re.match(
+                            r"^(python[23]?|pip[23]?|bash|sh)\s+[\-\w]",
+                            first_line,
+                        ):
+                            routed_to_bash = True
 
-                    # Inject custom functions into the Python execution environment
-                    self._inject_custom_functions_to_repl()
-                    result = run_with_timeout(run_python_repl, [code], timeout=timeout)
+                    if routed_to_bash:
+                        result = run_with_timeout(
+                            run_bash_script, [stripped_code], timeout=timeout
+                        )
+                    else:
+                        # Clear any previous plots before execution
+                        self._clear_execution_plots()
+
+                        # Inject custom functions into the Python execution environment
+                        self._inject_custom_functions_to_repl()
+                        result = run_with_timeout(run_python_repl, [py_code], timeout=timeout)
 
                     # Plots are now captured directly in the execution entry above
 
