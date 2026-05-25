@@ -1601,9 +1601,17 @@ Each library is listed with its description to help you understand its functiona
             if "<execute>" in last_message and "</execute>" not in last_message:
                 last_message += "</execute>"
 
-            execute_match = re.search(r"<execute>(.*?)</execute>", last_message, re.DOTALL)
-            if execute_match:
-                code = execute_match.group(1)
+            # GPT-5.x via OpenRouter often emits MULTIPLE <execute>...</execute>
+            # blocks back-to-back in a single response (stop sequences aren't
+            # honored by every route). The model intends each block to run.
+            # Concatenate all blocks so a file-inspect block followed by a
+            # train block followed by a save block all execute, instead of
+            # silently dropping everything after the first one. The Python
+            # REPL namespace persists across calls anyway, so concatenating
+            # is semantically equivalent to running them sequentially.
+            all_blocks = re.findall(r"<execute>(.*?)</execute>", last_message, re.DOTALL)
+            if all_blocks:
+                code = "\n\n".join(all_blocks) if len(all_blocks) > 1 else all_blocks[0]
 
                 # Set timeout duration (10 minutes = 600 seconds)
                 timeout = self.timeout_seconds
