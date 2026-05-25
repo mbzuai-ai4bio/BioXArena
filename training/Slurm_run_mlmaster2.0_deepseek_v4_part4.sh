@@ -1,5 +1,6 @@
 #!/bin/bash
 
+export PYTHONUNBUFFERED=1
 python -c "import torch; print('CUDA:', torch.cuda.is_available(), 'Version:', torch.version.cuda)"
 
 set -euo pipefail

@@ -283,6 +283,8 @@ def get_llm(
             stop_sequences=stop_sequences,
             base_url=base_url,
             api_key=api_key,
+            timeout=300,
+            max_retries=3,
             **extra_kwargs,
         )
         return llm
