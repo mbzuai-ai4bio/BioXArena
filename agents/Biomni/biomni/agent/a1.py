@@ -1555,10 +1555,17 @@ Each library is listed with its description to help you understand its functiona
             # Add the message to the state before checking for errors
             state["messages"].append(AIMessage(content=msg.strip()))
 
-            if answer_match:
-                state["next_step"] = "end"
-            elif execute_match:
+            # When a model emits BOTH <execute> and <solution> in the same
+            # response (commonly seen with GPT-5.x via OpenRouter, where the
+            # `stop` sequences are not always honored), the <solution> block
+            # is usually just a "done" claim while <execute> contains the
+            # actual code that produces the artifact. For benchmarks like
+            # BioXArena the deliverable is files on disk, never text inside
+            # <solution>, so we must run the code rather than trust the claim.
+            if execute_match:
                 state["next_step"] = "execute"
+            elif answer_match:
+                state["next_step"] = "end"
             elif think_match:
                 state["next_step"] = "generate"
             else:
