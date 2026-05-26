@@ -1228,6 +1228,19 @@ For R code, use the #!R marker at the beginning of your code block to indicate i
 For Bash scripts and commands, use the #!BASH marker at the beginning of your code block. This allows for both simple commands and multi-line scripts with variables, loops, conditionals, loops, and other Bash features.
 
 In each response, you must include EITHER <execute> or <solution> tag. Not both at the same time. Do not respond with messages without any tags. No empty messages.
+
+COMPUTE BUDGET (CRITICAL):
+Each task has a hard 2-hour (7200s) wall-clock limit. Prefer fast baselines and incremental delivery over exhaustive search.
+- Save submission.csv, metrics.json, and solution.py EARLY with a simple working model (e.g. one linear or tree baseline), then iterate to improve. A simple submitted result beats a sophisticated unfinished one.
+- Default to 3-fold CV (not 5-fold) unless the dataset has fewer than 2000 rows.
+- Default to 1-2 candidate models, not 4+. ExtraTrees + LightGBM is usually sufficient for tabular baselines.
+- For datasets with >500 features, avoid KNN (distance computation scales poorly in high dimensions); prefer linear models or LightGBM/XGBoost.
+- For image / segmentation tasks, prefer a frozen pretrained backbone + a simple head over end-to-end fine-tuning.
+- For pandas string operations (.lower(), .str.contains(), etc.), always coerce with .astype(str) or .fillna('') first so NaN floats do not crash the call.
+
+LIBRARY GOTCHAS:
+- Avoid CatBoost task_type='GPU' when any categorical feature has more than ~1000 unique values. CatBoost GPU's per-feature CTR computation OOMs on high-cardinality categoricals, and the resulting C++ TCatBoostException bypasses Python try/except, crashing the whole process. Use CPU mode (default) or switch to LightGBM/XGBoost with native categorical support for high-cardinality features.
+- When training multiple GPU-using libraries in sequence (e.g. torch feature extraction then LightGBM/CatBoost), explicitly free GPU memory between phases via `torch.cuda.empty_cache()` and `del` of large tensors to avoid native-extension segfaults from CUDA context contention.
 """
 
         # Add self-critic instructions if needed
