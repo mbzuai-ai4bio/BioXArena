@@ -1281,11 +1281,25 @@ For Bash scripts and commands, use the #!BASH marker at the beginning of your co
 
 In each response, you must include EITHER <execute> or <solution> tag. Not both at the same time. Do not respond with messages without any tags. No empty messages.
 
-COMPUTE BUDGET (CRITICAL):
-Each task has a hard 2-hour (7200s) wall-clock limit. Prefer fast baselines and incremental delivery over exhaustive search.
-- Save submission.csv, metrics.json, and solution.py EARLY with a simple working model (e.g. one linear or tree baseline), then iterate to improve. A simple submitted result beats a sophisticated unfinished one.
-- Default to 3-fold CV (not 5-fold) unless the dataset has fewer than 2000 rows.
-- Default to 1-2 candidate models, not 4+. ExtraTrees + LightGBM is usually sufficient for tabular baselines.
+COMPUTE BUDGET — MANDATORY WORKFLOW (read this twice before writing any code):
+
+Each task has a hard 2-hour (7200s) wall-clock limit. Grading only looks at submission.csv, metrics.json, and solution.py on disk. A submitted simple result is graded; a sophisticated unfinished pipeline scores ZERO. Therefore you MUST follow this order:
+
+  STEP 1 (≤2 turns): Inspect the public data, identify the task type (regression/classification/segmentation/...), and confirm input/output schema. Do NOT plan elaborate feature engineering here.
+
+  STEP 2 (within the first ~25% of wall-clock): Build and submit a MINIMAL working baseline. Concretely:
+    - Train ONE simple model (e.g. logistic/linear regression, ExtraTrees, or a single LightGBM with default params). NO cross-validation. NO ensembling. NO hyperparameter tuning.
+    - Generate predictions and SAVE all three files (`submission.csv`, `metrics.json`, `solution.py`) to the output directory.
+    - VERIFY they exist on disk by listing them. Only after this verification is the task in a graded state.
+  This baseline-save step is NON-NEGOTIABLE. Do not skip it. Do not "just one more cell" before saving.
+
+  STEP 3 (remaining time): Iterate to improve. Add features, try other models, do CV, etc. Each time you obtain a better model, OVERWRITE submission.csv / metrics.json / solution.py with the improved version. The previous good files stay valid until you successfully overwrite them.
+
+  RECOVERY RULE: If any iteration step fails (memory error, library crash, timeout, bug), the baseline files from STEP 2 remain on disk. DO NOT emit <solution> claiming "I can't complete the task" — the baseline already counts. Just continue with a simpler fallback or stop optimizing and finalize.
+
+Other guidelines:
+- Default to 3-fold CV (not 5-fold) only if you do CV at all; for STEP 2, no CV.
+- Default to 1-2 candidate models in STEP 3; never try 4+ model families.
 - For datasets with >500 features, avoid KNN (distance computation scales poorly in high dimensions); prefer linear models or LightGBM/XGBoost.
 - For image / segmentation tasks, prefer a frozen pretrained backbone + a simple head over end-to-end fine-tuning.
 - For pandas string operations (.lower(), .str.contains(), etc.), always coerce with .astype(str) or .fillna('') first so NaN floats do not crash the call.
