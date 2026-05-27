@@ -177,3 +177,4 @@ shutup==0.3.0
 
 # MLEvolve agent dependencies
 rank_bm25==0.2.2
+google-genai==2.6.0
