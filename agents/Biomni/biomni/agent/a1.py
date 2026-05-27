@@ -48,6 +48,58 @@ if os.path.exists(".env"):
     print("Loaded environment variables from .env")
 
 
+_DANGEROUS_BASH_PATTERNS: list[tuple[str, str]] = [
+    # Pattern-based process killers — these match the agent's own parent
+    # Python process. GLM-5.1 once self-destructed an entire slurm job
+    # (slurm-158285) by executing `pkill -f python` to "clean up" after a
+    # CUDA assert. Pattern killers have no legitimate use in ML workloads;
+    # if a child process needs killing, do it by PID via subprocess.
+    (r"\bpkill\b", "pkill (matches by pattern — would kill the agent itself)"),
+    (r"\bkillall\b", "killall (matches by process name — would kill the agent itself)"),
+    # System lifecycle
+    (r"\b(shutdown|reboot|poweroff|halt)\b", "system shutdown/reboot"),
+    # rm -rf / variants. The character class catches -rf, -fr, -Rf, -rfv,
+    # --recursive --force, etc.; the target must be exactly `/` or a
+    # top-level system directory (we don't block rm of subpaths).
+    (
+        r"\brm\s+(-\S*[rR]\S*[fF]\S*|-\S*[fF]\S*[rR]\S*|--recursive[^\n;|&]*--force|--force[^\n;|&]*--recursive)\s+/+(?:\s|$)",
+        "rm -rf /",
+    ),
+    (
+        r"\brm\s+(-\S*[rR]\S*[fF]\S*|-\S*[fF]\S*[rR]\S*)\s+/(home|etc|usr|var|bin|sbin|lib|boot|root|opt|lustre)(?:\s|/?\s*$)",
+        "rm -rf of a top-level system directory",
+    ),
+    # Block device wipe
+    (r"\bdd\s+[^|;]*\bof=/dev/(sd|nvme|hd|mmcblk)", "dd to a block device"),
+    (r"\bmkfs\.", "mkfs (format a filesystem)"),
+    (r">\s*/dev/(sd|nvme|hd|mmcblk)", "redirect to a block device"),
+    # Classic fork bomb
+    (r":\(\)\s*\{\s*:\s*\|\s*:\s*&\s*\}\s*;\s*:", "fork bomb"),
+]
+
+
+def _check_bash_safety(script: str) -> str | None:
+    """Return a refusal observation if ``script`` contains a known-dangerous
+    pattern; otherwise return None (caller should run the script normally).
+
+    The check protects against shell commands that can damage the running
+    process (pattern-based process killers), the host (shutdown/reboot,
+    device wipes) or the filesystem (rm -rf at system roots). False
+    positives are essentially zero for ML workloads — these commands have
+    no legitimate use in submission generation.
+    """
+    for pattern, label in _DANGEROUS_BASH_PATTERNS:
+        if re.search(pattern, script):
+            return (
+                f"REFUSED: bash command contains a dangerous pattern: {label}. "
+                f"This command is blocked to protect the agent process and the "
+                f"shared filesystem. If you need process control, terminate a "
+                f"specific child PID via Python subprocess; for error handling "
+                f"use try/except instead of killing processes by pattern."
+            )
+    return None
+
+
 class AgentState(TypedDict):
     messages: list[BaseMessage]
     next_step: str | None
@@ -1650,11 +1702,15 @@ Each library is listed with its description to help you understand its functiona
                         cli_command = re.sub(r"^#!CLI", "", code, count=1).strip()
                         # Remove any newlines to ensure it's a single command
                         cli_command = cli_command.replace("\n", " ")
-                        result = run_with_timeout(run_bash_script, [cli_command], timeout=timeout)
+                        result = _check_bash_safety(cli_command) or run_with_timeout(
+                            run_bash_script, [cli_command], timeout=timeout
+                        )
                     else:
                         # For Bash scripts, remove the marker and run as a bash script
                         bash_script = re.sub(r"^#!BASH|^# Bash script", "", code, count=1).strip()
-                        result = run_with_timeout(run_bash_script, [bash_script], timeout=timeout)
+                        result = _check_bash_safety(bash_script) or run_with_timeout(
+                            run_bash_script, [bash_script], timeout=timeout
+                        )
                 # Otherwise, run as Python code
                 else:
                     # Defensive fallback for GPT-style mistakes: GPT models sometimes
@@ -1684,7 +1740,7 @@ Each library is listed with its description to help you understand its functiona
                             routed_to_bash = True
 
                     if routed_to_bash:
-                        result = run_with_timeout(
+                        result = _check_bash_safety(stripped_code) or run_with_timeout(
                             run_bash_script, [stripped_code], timeout=timeout
                         )
                     else:
