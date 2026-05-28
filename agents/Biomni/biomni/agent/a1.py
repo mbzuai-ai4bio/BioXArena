@@ -1308,6 +1308,17 @@ LIBRARY GOTCHAS:
 - Avoid CatBoost task_type='GPU' when any categorical feature has more than ~1000 unique values. CatBoost GPU's per-feature CTR computation OOMs on high-cardinality categoricals, and the resulting C++ TCatBoostException bypasses Python try/except, crashing the whole process. Use CPU mode (default) or switch to LightGBM/XGBoost with native categorical support for high-cardinality features.
 - When training multiple GPU-using libraries in sequence (e.g. torch feature extraction then LightGBM/CatBoost), explicitly free GPU memory between phases via `torch.cuda.empty_cache()` and `del` of large tensors to avoid native-extension segfaults from CUDA context contention.
 - IMPORTANT: the execution environment is a SINGLE long-lived Python process whose namespace ACCUMULATES every variable across all your <execute> steps. Before running a memory-heavy native operation on a large matrix (PCA / TruncatedSVD / sparse SVD / large matrix multiply, especially on matrices with >100M non-zeros), explicitly `del` any large intermediate arrays you no longer need, then call `import gc; gc.collect()` and (if torch was used) `torch.cuda.empty_cache()`. The single-cell ATAC/RNA tasks have crashed with a silent SIGSEGV at exactly this point because accumulated state left too little headroom for the operation's native malloc. Keeping the process lean prevents that crash.
+
+DATA LOADING — DO NOT ASSUME CSV:
+Inputs are NOT always CSV. In STEP 1 always `os.listdir()` / `glob` the task directory and the `datasets/` subdirectory, then dispatch by the REAL file extension:
+- `.csv` / `.tsv` → pandas (`pd.read_csv`, set `sep='\\t'` for tsv)
+- `.jsonl` / `.jsonl.gz` → read line by line with `json.loads`; for `.gz` open via `gzip.open(path, 'rt')`
+- `.h5ad` → `anndata.read_h5ad` (single-cell AnnData)
+- `.npz` → `scipy.sparse.load_npz` for sparse matrices, or `np.load` for dense arrays
+- `.mtx` / `.mtx.gz` → `scipy.io.mmread`; a `matrix.mtx.gz` + `barcodes.tsv.gz` + `features.tsv.gz` trio is 10x format → `scanpy.read_10x_mtx(dir)`
+- `.parquet` → `pd.read_parquet`
+- images (`.png/.jpg/.tif/.nii.gz`) → PIL / tifffile / nibabel as appropriate
+If a loader raises a format error (e.g. "Not a gzipped file"), do NOT retry the same reader — inspect the file's first bytes to detect the true format, or fall back to the provided `train.csv`/`test.csv` which always link rows to the richer files via id columns.
 """
 
         # Add self-critic instructions if needed
