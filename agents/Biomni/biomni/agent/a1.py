@@ -1307,6 +1307,7 @@ Other guidelines:
 LIBRARY GOTCHAS:
 - Avoid CatBoost task_type='GPU' when any categorical feature has more than ~1000 unique values. CatBoost GPU's per-feature CTR computation OOMs on high-cardinality categoricals, and the resulting C++ TCatBoostException bypasses Python try/except, crashing the whole process. Use CPU mode (default) or switch to LightGBM/XGBoost with native categorical support for high-cardinality features.
 - When training multiple GPU-using libraries in sequence (e.g. torch feature extraction then LightGBM/CatBoost), explicitly free GPU memory between phases via `torch.cuda.empty_cache()` and `del` of large tensors to avoid native-extension segfaults from CUDA context contention.
+- IMPORTANT: the execution environment is a SINGLE long-lived Python process whose namespace ACCUMULATES every variable across all your <execute> steps. Before running a memory-heavy native operation on a large matrix (PCA / TruncatedSVD / sparse SVD / large matrix multiply, especially on matrices with >100M non-zeros), explicitly `del` any large intermediate arrays you no longer need, then call `import gc; gc.collect()` and (if torch was used) `torch.cuda.empty_cache()`. The single-cell ATAC/RNA tasks have crashed with a silent SIGSEGV at exactly this point because accumulated state left too little headroom for the operation's native malloc. Keeping the process lean prevents that crash.
 """
 
         # Add self-critic instructions if needed
