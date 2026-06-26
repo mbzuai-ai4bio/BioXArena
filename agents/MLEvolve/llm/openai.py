@@ -15,6 +15,27 @@ from .model_profiles import get_profile, supports_json_schema, thinking_json_inc
 logger = logging.getLogger("MLEvolve")
 
 
+def _write_llm_usage(
+    cfg: Config,
+    model: str,
+    created: int,
+    input_tokens: int,
+    output_tokens: int,
+    request_time_sec: float,
+) -> None:
+    cfg.log_dir.mkdir(parents=True, exist_ok=True)
+    payload = {
+        "timestamp_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+        "model": model,
+        "created": created,
+        "input_tokens": input_tokens,
+        "output_tokens": output_tokens,
+        "request_time_sec": request_time_sec,
+    }
+    with open(cfg.log_dir / "llm_usage.jsonl", "a", encoding="utf-8") as f:
+        f.write(json.dumps(payload) + "\n")
+
+
 def _strip_markdown_fences(args: str) -> str:
     """Remove markdown code fences that LLMs sometimes append inside JSON string values."""
     cleaned = re.sub(r'\\n```[a-z]*\s*("?\s*\}?\s*)$', r'\1', args.rstrip())
@@ -102,7 +123,7 @@ def query(
     client = OpenAI(
         api_key=stage.api_key,
         base_url=stage.base_url or None,
-        timeout=1200.0,
+        timeout=180.0,
     )
     messages = _build_messages(system_message, user_message)
     if not messages:
@@ -143,8 +164,28 @@ def query(
     try:
         completion = client.chat.completions.create(**params)
     except Exception as e:
-        logger.error(f"Error calling OpenAI-compatible API: {e}")
-        raise
+        # Endpoint-specific fallback: some OpenAI-compatible endpoints (e.g. gpt-5.x
+        # proxied through the Responses API) reject system-only requests because the
+        # user content maps to the required `input` field, which ends up empty. Only
+        # that specific 400 triggers this branch — the standard Chat Completions path
+        # (e.g. OpenRouter) succeeds on the first call and never reaches here, so its
+        # behaviour is completely unchanged.
+        err = str(e)
+        only_system = len(messages) == 1 and messages[0].get("role") == "system"
+        responses_api_input_error = "must be provided" in err and '"input"' in err
+        if only_system and responses_api_input_error:
+            logger.warning(
+                "Endpoint rejected system-only request (Responses API); "
+                "retrying once with system content promoted to a user message"
+            )
+            sys_content = messages[0]["content"]
+            if not isinstance(sys_content, str):
+                sys_content = compile_prompt_to_md(sys_content)
+            params["messages"] = [{"role": "user", "content": sys_content}]
+            completion = client.chat.completions.create(**params)
+        else:
+            logger.error(f"Error calling OpenAI-compatible API: {e}")
+            raise
     req_time = time.time() - t0
     choice = completion.choices[0]
     message = choice.message
@@ -178,30 +219,27 @@ def query(
 
 
 def _prompt_to_messages(prompt: str | dict | list, model: str = "") -> list[dict[str, str]]:
-    """Convert prompt to chat messages. Supports Qwen/OpenAI chat format: {system, user, assistant}.
+    """Convert prompt to chat messages.
 
-    For GPT models, assistant content is appended to the user message instead of
-    being sent as a separate assistant message, because GPT models may return
-    empty responses when they see a trailing assistant prefill.
+    Legacy prompt dicts may contain an ``assistant`` field used as context/prefill,
+    not as a true prior assistant turn. Merge it into the user message so every
+    backend receives a normal system+user prompt instead of a dangling assistant
+    continuation.
     """
     if isinstance(prompt, dict) and ("system" in prompt or "user" in prompt or "assistant" in prompt):
         messages = []
         if prompt.get("system"):
             messages.append({"role": "system", "content": str(prompt["system"])})
 
-        is_gpt = (model or "").lower().startswith("gpt")
         user_content = str(prompt["user"]) if prompt.get("user") else ""
         assistant_content = str(prompt["assistant"]) if prompt.get("assistant") else ""
 
-        if is_gpt and assistant_content:
-            # GPT: merge assistant prefill into user message
+        if assistant_content:
             combined = f"{user_content}\n\n{assistant_content}" if user_content else assistant_content
             messages.append({"role": "user", "content": combined})
         else:
             if user_content:
                 messages.append({"role": "user", "content": user_content})
-            if assistant_content:
-                messages.append({"role": "assistant", "content": assistant_content})
 
         if not messages:
             raise ValueError("Chat dict must have at least one of: system, user, assistant")
@@ -227,7 +265,7 @@ def generate(
     client = OpenAI(
         api_key=stage.api_key,
         base_url=stage.base_url or None,
-        timeout=1200.0,
+        timeout=180.0,
     )
     # Qwen: thinking + json_schema are mutually exclusive — drop schema, keep thinking.
     if json_schema is not None and thinking_json_incompatible(model):
@@ -247,6 +285,7 @@ def generate(
         "temperature": profile.get("temperature", temperature if temperature is not None else 1.0),
         "max_tokens": max_tokens if max_tokens is not None else 16384,
         "stream": True,
+        "stream_options": {"include_usage": True},
     }
     if "top_p" in profile:
         params["top_p"] = profile["top_p"]
@@ -267,20 +306,39 @@ def generate(
 
     logger.info(f"generate messages: {len(messages)} turns", extra={"verbose": True})
     for attempt in range(max_retries):
+        full_text = ""
+        input_tokens = 0
+        output_tokens = 0
+        usage_seen = False
+        response_model = model
+        created = int(time.time())
         try:
+            t0 = time.time()
             stream = client.chat.completions.create(**params)
-            full_text = ""
             for chunk in stream:
+                response_model = getattr(chunk, "model", response_model) or response_model
+                created = getattr(chunk, "created", created) or created
+                usage = getattr(chunk, "usage", None)
+                if usage is not None:
+                    usage_seen = True
+                    input_tokens = getattr(usage, "prompt_tokens", 0) or 0
+                    output_tokens = getattr(usage, "completion_tokens", 0) or 0
                 if chunk.choices and chunk.choices[0].delta.content:
                     full_text += chunk.choices[0].delta.content
-            if "</think>" in full_text:
-                full_text = full_text[full_text.find("</think>") + 8:]
-            logger.info(f"generate response: {full_text}", extra={"verbose": True})
-            return full_text
+            request_time_sec = time.time() - t0
         except Exception as e:
             logger.warning(f"generate failed, retrying {attempt + 1}/{max_retries}: {e}")
             if attempt >= max_retries - 1:
                 logger.error("generate retry limit reached")
                 raise
             time.sleep(retry_delay)
+            continue
+
+        if "</think>" in full_text:
+            full_text = full_text[full_text.find("</think>") + 8:]
+        logger.info(f"generate response: {full_text}", extra={"verbose": True})
+        if not usage_seen:
+            raise RuntimeError("OpenAI-compatible streaming response did not include usage")
+        _write_llm_usage(cfg, response_model, created, input_tokens, output_tokens, request_time_sec)
+        return full_text
     return ""
