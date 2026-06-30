@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run Biomni agent on BioXArena tasks.
+"""Run Biomni agent on BioXArena-XL tasks.
 
 Unlike general LLM agents where the outer runner handles retries,
 Biomni's A1 agent handles its own ReAct loop internally.
@@ -9,7 +9,7 @@ We just need to:
   3. Collect outputs (submission.csv, metrics.json, solution.py)
 
 Examples:
-    python run_biomni_agent.py --task sequence/multi-tf-binding
+    python run_biomni_agent.py --task sequence-genomics/cgbench-xl-variant
     python run_biomni_agent.py --domain chemical-biology --max-workers 2
     python run_biomni_agent.py --all-tasks --max-workers 4
 """
@@ -34,7 +34,7 @@ from typing import Any
 # ---------------------------------------------------------------------------
 SCRIPT_PATH = Path(__file__).resolve()
 TRAINING_DIR = SCRIPT_PATH.parent
-EVAL_ROOT = TRAINING_DIR.parent          # BioXArena/
+EVAL_ROOT = TRAINING_DIR.parent          # BioXArena-XL/
 WORKSPACE_ROOT = EVAL_ROOT.parent
 DEFAULT_TASKS_ROOT = EVAL_ROOT / "tasks"
 DEFAULT_PROMPT_PATH = EVAL_ROOT / "prompts" / "unified_eval_prompt.py"
@@ -43,6 +43,18 @@ DEFAULT_ROUND_NAME = "round1"
 BIOMNI_AGENT_DIR = EVAL_ROOT / "agents" / "Biomni"
 
 REQUIRED_OUTPUT_LABELS = ["submission.csv", "metrics.json", "solution.py"]
+
+SAFE_NATIVE_CRASH_RETRY_APPENDIX = """
+
+# NATIVE-CRASH RETRY MODE
+The previous attempt for this task exited from native code before returning a result.
+Retry with a more robust implementation, but still train a real model and optimize the task metric.
+- Avoid repeating the likely crash pattern: large in-process SVD/PCA/UMAP/Scanpy transforms, large pandas column-by-column concatenation, GPU/native library chains, or native GBDT training on huge dense/categorical matrices.
+- Prefer stable, resource-aware feature engineering: direct float32 features, variance/top-k feature selection, sparse one-hot/text hashing, chunked processing, and explicit deletion of large intermediates.
+- Prefer robust scikit-learn models first, such as LogisticRegression/SGDClassifier/Ridge for high-dimensional sparse data, or RandomForest/ExtraTrees/HistGradientBoosting for moderate tabular data. Use heavier libraries only if the data size and feature matrix make them low risk.
+- Set OMP_NUM_THREADS, MKL_NUM_THREADS, OPENBLAS_NUM_THREADS, and NUMEXPR_NUM_THREADS to 1 at the top of solution.py.
+- Execute heavy training through solution.py as a subprocess and check return codes instead of running fragile native-heavy steps directly in the interactive process.
+"""
 
 
 # ---------------------------------------------------------------------------
@@ -352,6 +364,8 @@ def run_task_with_wall_clock(
     timeout_seconds,
     wall_clock_sec,
     print_lock,
+    safe_retry_on_native_crash=False,
+    native_crash_retry_used=False,
 ):
     """Run a single task in a child process with a hard wall-clock limit."""
     # Let the system handle GPU assignment naturally.
@@ -412,6 +426,39 @@ def run_task_with_wall_clock(
         return result
     except Exception as exc:
         duration = time.time() - start
+        if (
+            safe_retry_on_native_crash
+            and not native_crash_retry_used
+            and proc.exitcode is not None
+            and proc.exitcode < 0
+        ):
+            retry_wall_clock = max(60, wall_clock_sec - int(duration))
+            with print_lock:
+                print(
+                    f"[SAFE-RETRY] {task_spec.key} child exited with code={proc.exitcode}; "
+                    f"retrying once with conservative prompt ({retry_wall_clock}s remaining)"
+                )
+            retry_result = run_task_with_wall_clock(
+                task_spec=task_spec,
+                prompt_template=prompt_template + SAFE_NATIVE_CRASH_RETRY_APPENDIX,
+                llm_model=llm_model,
+                source=source,
+                base_url=base_url,
+                api_key=api_key,
+                temperature=temperature,
+                timeout_seconds=timeout_seconds,
+                wall_clock_sec=retry_wall_clock,
+                print_lock=print_lock,
+                safe_retry_on_native_crash=safe_retry_on_native_crash,
+                native_crash_retry_used=True,
+            )
+            retry_result.duration_sec += duration
+            if retry_result.status != "success" and retry_result.error:
+                retry_result.error = (
+                    f"Native crash retry failed after initial code={proc.exitcode}: "
+                    f"{retry_result.error}"
+                )
+            return retry_result
         return TaskRunResult(
             task_key=task_spec.key,
             status="failed",
@@ -425,7 +472,7 @@ def run_task_with_wall_clock(
 # Main
 # ---------------------------------------------------------------------------
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Run Biomni agent on BioXArena tasks")
+    parser = argparse.ArgumentParser(description="Run Biomni agent on BioXArena-XL tasks")
     parser.add_argument("--prefix-dir", type=str, default=str(WORKSPACE_ROOT))
     parser.add_argument("--model", type=str, default="qwen/qwen3.6-plus:free")
     parser.add_argument("--source", type=str, default="Custom",
@@ -439,9 +486,11 @@ def main() -> None:
                         help="Timeout for each code execution INSIDE Biomni agent (per shell call)")
     parser.add_argument("--task-wall-clock-sec", type=int, default=7200,
                         help="Hard per-task wall-clock in seconds; child process is killed when exceeded. Default 7200 (2h).")
+    parser.add_argument("--safe-retry-on-native-crash", action="store_true",
+                        help="On native child crashes such as SIGSEGV, retry the task once with a conservative safe-baseline prompt. Default off.")
     parser.add_argument("--round-name", type=str, default=DEFAULT_ROUND_NAME)
     parser.add_argument("--task", action="append", default=[], dest="tasks",
-                        help="Specific task(s), e.g., sequence/multi-tf-binding")
+                        help="Specific task(s), e.g., sequence-genomics/cgbench-xl-variant")
     parser.add_argument("--domain", action="append", default=[], dest="domains",
                         help="Run all tasks in domain(s)")
     parser.add_argument("--all-tasks", action="store_true")
@@ -450,9 +499,9 @@ def main() -> None:
     args = parser.parse_args()
 
     prefix_dir = Path(args.prefix_dir)
-    tasks_root = prefix_dir / "BioXArena-Data-Public"
+    tasks_root = prefix_dir / "BioXArena-Data-Public-XL"
     model_dir_name = args.model.replace("/", "__").replace(":", "_")
-    output_root = prefix_dir / "BioXArena-Output" / f"biomni__{model_dir_name}" / args.round_name
+    output_root = prefix_dir / "BioXArena-Output-XL" / f"biomni__{model_dir_name}" / args.round_name
 
     # Load API credentials from .env if not provided
     if args.api_key is None or args.base_url is None:
@@ -493,6 +542,8 @@ def main() -> None:
     print(f"Tasks: {len(selected)}")
     print(f"Output root: {output_root}")
     print(f"Max workers: {args.max_workers}")
+    if args.safe_retry_on_native_crash:
+        print("Safe retry on native crash: enabled")
     print()
 
     if args.dry_run:
@@ -518,6 +569,7 @@ def main() -> None:
                 timeout_seconds=args.timeout_seconds,
                 wall_clock_sec=args.task_wall_clock_sec,
                 print_lock=print_lock,
+                safe_retry_on_native_crash=args.safe_retry_on_native_crash,
             )
             results.append(result)
     else:
@@ -535,6 +587,7 @@ def main() -> None:
                     timeout_seconds=args.timeout_seconds,
                     wall_clock_sec=args.task_wall_clock_sec,
                     print_lock=print_lock,
+                    safe_retry_on_native_crash=args.safe_retry_on_native_crash,
                 ): task_spec
                 for task_spec in selected
             }
