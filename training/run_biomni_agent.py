@@ -68,6 +68,19 @@ Find the traceback or execution mistake that prevented submission.csv, metrics.j
 - Validate submission.csv against sample_submission.csv for column names, row count, and first-column values/order.
 """
 
+TIMEOUT_RETRY_APPENDIX = """
+
+# TIMEOUT RETRY MODE
+The previous attempt exceeded the 2-hour per-task wall-clock limit.
+Retry with a runtime-bounded implementation that must complete within the retry wall-clock budget.
+- First estimate train and test size, per-item cost, and total inference cost before choosing the method.
+- Produce complete valid outputs early, then improve only if time remains.
+- For file-manifest, voxel, image, segmentation, or large-array tasks, avoid expensive full-resolution model inference over every pixel/voxel unless it is simple NumPy/PyTorch vectorization and clearly fits the budget.
+- If using learned models, train them on a bounded sample of the training data, and keep test-time inference simple, chunked, and vectorized enough to finish within the wall-clock budget.
+- Prefer methods with predictable runtime over higher-ceiling methods whose inference cost is uncertain.
+- Save intermediate prediction files incrementally, but do not stop until submission.csv, metrics.json, solution.py, and all referenced files are complete.
+"""
+
 
 # ---------------------------------------------------------------------------
 # Data classes
@@ -380,6 +393,8 @@ def run_task_with_wall_clock(
     native_crash_retry_used=False,
     retry_on_missing_outputs=False,
     missing_outputs_retry_used=False,
+    retry_on_timeout=False,
+    timeout_retry_used=False,
 ):
     """Run a single task in a child process with a hard wall-clock limit."""
     # Let the system handle GPU assignment naturally.
@@ -412,6 +427,37 @@ def run_task_with_wall_clock(
         duration = time.time() - start
         with print_lock:
             print(f"[TIMEOUT] {task_spec.key} ({duration:.0f}s) exceeded wall-clock {wall_clock_sec}s")
+        if retry_on_timeout and not timeout_retry_used:
+            with print_lock:
+                print(
+                    f"[TIMEOUT-RETRY] {task_spec.key} exceeded wall-clock; "
+                    f"retrying once with runtime-bounded prompt ({wall_clock_sec}s retry budget)"
+                )
+            retry_result = run_task_with_wall_clock(
+                task_spec=task_spec,
+                prompt_template=prompt_template + TIMEOUT_RETRY_APPENDIX,
+                llm_model=llm_model,
+                source=source,
+                base_url=base_url,
+                api_key=api_key,
+                temperature=temperature,
+                timeout_seconds=timeout_seconds,
+                wall_clock_sec=wall_clock_sec,
+                print_lock=print_lock,
+                safe_retry_on_native_crash=safe_retry_on_native_crash,
+                native_crash_retry_used=native_crash_retry_used,
+                retry_on_missing_outputs=retry_on_missing_outputs,
+                missing_outputs_retry_used=missing_outputs_retry_used,
+                retry_on_timeout=retry_on_timeout,
+                timeout_retry_used=True,
+            )
+            retry_result.duration_sec += duration
+            if retry_result.status != "success" and retry_result.error:
+                retry_result.error = (
+                    f"Timeout retry failed after initial timeout of {wall_clock_sec}s: "
+                    f"{retry_result.error}"
+                )
+            return retry_result
         try:
             task_spec.output_dir.mkdir(parents=True, exist_ok=True)
             (task_spec.output_dir / "FAILED.json").write_text(
@@ -466,6 +512,8 @@ def run_task_with_wall_clock(
                 native_crash_retry_used=native_crash_retry_used,
                 retry_on_missing_outputs=retry_on_missing_outputs,
                 missing_outputs_retry_used=True,
+                retry_on_timeout=retry_on_timeout,
+                timeout_retry_used=timeout_retry_used,
             )
             retry_result.duration_sec += duration
             if retry_result.status != "success" and retry_result.error:
@@ -504,6 +552,8 @@ def run_task_with_wall_clock(
                 native_crash_retry_used=True,
                 retry_on_missing_outputs=retry_on_missing_outputs,
                 missing_outputs_retry_used=missing_outputs_retry_used,
+                retry_on_timeout=retry_on_timeout,
+                timeout_retry_used=timeout_retry_used,
             )
             retry_result.duration_sec += duration
             if retry_result.status != "success" and retry_result.error:
@@ -543,6 +593,8 @@ def main() -> None:
                         help="On native child crashes such as SIGSEGV, retry the task once with a conservative safe-baseline prompt. Default off.")
     parser.add_argument("--retry-on-missing-outputs", action="store_true",
                         help="When a task returns Missing outputs, retry once with a debugging/validation prompt. Default off.")
+    parser.add_argument("--retry-on-timeout", action="store_true",
+                        help="When a task exceeds wall-clock, retry once with a runtime-bounded prompt. Default off.")
     parser.add_argument("--round-name", type=str, default=DEFAULT_ROUND_NAME)
     parser.add_argument("--task", action="append", default=[], dest="tasks",
                         help="Specific task(s), e.g., sequence-genomics/cgbench-xl-variant")
@@ -601,6 +653,8 @@ def main() -> None:
         print("Safe retry on native crash: enabled")
     if args.retry_on_missing_outputs:
         print("Retry on missing outputs: enabled")
+    if args.retry_on_timeout:
+        print("Retry on timeout: enabled")
     print()
 
     if args.dry_run:
@@ -628,6 +682,7 @@ def main() -> None:
                 print_lock=print_lock,
                 safe_retry_on_native_crash=args.safe_retry_on_native_crash,
                 retry_on_missing_outputs=args.retry_on_missing_outputs,
+                retry_on_timeout=args.retry_on_timeout,
             )
             results.append(result)
     else:
@@ -647,6 +702,7 @@ def main() -> None:
                     print_lock=print_lock,
                     safe_retry_on_native_crash=args.safe_retry_on_native_crash,
                     retry_on_missing_outputs=args.retry_on_missing_outputs,
+                    retry_on_timeout=args.retry_on_timeout,
                 ): task_spec
                 for task_spec in selected
             }
