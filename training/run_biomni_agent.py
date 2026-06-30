@@ -56,6 +56,18 @@ Retry with a more robust implementation, but still train a real model and optimi
 - Execute heavy training through solution.py as a subprocess and check return codes instead of running fragile native-heavy steps directly in the interactive process.
 """
 
+MISSING_OUTPUTS_RETRY_APPENDIX = """
+
+# MISSING OUTPUTS RETRY MODE
+The previous attempt finished without all required outputs.
+Inspect the existing output directory first, especially biomni_log.txt and solution.py if present.
+Find the traceback or execution mistake that prevented submission.csv, metrics.json, or solution.py from being produced, then fix it.
+- Do not weaken the modeling plan just because outputs were missing; this retry is for debugging and validation.
+- When running solution.py or any generated script, use subprocess.run(..., capture_output=True, text=True), print stdout and stderr, and check returncode before claiming success.
+- Before the final response, verify that submission.csv, metrics.json, and solution.py exist in the output directory.
+- Validate submission.csv against sample_submission.csv for column names, row count, and first-column values/order.
+"""
+
 
 # ---------------------------------------------------------------------------
 # Data classes
@@ -366,6 +378,8 @@ def run_task_with_wall_clock(
     print_lock,
     safe_retry_on_native_crash=False,
     native_crash_retry_used=False,
+    retry_on_missing_outputs=False,
+    missing_outputs_retry_used=False,
 ):
     """Run a single task in a child process with a hard wall-clock limit."""
     # Let the system handle GPU assignment naturally.
@@ -423,6 +437,43 @@ def run_task_with_wall_clock(
 
     try:
         result = q.get(timeout=10)
+        if (
+            retry_on_missing_outputs
+            and not missing_outputs_retry_used
+            and result.status == "failed"
+            and result.error
+            and result.error.startswith("Missing outputs")
+        ):
+            duration = time.time() - start
+            retry_wall_clock = max(60, wall_clock_sec - int(duration))
+            with print_lock:
+                print(
+                    f"[OUTPUT-RETRY] {task_spec.key} returned missing outputs; "
+                    f"retrying once with debugging prompt ({retry_wall_clock}s remaining)"
+                )
+            retry_result = run_task_with_wall_clock(
+                task_spec=task_spec,
+                prompt_template=prompt_template + MISSING_OUTPUTS_RETRY_APPENDIX,
+                llm_model=llm_model,
+                source=source,
+                base_url=base_url,
+                api_key=api_key,
+                temperature=temperature,
+                timeout_seconds=timeout_seconds,
+                wall_clock_sec=retry_wall_clock,
+                print_lock=print_lock,
+                safe_retry_on_native_crash=safe_retry_on_native_crash,
+                native_crash_retry_used=native_crash_retry_used,
+                retry_on_missing_outputs=retry_on_missing_outputs,
+                missing_outputs_retry_used=True,
+            )
+            retry_result.duration_sec += duration
+            if retry_result.status != "success" and retry_result.error:
+                retry_result.error = (
+                    f"Missing outputs retry failed after initial error={result.error!r}: "
+                    f"{retry_result.error}"
+                )
+            return retry_result
         return result
     except Exception as exc:
         duration = time.time() - start
@@ -451,6 +502,8 @@ def run_task_with_wall_clock(
                 print_lock=print_lock,
                 safe_retry_on_native_crash=safe_retry_on_native_crash,
                 native_crash_retry_used=True,
+                retry_on_missing_outputs=retry_on_missing_outputs,
+                missing_outputs_retry_used=missing_outputs_retry_used,
             )
             retry_result.duration_sec += duration
             if retry_result.status != "success" and retry_result.error:
@@ -488,6 +541,8 @@ def main() -> None:
                         help="Hard per-task wall-clock in seconds; child process is killed when exceeded. Default 7200 (2h).")
     parser.add_argument("--safe-retry-on-native-crash", action="store_true",
                         help="On native child crashes such as SIGSEGV, retry the task once with a conservative safe-baseline prompt. Default off.")
+    parser.add_argument("--retry-on-missing-outputs", action="store_true",
+                        help="When a task returns Missing outputs, retry once with a debugging/validation prompt. Default off.")
     parser.add_argument("--round-name", type=str, default=DEFAULT_ROUND_NAME)
     parser.add_argument("--task", action="append", default=[], dest="tasks",
                         help="Specific task(s), e.g., sequence-genomics/cgbench-xl-variant")
@@ -544,6 +599,8 @@ def main() -> None:
     print(f"Max workers: {args.max_workers}")
     if args.safe_retry_on_native_crash:
         print("Safe retry on native crash: enabled")
+    if args.retry_on_missing_outputs:
+        print("Retry on missing outputs: enabled")
     print()
 
     if args.dry_run:
@@ -570,6 +627,7 @@ def main() -> None:
                 wall_clock_sec=args.task_wall_clock_sec,
                 print_lock=print_lock,
                 safe_retry_on_native_crash=args.safe_retry_on_native_crash,
+                retry_on_missing_outputs=args.retry_on_missing_outputs,
             )
             results.append(result)
     else:
@@ -588,6 +646,7 @@ def main() -> None:
                     wall_clock_sec=args.task_wall_clock_sec,
                     print_lock=print_lock,
                     safe_retry_on_native_crash=args.safe_retry_on_native_crash,
+                    retry_on_missing_outputs=args.retry_on_missing_outputs,
                 ): task_spec
                 for task_spec in selected
             }
