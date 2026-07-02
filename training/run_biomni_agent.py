@@ -253,6 +253,20 @@ def _is_llm_json_parse_failure(error: str | None, output_dir: Path) -> bool:
     return has_json_error and has_parse_marker
 
 
+def _is_graph_recursion_limit_error(error_text: str) -> bool:
+    return (
+        "GraphRecursionError" in error_text
+        or (
+            "Recursion limit" in error_text
+            and "without hitting a stop condition" in error_text
+        )
+    )
+
+
+def _missing_required_outputs(output_dir: Path) -> list[str]:
+    return [f for f in REQUIRED_OUTPUT_LABELS if not (output_dir / f).exists()]
+
+
 # ---------------------------------------------------------------------------
 # Biomni agent runner
 # ---------------------------------------------------------------------------
@@ -288,6 +302,8 @@ def run_single_task(
 
     with print_lock:
         print(f"[START] {task_spec.key}")
+
+    agent: Any | None = None
 
     try:
         # Set cwd to task output directory so any files the agent writes
@@ -337,7 +353,7 @@ def run_single_task(
         _backfill_metrics(task_spec.output_dir, duration, token_usage)
 
         # Check required outputs
-        missing = [f for f in REQUIRED_OUTPUT_LABELS if not (task_spec.output_dir / f).exists()]
+        missing = _missing_required_outputs(task_spec.output_dir)
 
         if missing:
             status = "failed"
@@ -360,6 +376,40 @@ def run_single_task(
     except Exception as exc:
         duration = time.time() - task_start
         error_text = f"{type(exc).__name__}: {exc}\n{traceback.format_exc()}"
+        missing = _missing_required_outputs(task_spec.output_dir)
+
+        if _is_graph_recursion_limit_error(error_text) and not missing:
+            token_usage = None
+            if agent is not None:
+                try:
+                    token_usage = agent.get_token_usage()
+                except Exception:
+                    token_usage = None
+                try:
+                    agent_log = getattr(agent, "log", None)
+                    if agent_log:
+                        (task_spec.output_dir / "biomni_log.txt").write_text(
+                            "\n".join(str(entry) for entry in agent_log),
+                            encoding="utf-8",
+                        )
+                except Exception:
+                    pass
+
+            _backfill_metrics(task_spec.output_dir, duration, token_usage)
+            with print_lock:
+                print(
+                    f"[SUCCESS] {task_spec.key} ({duration:.0f}s) "
+                    "after GraphRecursionError; required outputs already exist"
+                )
+
+            return TaskRunResult(
+                task_key=task_spec.key,
+                status="success",
+                output_dir=str(task_spec.output_dir),
+                error=None,
+                duration_sec=duration,
+            )
+
         with print_lock:
             print(f"[ERROR] {task_spec.key} ({duration:.0f}s): {exc}")
 
