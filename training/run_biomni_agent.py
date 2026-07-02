@@ -81,6 +81,16 @@ Retry with a runtime-bounded implementation that must complete within the retry 
 - Save intermediate prediction files incrementally, but do not stop until submission.csv, metrics.json, solution.py, and all referenced files are complete.
 """
 
+LLM_JSON_RETRY_APPENDIX = """
+
+# LLM/API RESPONSE RETRY MODE
+The previous attempt failed before completion because the LLM provider response could not be parsed as valid JSON.
+This is usually a transient API/proxy response-format issue, not evidence that the task plan is wrong.
+Retry from scratch with the same modeling ambition.
+- Keep natural-language responses concise and put implementation details in solution.py.
+- Verify that submission.csv, metrics.json, and solution.py exist before the final response.
+"""
+
 
 # ---------------------------------------------------------------------------
 # Data classes
@@ -209,6 +219,38 @@ def _backfill_metrics(output_dir: Path, duration_sec: float, token_usage: dict[s
         metrics["output_tokens"] = int(token_usage.get("output_tokens", 0))
 
     metrics_path.write_text(json.dumps(metrics, indent=2), encoding="utf-8")
+
+
+def _is_llm_json_parse_failure(error: str | None, output_dir: Path) -> bool:
+    """Detect provider/client JSON parse failures from the agent invocation path."""
+    texts = []
+    if error:
+        texts.append(error)
+
+    failed_path = output_dir / "FAILED.json"
+    if failed_path.exists():
+        try:
+            payload = json.loads(failed_path.read_text(encoding="utf-8"))
+            texts.append(str(payload.get("error", "")))
+        except Exception:
+            try:
+                texts.append(failed_path.read_text(encoding="utf-8", errors="replace"))
+            except Exception:
+                pass
+
+    combined = "\n".join(texts)
+    if not combined:
+        return False
+
+    parse_markers = (
+        "response.json()",
+        "raw_response.parse()",
+        "openai/_legacy_response.py",
+        "langchain_openai",
+    )
+    has_parse_marker = any(marker in combined for marker in parse_markers)
+    has_json_error = "JSONDecodeError" in combined or "Expecting value:" in combined
+    return has_json_error and has_parse_marker
 
 
 # ---------------------------------------------------------------------------
@@ -395,6 +437,8 @@ def run_task_with_wall_clock(
     missing_outputs_retry_used=False,
     retry_on_timeout=False,
     timeout_retry_used=False,
+    retry_on_llm_json_error=False,
+    llm_json_retry_used=False,
 ):
     """Run a single task in a child process with a hard wall-clock limit."""
     # Let the system handle GPU assignment naturally.
@@ -450,6 +494,8 @@ def run_task_with_wall_clock(
                 missing_outputs_retry_used=missing_outputs_retry_used,
                 retry_on_timeout=retry_on_timeout,
                 timeout_retry_used=True,
+                retry_on_llm_json_error=retry_on_llm_json_error,
+                llm_json_retry_used=llm_json_retry_used,
             )
             retry_result.duration_sec += duration
             if retry_result.status != "success" and retry_result.error:
@@ -514,11 +560,53 @@ def run_task_with_wall_clock(
                 missing_outputs_retry_used=True,
                 retry_on_timeout=retry_on_timeout,
                 timeout_retry_used=timeout_retry_used,
+                retry_on_llm_json_error=retry_on_llm_json_error,
+                llm_json_retry_used=llm_json_retry_used,
             )
             retry_result.duration_sec += duration
             if retry_result.status != "success" and retry_result.error:
                 retry_result.error = (
                     f"Missing outputs retry failed after initial error={result.error!r}: "
+                    f"{retry_result.error}"
+                )
+            return retry_result
+        if (
+            retry_on_llm_json_error
+            and not llm_json_retry_used
+            and result.status == "failed"
+            and _is_llm_json_parse_failure(result.error, task_spec.output_dir)
+        ):
+            duration = time.time() - start
+            retry_wall_clock = max(60, wall_clock_sec - int(duration))
+            with print_lock:
+                print(
+                    f"[LLM-JSON-RETRY] {task_spec.key} hit an LLM/API JSON parse failure; "
+                    f"retrying once ({retry_wall_clock}s remaining)"
+                )
+            retry_result = run_task_with_wall_clock(
+                task_spec=task_spec,
+                prompt_template=prompt_template + LLM_JSON_RETRY_APPENDIX,
+                llm_model=llm_model,
+                source=source,
+                base_url=base_url,
+                api_key=api_key,
+                temperature=temperature,
+                timeout_seconds=timeout_seconds,
+                wall_clock_sec=retry_wall_clock,
+                print_lock=print_lock,
+                safe_retry_on_native_crash=safe_retry_on_native_crash,
+                native_crash_retry_used=native_crash_retry_used,
+                retry_on_missing_outputs=retry_on_missing_outputs,
+                missing_outputs_retry_used=missing_outputs_retry_used,
+                retry_on_timeout=retry_on_timeout,
+                timeout_retry_used=timeout_retry_used,
+                retry_on_llm_json_error=retry_on_llm_json_error,
+                llm_json_retry_used=True,
+            )
+            retry_result.duration_sec += duration
+            if retry_result.status != "success" and retry_result.error:
+                retry_result.error = (
+                    f"LLM JSON parse retry failed after initial error={result.error!r}: "
                     f"{retry_result.error}"
                 )
             return retry_result
@@ -554,6 +642,8 @@ def run_task_with_wall_clock(
                 missing_outputs_retry_used=missing_outputs_retry_used,
                 retry_on_timeout=retry_on_timeout,
                 timeout_retry_used=timeout_retry_used,
+                retry_on_llm_json_error=retry_on_llm_json_error,
+                llm_json_retry_used=llm_json_retry_used,
             )
             retry_result.duration_sec += duration
             if retry_result.status != "success" and retry_result.error:
@@ -595,6 +685,8 @@ def main() -> None:
                         help="When a task returns Missing outputs, retry once with a debugging/validation prompt. Default off.")
     parser.add_argument("--retry-on-timeout", action="store_true",
                         help="When a task exceeds wall-clock, retry once with a runtime-bounded prompt. Default off.")
+    parser.add_argument("--retry-on-llm-json-error", action="store_true",
+                        help="When the LLM/API response cannot be parsed as JSON, retry the task once. Default off.")
     parser.add_argument("--round-name", type=str, default=DEFAULT_ROUND_NAME)
     parser.add_argument("--task", action="append", default=[], dest="tasks",
                         help="Specific task(s), e.g., sequence-genomics/cgbench-xl-variant")
@@ -655,6 +747,8 @@ def main() -> None:
         print("Retry on missing outputs: enabled")
     if args.retry_on_timeout:
         print("Retry on timeout: enabled")
+    if args.retry_on_llm_json_error:
+        print("Retry on LLM/API JSON parse error: enabled")
     print()
 
     if args.dry_run:
@@ -683,6 +777,7 @@ def main() -> None:
                 safe_retry_on_native_crash=args.safe_retry_on_native_crash,
                 retry_on_missing_outputs=args.retry_on_missing_outputs,
                 retry_on_timeout=args.retry_on_timeout,
+                retry_on_llm_json_error=args.retry_on_llm_json_error,
             )
             results.append(result)
     else:
@@ -703,6 +798,7 @@ def main() -> None:
                     safe_retry_on_native_crash=args.safe_retry_on_native_crash,
                     retry_on_missing_outputs=args.retry_on_missing_outputs,
                     retry_on_timeout=args.retry_on_timeout,
+                    retry_on_llm_json_error=args.retry_on_llm_json_error,
                 ): task_spec
                 for task_spec in selected
             }
