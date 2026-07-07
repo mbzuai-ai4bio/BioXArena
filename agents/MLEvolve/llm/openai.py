@@ -47,6 +47,30 @@ def _strip_markdown_fences(args: str) -> str:
     return cleaned
 
 
+def _parse_concatenated_json_args(args: str) -> dict | None:
+    """Recover when an endpoint returns multiple JSON objects like '{}{...}'."""
+    decoder = json.JSONDecoder()
+    idx = 0
+    parsed: list[Any] = []
+    text = args.strip()
+    while idx < len(text):
+        while idx < len(text) and text[idx].isspace():
+            idx += 1
+        if idx >= len(text):
+            break
+        try:
+            value, end = decoder.raw_decode(text, idx)
+        except json.JSONDecodeError:
+            return None
+        parsed.append(value)
+        idx = end
+
+    objects = [value for value in parsed if isinstance(value, dict)]
+    if len(objects) >= 2:
+        return objects[-1]
+    return None
+
+
 def _parse_json_args(args: str) -> dict:
     """Parse function call arguments, tolerating Python literals and markdown fences."""
     # 1. Fast path: valid JSON as-is
@@ -55,7 +79,13 @@ def _parse_json_args(args: str) -> dict:
     except json.JSONDecodeError:
         pass
 
-    # 2. Try stripping markdown fences
+    # 2. Handle concatenated JSON objects, e.g. '{}{"lower_is_better": false}'.
+    recovered = _parse_concatenated_json_args(args)
+    if recovered is not None:
+        logger.warning("Fixed malformed function args by using the last concatenated JSON object")
+        return recovered
+
+    # 3. Try stripping markdown fences
     try:
         cleaned = _strip_markdown_fences(args)
         if cleaned != args:
@@ -65,11 +95,11 @@ def _parse_json_args(args: str) -> dict:
     except json.JSONDecodeError:
         pass
 
-    # 3. Normalize Python literals (None/True/False) outside quoted strings
+    # 4. Normalize Python literals (None/True/False) outside quoted strings
     parts = re.split(r'("(?:[^"\\]|\\.)*")', args)
     normalized = []
     for part in parts:
-        if part.startswith('"'):
+        if part.startswith("\""):
             normalized.append(part)
         else:
             part = re.sub(r'\bNone\b', 'null', part)
@@ -83,7 +113,7 @@ def _parse_json_args(args: str) -> dict:
     except json.JSONDecodeError:
         pass
 
-    # 4. Normalized + strip markdown fences
+    # 5. Normalized + strip markdown fences
     cleaned = _strip_markdown_fences(normalized_str)
     return json.loads(cleaned)
 
@@ -98,12 +128,17 @@ def _stage_config_for_model(cfg: Config, model: str):
     return cfg.agent.feedback
 
 
-def _build_messages(system_message: str | None, user_message: str | None) -> list[dict[str, str]]:
+def _build_messages(system_message: str | None, user_message: str | None, model: str = "") -> list[dict[str, str]]:
     messages = []
-    if system_message:
+    claude_model = model.lower().startswith("claude")
+    if system_message and (user_message or not claude_model):
         messages.append({"role": "system", "content": system_message})
     if user_message:
         messages.append({"role": "user", "content": user_message})
+    elif system_message and claude_model:
+        # Some OpenAI-compatible Claude endpoints reject system-only chats because
+        # the conversation does not end with a user message.
+        messages.append({"role": "user", "content": system_message})
     return messages
 
 
@@ -125,7 +160,7 @@ def query(
         base_url=stage.base_url or None,
         timeout=180.0,
     )
-    messages = _build_messages(system_message, user_message)
+    messages = _build_messages(system_message, user_message, model=model)
     if not messages:
         raise ValueError("Either system_message or user_message must be provided")
 
