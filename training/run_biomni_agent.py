@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run Biomni agent on BioXArena-XL tasks.
+"""Run Biomni agent on BioXArena tasks.
 
 Unlike general LLM agents where the outer runner handles retries,
 Biomni's A1 agent handles its own ReAct loop internally.
@@ -9,7 +9,7 @@ We just need to:
   3. Collect outputs (submission.csv, metrics.json, solution.py)
 
 Examples:
-    python run_biomni_agent.py --task sequence-genomics/cgbench-xl-variant
+    python run_biomni_agent.py --task chemical-biology/bace1-binding-affinity
     python run_biomni_agent.py --domain chemical-biology --max-workers 2
     python run_biomni_agent.py --all-tasks --max-workers 4
 """
@@ -34,7 +34,7 @@ from typing import Any
 # ---------------------------------------------------------------------------
 SCRIPT_PATH = Path(__file__).resolve()
 TRAINING_DIR = SCRIPT_PATH.parent
-EVAL_ROOT = TRAINING_DIR.parent          # BioXArena-XL/
+EVAL_ROOT = TRAINING_DIR.parent          # BioXArena/
 WORKSPACE_ROOT = EVAL_ROOT.parent
 DEFAULT_TASKS_ROOT = EVAL_ROOT / "tasks"
 DEFAULT_PROMPT_PATH = EVAL_ROOT / "prompts" / "unified_eval_prompt.py"
@@ -715,7 +715,7 @@ def run_task_with_wall_clock(
 # Main
 # ---------------------------------------------------------------------------
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Run Biomni agent on BioXArena-XL tasks")
+    parser = argparse.ArgumentParser(description="Run Biomni agent on BioXArena tasks")
     parser.add_argument("--prefix-dir", type=str, default=str(WORKSPACE_ROOT))
     parser.add_argument("--model", type=str, default="qwen/qwen3.6-plus:free")
     parser.add_argument("--source", type=str, default="Custom",
@@ -739,7 +739,7 @@ def main() -> None:
                         help="When the LLM/API response cannot be parsed as JSON, retry the task once. Default off.")
     parser.add_argument("--round-name", type=str, default=DEFAULT_ROUND_NAME)
     parser.add_argument("--task", action="append", default=[], dest="tasks",
-                        help="Specific task(s), e.g., sequence-genomics/cgbench-xl-variant")
+                        help="Specific task(s), e.g., chemical-biology/bace1-binding-affinity")
     parser.add_argument("--domain", action="append", default=[], dest="domains",
                         help="Run all tasks in domain(s)")
     parser.add_argument("--all-tasks", action="store_true")
@@ -748,9 +748,9 @@ def main() -> None:
     args = parser.parse_args()
 
     prefix_dir = Path(args.prefix_dir)
-    tasks_root = prefix_dir / "BioXArena-Data-Public-XL"
+    tasks_root = prefix_dir / "BioXArena-Data-Public"
     model_dir_name = args.model.replace("/", "__").replace(":", "_")
-    output_root = prefix_dir / "BioXArena-Output-XL" / f"biomni__{model_dir_name}" / args.round_name
+    output_root = prefix_dir / "BioXArena-Output" / f"biomni__{model_dir_name}" / args.round_name
 
     # Load API credentials from .env if not provided
     if args.api_key is None or args.base_url is None:
