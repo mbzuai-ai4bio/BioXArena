@@ -117,6 +117,37 @@ def _parse_json_args(args: str) -> dict:
     cleaned = _strip_markdown_fences(normalized_str)
     return json.loads(cleaned)
 
+
+def _parse_structured_text_response(text: str) -> dict:
+    """Parse Qwen fallback text when the endpoint does not emit a tool call."""
+    try:
+        return _parse_json_args(text)
+    except json.JSONDecodeError:
+        pass
+
+    fenced = re.search(r"```(?:json)?\s*(\{.*?\})\s*```", text, flags=re.IGNORECASE | re.DOTALL)
+    if fenced:
+        try:
+            logger.warning("Parsing structured response from markdown fenced JSON")
+            return _parse_json_args(fenced.group(1))
+        except json.JSONDecodeError:
+            pass
+
+    decoder = json.JSONDecoder()
+    objects: list[dict] = []
+    for match in re.finditer(r"\{", text):
+        try:
+            value, _ = decoder.raw_decode(text, match.start())
+        except json.JSONDecodeError:
+            continue
+        if isinstance(value, dict):
+            objects.append(value)
+    if objects:
+        logger.warning("Parsing structured response from embedded JSON object")
+        return objects[-1]
+
+    return _parse_json_args(text)
+
 # Return type aligned with gemini.query
 OutputType = str | dict
 
@@ -126,6 +157,28 @@ def _stage_config_for_model(cfg: Config, model: str):
     if cfg.agent.code.model == model:
         return cfg.agent.code
     return cfg.agent.feedback
+
+
+def _is_qwen_model(model: str) -> bool:
+    return (model or "").lower().startswith("qwen")
+
+
+def _append_qwen_structured_output_fallback(
+    messages: list[dict[str, str]],
+    func_spec: FunctionSpec,
+) -> list[dict[str, str]]:
+    """Tell Qwen how to respond if its endpoint declines to emit tool calls."""
+    if not messages:
+        return messages
+
+    fallback_instruction = (
+        "\n\nFor this structured-response request, use the provided tool if possible. "
+        "If the provider does not emit a tool call, return only a valid JSON object "
+        f"matching the `{func_spec.name}` schema. Do not include markdown fences or extra text."
+    )
+    updated = [dict(message) for message in messages]
+    updated[-1]["content"] = str(updated[-1].get("content", "")) + fallback_instruction
+    return updated
 
 
 def _build_messages(system_message: str | None, user_message: str | None, model: str = "") -> list[dict[str, str]]:
@@ -163,6 +216,9 @@ def query(
     messages = _build_messages(system_message, user_message, model=model)
     if not messages:
         raise ValueError("Either system_message or user_message must be provided")
+    qwen_func_call = func_spec is not None and _is_qwen_model(model)
+    if qwen_func_call:
+        messages = _append_qwen_structured_output_fallback(messages, func_spec)
 
     # Function calling requires non_thinking mode, otherwise Qwen API errors:
     # "tool_choice does not support required/object in thinking mode"
@@ -192,7 +248,13 @@ def query(
         if not supports_json_schema(model):
             tool_dict.pop("strict", None)
         params["tools"] = [tool_dict]
-        params["tool_choice"] = func_spec.openai_tool_choice_dict
+        if qwen_func_call:
+            # Alibaba/Qwen may reject required/object tool_choice while the
+            # endpoint is in thinking mode, even when enable_thinking=False is
+            # sent. Keep tools available but let the provider choose.
+            logger.info("Qwen function call: omitting forced tool_choice for provider compatibility")
+        else:
+            params["tool_choice"] = func_spec.openai_tool_choice_dict
 
     t0 = time.time()
     logger.info(f"Querying OpenAI-compatible API with model: {model}")
@@ -232,17 +294,25 @@ def query(
         output = message.content or ""
         logger.info(f"OpenAI response: {output}", extra={"verbose": True})
     else:
-        if not message.tool_calls:
+        if message.tool_calls:
+            tc = message.tool_calls[0]
+            if tc.function.name != func_spec.name:
+                raise ValueError(f"Function name mismatch: expected {func_spec.name}, got {tc.function.name}")
+            try:
+                output = _parse_json_args(tc.function.arguments or "{}")
+            except json.JSONDecodeError as e:
+                logger.error(f"Invalid function arguments: {tc.function.arguments}")
+                raise e
+            logger.info(f"OpenAI function call response: {output}", extra={"verbose": True})
+        elif qwen_func_call and message.content:
+            try:
+                output = _parse_structured_text_response(message.content)
+            except json.JSONDecodeError as e:
+                logger.error(f"Invalid Qwen structured text response: {message.content}")
+                raise e
+            logger.info(f"Qwen structured text fallback response: {output}", extra={"verbose": True})
+        else:
             raise ValueError("Expected function call, got no tool_calls")
-        tc = message.tool_calls[0]
-        if tc.function.name != func_spec.name:
-            raise ValueError(f"Function name mismatch: expected {func_spec.name}, got {tc.function.name}")
-        try:
-            output = _parse_json_args(tc.function.arguments or "{}")
-        except json.JSONDecodeError as e:
-            logger.error(f"Invalid function arguments: {tc.function.arguments}")
-            raise e
-        logger.info(f"OpenAI function call response: {output}", extra={"verbose": True})
 
     in_tok = getattr(completion.usage, "prompt_tokens", 0) or 0
     out_tok = getattr(completion.usage, "completion_tokens", 0) or 0
