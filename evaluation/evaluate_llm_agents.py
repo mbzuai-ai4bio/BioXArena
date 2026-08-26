@@ -35,8 +35,12 @@ DEFAULT_TASKS_ROOT = EVAL_ROOT / "tasks" # /<work_root>/BioXArena/tasks
 DEFAULT_PRIVATE_ROOT_NAME = "BioXArena-Data-Private"
 DEFAULT_OUTPUT_ROOT_NAME = "BioXArena-Output"
 DEFAULT_ROUND_NAME = "round1"
-RELATIVE_SUBMISSION_PATH_COLUMNS: dict[str, tuple[str, ...]] = {
+SUBMISSION_FILE_MANIFEST_PATH_COLUMNS: dict[str, tuple[str, ...]] = {
     "imaging/amos-organ-segmentation": ("prediction_file",),
+    "structure/protein-structure-prediction": ("coords_file",),
+}
+ANSWER_FILE_MANIFEST_PATH_COLUMNS: dict[str, tuple[str, ...]] = {
+    "imaging/amos-organ-segmentation": ("label_file",),
     "structure/protein-structure-prediction": ("coords_file",),
 }
 
@@ -169,6 +173,18 @@ def infer_metric_info(grade_module: Any) -> MetricInfo:
         grade_source = ""
     source = grade_source.lower()
 
+    if "tm_score" in source or "tm-score" in source:
+        return MetricInfo(
+            name="tm_score",
+            direction="higher_is_better",
+            normalization="already_in_0_1",
+        )
+    if "dice_score" in source or "dice score" in source:
+        return MetricInfo(
+            name="dice",
+            direction="higher_is_better",
+            normalization="already_in_0_1",
+        )
     if "grade_macro_roc_auc" in source:
         return MetricInfo(
             name="macro_roc_auc",
@@ -251,6 +267,8 @@ def infer_task_metric_info(task_spec: TaskSpec) -> MetricInfo:
 
 
 def normalize_score(score: float, metric_info: MetricInfo) -> float:
+    if not math.isfinite(score):
+        raise ValueError(f"Metric score must be finite, got {score!r}")
     if metric_info.normalization == "map_minus1_1_to_0_1":
         normalized = (score + 1.0) / 2.0
         return max(0.0, min(1.0, normalized))
@@ -285,29 +303,49 @@ def build_results_payload(
     }
 
 
-def resolve_submission_path(value: Any, output_dir: Path) -> Any:
+def resolve_manifest_path(value: Any, root: Path, label: str) -> Any:
     if pd.isna(value):
         return value
 
     candidate = Path(str(value))
-    if candidate.is_absolute():
-        return str(candidate)
-    return str(output_dir / candidate)
+    if not candidate.is_absolute() and ".." in candidate.parts:
+        raise ValueError(f"{label} file path may not contain '..': {value!r}")
+
+    resolved_root = root.resolve()
+    resolved_candidate = (candidate if candidate.is_absolute() else root / candidate).resolve()
+    try:
+        resolved_candidate.relative_to(resolved_root)
+    except ValueError as exc:
+        raise ValueError(
+            f"{label} file path must stay inside its task directory: {value!r}"
+        ) from exc
+    return str(resolved_candidate)
 
 
-def resolve_submission_file_columns(task_spec: TaskSpec, submission_df: pd.DataFrame) -> pd.DataFrame:
-    path_columns = RELATIVE_SUBMISSION_PATH_COLUMNS.get(task_spec.key)
+def resolve_file_manifest_columns(
+    task_spec: TaskSpec,
+    frame: pd.DataFrame,
+    *,
+    root: Path,
+    label: str,
+) -> pd.DataFrame:
+    path_columns_by_task = (
+        SUBMISSION_FILE_MANIFEST_PATH_COLUMNS
+        if label == "Submission"
+        else ANSWER_FILE_MANIFEST_PATH_COLUMNS
+    )
+    path_columns = path_columns_by_task.get(task_spec.key)
     if not path_columns:
-        return submission_df
+        return frame
 
-    resolved_df = submission_df.copy()
+    resolved_df = frame.copy()
     for column in path_columns:
         if column not in resolved_df.columns:
             raise ValueError(
-                f"Submission for {task_spec.key} is missing required path column: {column}"
+                f"{label} for {task_spec.key} is missing required path column: {column}"
             )
         resolved_df[column] = resolved_df[column].map(
-            lambda value: resolve_submission_path(value, task_spec.output_dir)
+            lambda value: resolve_manifest_path(value, root, label)
         )
     return resolved_df
 
@@ -399,8 +437,19 @@ def evaluate_single_task(task_spec: TaskSpec, print_lock: threading.Lock) -> Tas
         grade_module = load_grade_module(task_spec.grade_path, task_spec.key)
         metric_info = infer_metric_info(grade_module)
         submission_df = pd.read_csv(submission_path)
-        submission_df = resolve_submission_file_columns(task_spec, submission_df)
+        submission_df = resolve_file_manifest_columns(
+            task_spec,
+            submission_df,
+            root=task_spec.output_dir,
+            label="Submission",
+        )
         answers_df = pd.read_csv(task_spec.answers_path)
+        answers_df = resolve_file_manifest_columns(
+            task_spec,
+            answers_df,
+            root=task_spec.answers_path.parent,
+            label="Answer",
+        )
         raw_score = grade_module.grade(submission_df, answers_df)
         score = float(raw_score)
         if not math.isfinite(score):
@@ -472,6 +521,7 @@ def build_arg_parser() -> argparse.ArgumentParser:
     parser.add_argument("--private-root", type=Path, default=None, help="Base root for private answers. Overrides --prefix-dir/BioXArena-Data-Private.")
     parser.add_argument("--output-root", type=Path, default=None, help="Base output root. Overrides --prefix-dir/BioXArena-Output.")
     parser.add_argument("--max-workers", type=int, default=1, help="Number of task evaluations to run in parallel.")
+    parser.add_argument("--model-dir", default=None, help="Override the model-name-based output subdirectory.")
     return parser
 
 
@@ -490,7 +540,7 @@ def main() -> int:
         if args.output_root
         else resolved_prefix_dir / DEFAULT_OUTPUT_ROOT_NAME
     )
-    resolved_model_dir = sanitize_path_component(args.model)
+    resolved_model_dir = sanitize_path_component(args.model_dir) if args.model_dir else sanitize_path_component(args.model)
     resolved_round_name = sanitize_path_component(args.round_name)
     resolved_output_root = base_output_root / resolved_model_dir / resolved_round_name
 

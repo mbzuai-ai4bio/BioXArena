@@ -56,17 +56,19 @@ def validate_first_column_match(submission: pd.DataFrame, answers: pd.DataFrame)
 def grade(submission: pd.DataFrame, answers: pd.DataFrame) -> float:
     """Grade structure prediction using mean TM-score."""
     validate_first_column_match(submission, answers)
+    if "coords_file" not in submission.columns:
+        raise ValueError("Submission must contain a 'coords_file' column.")
+    if "coords_file" not in answers.columns:
+        raise ValueError("Answers must contain a 'coords_file' column.")
     submission = submission.sort_values("id").reset_index(drop=True)
     answers = answers.sort_values("id").reset_index(drop=True)
-
-    task_dir = Path(__file__).resolve().parent / "coordinates"
 
     scores = []
     for i in range(len(answers)):
         # Load true coordinates
-        true_file = task_dir / answers.iloc[i]["coords_file"]
-        if not true_file.exists():
-            continue
+        true_file = Path(answers.iloc[i]["coords_file"])
+        if not true_file.is_file():
+            raise FileNotFoundError(f"Ground-truth coordinate file not found: {true_file}")
 
         with open(true_file) as f:
             true_coords = json.load(f)
@@ -74,10 +76,8 @@ def grade(submission: pd.DataFrame, answers: pd.DataFrame) -> float:
         # Load predicted coordinates
         pred_file = submission.iloc[i]["coords_file"]
         pred_path = Path(pred_file)
-        # if not pred_path.is_absolute():
-        #     pred_path = task_dir.parent.parent / pred_file
 
-        if not pred_path.exists():
+        if not pred_path.is_file():
             scores.append(0.0)
             continue
 
