@@ -281,24 +281,25 @@ class A1:
         self.configure()
 
     def _requires_user_terminal_messages(self) -> bool:
-        """Return True for models that reject assistant-prefill requests."""
+        """Return True for Claude >= 4.6, which rejects assistant prefill."""
         model_name = str(
             getattr(self.llm, "model_name", "")
             or getattr(self.llm, "model", "")
             or self.llm_model
             or ""
         ).lower()
-        source = str(self.llm_source or "").lower()
-        base_url = str(
-            self.llm_base_url
-            or getattr(self.llm, "openai_api_base", "")
-            or getattr(self.llm, "base_url", "")
-            or ""
-        ).lower()
 
-        is_claude_46 = "claude" in model_name and "4.6" in model_name
-        is_anthropic_route = "anthropic" in model_name or source == "anthropic" or "openrouter.ai" in base_url
-        return is_claude_46 and is_anthropic_route
+        # This is a model capability, not a transport property: custom
+        # OpenAI-compatible proxies can enforce the same restriction.
+        normalized_model = model_name.replace("_", "-").replace(".", "-")
+        version_match = re.search(
+            r"(?:^|[/_-])claude(?:-[a-z][a-z0-9]*)*-(\d{1,2})(?:-(\d{1,2}))?(?:-|$)",
+            normalized_model,
+        )
+        if version_match is None:
+            return False
+        version = (int(version_match.group(1)), int(version_match.group(2) or 0))
+        return version >= (4, 6)
 
     def _observation_message(self, observation: str) -> BaseMessage:
         if self.observations_as_user_messages:
