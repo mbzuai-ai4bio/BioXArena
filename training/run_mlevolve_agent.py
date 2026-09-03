@@ -330,7 +330,7 @@ def write_final_metrics_json(
 
     notes = combine_notes(
         source_payload.get("notes"),
-        None if source_metrics_path is not None else "metrics.json synthesized by run_mlevolve_agent_dxb.py from MLEvolve artifacts.",
+        None if source_metrics_path is not None else "metrics.json synthesized by run_mlevolve_agent.py from MLEvolve artifacts.",
         None if usage_found else "MLEvolve did not persist token usage metadata; input_tokens/output_tokens defaulted to 0.",
         fallback_notes,
         f"MLEvolve search metadata: steps={steps}, code_model={model}, temperature={temperature}.",
