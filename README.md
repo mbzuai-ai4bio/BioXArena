@@ -20,7 +20,7 @@ For any questions, suggestions, submission evaluations, or collaboration opportu
 
 | **Loka Li** | **Duzhen Zhang** | **Xingbo Du** |
 |:---:|:---:|:---:|
-| 📧 [loka.li@mbzuai.ac.ae](mailto:loka.li@mbzuai.ac.ae) | 📧 [duzhen.zhang@mbzuai.ac.ae](mailto:duzhen.zhang@mbzuai.ac.ae) | 📧 [xingbo.du@mbzuai.ac.ae](mailto:xingbo.du@mbzuai.ac.ae) |
+| 📧 [longkang.li@mbzuai.ac.ae](mailto:loka.li@mbzuai.ac.ae) | 📧 [duzhen.zhang@mbzuai.ac.ae](mailto:duzhen.zhang@mbzuai.ac.ae) | 📧 [xingbo.du@mbzuai.ac.ae](mailto:xingbo.du@mbzuai.ac.ae) |
 
 ## 📰 News
 
