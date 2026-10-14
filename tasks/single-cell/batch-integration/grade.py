@@ -1,5 +1,6 @@
 import pandas as pd
-from tasks.utils import grade_accuracy
+from tasks.utils import grade_macro_f1
+
 
 def validate_first_column_match(submission: pd.DataFrame, answers: pd.DataFrame) -> None:
     if submission.shape[1] == 0 or answers.shape[1] == 0:
@@ -19,5 +20,6 @@ def validate_first_column_match(submission: pd.DataFrame, answers: pd.DataFrame)
 
 
 def grade(submission: pd.DataFrame, answers: pd.DataFrame) -> float:
+    """Macro F1 over cell types, so rare and hard cell types count as much as abundant ones."""
     validate_first_column_match(submission, answers)
-    return grade_accuracy(submission, answers, id_col="id", pred_col="cell_type", label_col="cell_type")
+    return grade_macro_f1(submission, answers, id_col="id", pred_col="cell_type", label_col="cell_type")

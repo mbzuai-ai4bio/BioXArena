@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-from scipy.stats import pearsonr
+from scipy.stats import spearmanr
 
 from tasks.utils import validate_submission
 from tasks.utils import InvalidSubmissionError
@@ -24,52 +24,35 @@ def validate_first_column_match(submission: pd.DataFrame, answers: pd.DataFrame)
 
 
 def grade(submission: pd.DataFrame, answers: pd.DataFrame) -> float:
-    """Compute mean Pearson correlation across RNA and protein delta columns.
+    """Mean per-protein Spearman rank correlation across test cells.
 
-    Evaluates RNA and protein modalities separately, then averages.
+    Each `delta_protein_*` column is one surface protein. The correlation between predicted
+    and true values is computed across cells for every protein and averaged. A protein whose
+    predictions are constant contributes 0.
     """
     validate_first_column_match(submission, answers)
     submission = validate_submission(submission, answers, id_col="id")
     answers = answers.sort_values("id").reset_index(drop=True)
 
-    rna_cols = [c for c in answers.columns if c.startswith("delta_rna_")]
     protein_cols = [c for c in answers.columns if c.startswith("delta_protein_")]
+    if not protein_cols:
+        raise InvalidSubmissionError("No delta_protein columns found in answers")
 
-    if not rna_cols and not protein_cols:
-        raise InvalidSubmissionError("No delta columns found in answers")
+    scores = []
+    for col in protein_cols:
+        if col not in submission.columns:
+            raise InvalidSubmissionError(f"Missing column: {col}")
+        y_true = answers[col].values.astype(float)
+        y_pred = submission[col].values.astype(float)
+        if np.ptp(y_true) == 0:
+            continue
+        if not np.isfinite(y_pred).all() or np.ptp(y_pred) == 0:
+            scores.append(0.0)
+            continue
+        corr, _ = spearmanr(y_true, y_pred)
+        scores.append(float(corr) if np.isfinite(corr) else 0.0)
 
-    modality_scores = []
-
-    # RNA modality
-    if rna_cols:
-        rna_corrs = []
-        for col in rna_cols:
-            if col not in submission.columns:
-                raise InvalidSubmissionError(f"Missing column: {col}")
-            y_true = answers[col].values.astype(float)
-            y_pred = submission[col].values.astype(float)
-            if np.std(y_true) > 0 and np.std(y_pred) > 0:
-                r, _ = pearsonr(y_true, y_pred)
-                rna_corrs.append(r)
-        if rna_corrs:
-            modality_scores.append(float(np.mean(rna_corrs)))
-
-    # Protein modality
-    if protein_cols:
-        prot_corrs = []
-        for col in protein_cols:
-            if col not in submission.columns:
-                raise InvalidSubmissionError(f"Missing column: {col}")
-            y_true = answers[col].values.astype(float)
-            y_pred = submission[col].values.astype(float)
-            if np.std(y_true) > 0 and np.std(y_pred) > 0:
-                r, _ = pearsonr(y_true, y_pred)
-                prot_corrs.append(r)
-        if prot_corrs:
-            modality_scores.append(float(np.mean(prot_corrs)))
-
-    if not modality_scores:
+    if not scores:
         raise InvalidSubmissionError("No valid correlations computed")
 
-    raw = float(np.mean(modality_scores))
-    return raw
+    return float(np.mean(scores))

@@ -1,5 +1,8 @@
 import pandas as pd
-from tasks.utils import grade_spearman
+import numpy as np
+from scipy.stats import spearmanr
+
+from tasks.utils import validate_submission
 
 
 def validate_first_column_match(submission: pd.DataFrame, answers: pd.DataFrame) -> None:
@@ -20,8 +23,25 @@ def validate_first_column_match(submission: pd.DataFrame, answers: pd.DataFrame)
 
 
 def grade(submission: pd.DataFrame, answers: pd.DataFrame) -> float:
-    """Grade cancer drug sensitivity prediction using Spearman correlation."""
+    """Mean within-drug Spearman rank correlation between predicted and true ln_ic50.
+
+    The correlation is computed separately for every drug (answers carry `drug_id`) and
+    averaged, so the score reflects which cell lines are more sensitive to a given drug
+    rather than which drugs are more potent. A drug whose predictions are constant
+    contributes 0.
+    """
     validate_first_column_match(submission, answers)
-    return grade_spearman(
-        submission, answers, id_col="id", pred_col="ln_ic50", target_col="ln_ic50"
-    )
+    submission = validate_submission(submission, answers, id_col="id", pred_cols=["ln_ic50"])
+    answers = answers.sort_values("id").reset_index(drop=True)
+    pred = submission["ln_ic50"].astype(float).values
+    true = answers["ln_ic50"].astype(float).values
+    scores = []
+    for _, idx in answers.groupby("drug_id").indices.items():
+        if len(idx) < 3 or np.ptp(true[idx]) == 0:
+            continue
+        if not np.isfinite(pred[idx]).all() or np.ptp(pred[idx]) == 0:
+            scores.append(0.0)
+            continue
+        corr, _ = spearmanr(true[idx], pred[idx])
+        scores.append(float(corr) if np.isfinite(corr) else 0.0)
+    return float(np.mean(scores))

@@ -1,5 +1,9 @@
+import numpy as np
 import pandas as pd
-from tasks.utils import grade_pearson
+from sklearn.metrics import average_precision_score
+
+from tasks.utils import InvalidSubmissionError
+from tasks.utils import validate_submission
 
 
 def validate_first_column_match(submission: pd.DataFrame, answers: pd.DataFrame) -> None:
@@ -20,5 +24,30 @@ def validate_first_column_match(submission: pd.DataFrame, answers: pd.DataFrame)
 
 
 def grade(submission: pd.DataFrame, answers: pd.DataFrame) -> float:
+    """Mean per-chain AUPRC for interface-residue prediction.
+
+    The area under the precision-recall curve is computed separately for every chain
+    (answers carry `chain_id`) and averaged, so a chain with many residues does not dominate
+    and the score is not driven by differences in interface size between chains. A chain whose
+    predictions are constant scores the share of interface residues of that chain, which is
+    what a constant prediction earns under AUPRC.
+    """
     validate_first_column_match(submission, answers)
-    return grade_pearson(submission, answers, id_col="id", pred_col="interface_fraction", target_col="interface_fraction")
+    submission = validate_submission(submission, answers, id_col="id", pred_cols=["interface"])
+    answers = answers.sort_values("id").reset_index(drop=True)
+
+    pred = submission["interface"].astype(float).values
+    true = answers["interface"].astype(int).values
+    if not np.isfinite(pred).all():
+        raise InvalidSubmissionError("Predictions must be finite numbers")
+
+    scores = []
+    for _, idx in answers.groupby("chain_id").indices.items():
+        if len(idx) < 5 or true[idx].min() == true[idx].max():
+            continue
+        scores.append(float(average_precision_score(true[idx], pred[idx])))
+
+    if not scores:
+        raise InvalidSubmissionError("No chain had both interface and non-interface residues")
+
+    return float(np.mean(scores))

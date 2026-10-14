@@ -1,9 +1,5 @@
-import numpy as np
 import pandas as pd
-from scipy.stats import pearsonr
-
-from tasks.utils import validate_submission
-from tasks.utils import InvalidSubmissionError
+from tasks.utils import grade_accuracy
 
 
 def validate_first_column_match(submission: pd.DataFrame, answers: pd.DataFrame) -> None:
@@ -24,28 +20,6 @@ def validate_first_column_match(submission: pd.DataFrame, answers: pd.DataFrame)
 
 
 def grade(submission: pd.DataFrame, answers: pd.DataFrame) -> float:
-    """Compute mean Pearson correlation across all delta accessibility dimensions."""
+    """Share of test pools whose knocked-down gene is named correctly."""
     validate_first_column_match(submission, answers)
-    submission = validate_submission(submission, answers, id_col="id")
-    answers = answers.sort_values("id").reset_index(drop=True)
-
-    # Get all delta columns
-    delta_cols = [c for c in answers.columns if c.startswith("delta_")]
-    if not delta_cols:
-        raise InvalidSubmissionError("No delta columns found in answers")
-
-    correlations = []
-    for col in delta_cols:
-        if col not in submission.columns:
-            raise InvalidSubmissionError(f"Missing column: {col}")
-        y_true = answers[col].values.astype(float)
-        y_pred = submission[col].values.astype(float)
-        if np.std(y_true) > 0 and np.std(y_pred) > 0:
-            r, _ = pearsonr(y_true, y_pred)
-            correlations.append(r)
-
-    if not correlations:
-        raise InvalidSubmissionError("No valid correlations computed")
-
-    raw = float(np.mean(correlations))
-    return raw
+    return grade_accuracy(submission, answers, id_col="id", pred_col="target_gene", label_col="target_gene")

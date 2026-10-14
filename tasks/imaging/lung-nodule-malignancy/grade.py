@@ -1,5 +1,5 @@
 import pandas as pd
-from tasks.utils import grade_accuracy
+from tasks.utils import grade_spearman
 
 
 def validate_first_column_match(submission: pd.DataFrame, answers: pd.DataFrame) -> None:
@@ -20,8 +20,14 @@ def validate_first_column_match(submission: pd.DataFrame, answers: pd.DataFrame)
 
 
 def grade(submission: pd.DataFrame, answers: pd.DataFrame) -> float:
-    """Grade lung nodule malignancy prediction using accuracy."""
+    """Spearman rank correlation between the predicted and the true mean malignancy rating.
+
+    The target is the mean of the malignancy scores the radiologists gave the nodule, on the
+    LIDC scale from 1 (highly unlikely malignant) to 5 (highly suspicious), so a rank
+    correlation scores how well the nodules are ordered by suspicion rather than whether an
+    ordinal level is hit exactly.
+    """
     validate_first_column_match(submission, answers)
-    return grade_accuracy(
-        submission, answers, id_col="id", pred_col="malignancy_level", label_col="malignancy_level"
+    return grade_spearman(
+        submission, answers, id_col="id", pred_col="malignancy", target_col="malignancy"
     )
