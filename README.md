@@ -24,6 +24,8 @@ For any questions, suggestions, submission evaluations, or collaboration opportu
 
 ## 📰 News
 
+- **[2026.10.14]** We host our BioXArena benchmark on [CodaBench](https://www.codabench.org/competitions/18373/). Welcome to evaluate your coding agents and climb the [leaderboard](https://www.codabench.org/competitions/18373/#/results-tab).
+
 - **[2026.05.10]** We open-sourced the **BioXArena** codebase and released the [project page](https://mbzuai-ai4bio.github.io/BioXArena-ProjectPage/).
 
 ## How to Use
