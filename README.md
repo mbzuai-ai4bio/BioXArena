@@ -1,10 +1,57 @@
-# BioXArena
+# BioXArena: Benchmarking LLM Agents on Multi-Modal Biomedical Machine Learning Tasks
 
 <p align="center">
-  <img src="figs/Figure1_benchmark_pipeline.png" alt="BioXArena Overview" width="80%">
+  <a href="https://arxiv.org/abs/2605.15766"><img src="https://img.shields.io/badge/arXiv-2605.15766-b31b1b.svg" alt="arXiv"></a>
+  <a href="https://mbzuai-ai4bio.github.io/BioXArena-ProjectPage/"><img src="https://img.shields.io/badge/Project-Page-blue.svg" alt="Project Page"></a>
+  <a href="https://huggingface.co/datasets/mbzuai-ai4bio/BioXArena-Data-Public"><img src="https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Dataset-yellow.svg" alt="Hugging Face Dataset"></a>
+  <img src="https://img.shields.io/badge/NeurIPS%202026-E%26D%20Track-purple.svg" alt="NeurIPS 2026 E&D Track">
 </p>
 
-This repository contains the evaluation code for **BioXArena**, our benchmark for assessing State-Of-The-Art (SOTA) LLM agents on biomedical tasks. We have used this codebase to evaluate more than a dozen SOTA LLM agents on the **BioXArena** benchmark.
+<p align="center">
+  <img src="figs/Figure1_benchmark_pipeline.png" alt="BioXArena Overview" width="95%">
+</p>
+
+This repository contains the evaluation code for **BioXArena**, a biomedical machine learning (BioML) coding benchmark that tests whether LLM agents can build task-specific models on heterogeneous, often multi-modal biomedical data. BioXArena contains **76 end-to-end tasks across 9 domains** (sequence, single-cell, structure, network biology, chemical biology, perturbation dynamics, phenotype–disease, imaging, and text-integrated). Each task ships public training data and a task description, while the test labels and graders stay private. Agents must write runnable code, train models, and submit predictions for the held-out test samples. We use this codebase to evaluate **18 agent configurations** under the same controlled resource configuration.
+
+## 📰 News
+
+- **[2026.10.15]** 🔥 We updated our [project page](https://mbzuai-ai4bio.github.io/BioXArena-ProjectPage/) and this repository. The **camera-ready paper** is available!
+- **[2026.10.14]** [CodaBench](https://www.codabench.org/competitions/18373/) is available for result evaluation.
+- **[2026.10.07]** We updated most of the benchmark data on [Hugging Face](https://huggingface.co/datasets/mbzuai-ai4bio/BioXArena-Data-Public). We fixed data leakage, improved the task descriptions, and made further data corrections. All 18 configurations were re-evaluated on the corrected tasks.
+- **[2026.09.24]** 🎉 BioXArena was accepted to the **NeurIPS 2026 Evaluations & Datasets Track**!
+- **[2026.05.15]** The first version of BioXArena went online, including the [arXiv paper](https://arxiv.org/abs/2605.15766) and the [Hugging Face dataset](https://huggingface.co/datasets/mbzuai-ai4bio/BioXArena-Data-Public).
+- **[2026.05.10]** We open-sourced the **BioXArena** codebase and released the [project page](https://mbzuai-ai4bio.github.io/BioXArena-ProjectPage/).
+
+## 🏆 Leaderboard (18 agent configurations)
+
+All scores are normalized to a 0–100 scale (higher is better) and computed on the corrected tasks. **Task Avg** averages over all 76 tasks, and failed runs score 0. **Domain Avg** gives each of the 9 domains equal weight. **Success** counts the runs whose submission passed the task grader. **Success-only Avg** averages over successful runs only.
+
+| Rank | Agent | Backbone LLM | Type | Success (/76) | Task Avg | Domain Avg | Success-only Avg |
+|:---:|:---|:---|:---|:---:|:---:|:---:|:---:|
+| 1 | Codex | GPT-6 Astra | Generic coding agent | 76 | **73.9** | **73.6** | 73.9 |
+| 2 | Claude Code | Claude Opus 5.5 | Generic coding agent | 72 | 73.8 | 73.4 | 77.9 |
+| 3 | OpenCode | GPT-5.6-sol | Generic coding agent | 75 | 68.7 | 68.2 | 69.6 |
+| 4 | Codex | GPT-5.6-sol | Generic coding agent | 76 | 68.7 | 68.3 | 68.7 |
+| 5 | Claude Code | Claude Opus 5 | Generic coding agent | 63 | 65.6 | 65.0 | **79.1** |
+| 6 | Minimal | GPT-5.6-sol | Minimal runner | 75 | 65.3 | 64.9 | 66.2 |
+| 7 | Claude Code | Claude Opus 4.6 | Generic coding agent | 69 | 64.6 | 64.7 | 71.1 |
+| 8 | MLEvolve | Gemini-3.1-Pro | ML coding agent | 74 | 63.3 | 62.5 | 65.0 |
+| 9 | Biomni | Claude Sonnet 5 | Biomedical agent | 67 | 60.9 | 60.8 | 69.0 |
+| 10 | Minimal | GLM-5.1 | Minimal runner | 72 | 60.7 | 60.4 | 64.1 |
+| 11 | OpenCode | Claude Opus 4.6 | Generic coding agent | 63 | 60.4 | 60.3 | 72.8 |
+| 12 | Minimal | Gemini-3.1-Pro | Minimal runner | 72 | 58.9 | 58.3 | 62.2 |
+| 13 | Minimal | Claude Opus 4.6 | Minimal runner | 67 | 58.4 | 58.1 | 66.3 |
+| 14 | Minimal | Qwen3.6-Plus | Minimal runner | 71 | 55.0 | 54.6 | 58.9 |
+| 15 | STELLA | Claude Sonnet 5 | Biomedical agent | 60 | 55.0 | 54.7 | 69.6 |
+| 16 | MLMaster2 | DeepSeek-V4-Pro | ML coding agent | 63 | 53.5 | 53.0 | 64.6 |
+| 17 | Minimal | Gemma-4-31B | Minimal runner | 55 | 45.6 | 44.5 | 63.0 |
+| 18 | Minimal | DeepSeek-V3.2 | Minimal runner | 55 | 39.8 | 39.3 | 55.0 |
+
+Configurations are ranked by Task Avg. *Minimal* is our minimal code-execution runner, which generates, executes, and repairs a single solution script. The figure below (Figure 3 in the paper) shows the per-domain scores and the failure breakdown.
+
+<p align="center">
+  <img src="figs/Figure3_main_leaderboard_failures.png" alt="BioXArena main results" width="90%">
+</p>
 
 ## 💬 Join Our Community
 
@@ -21,12 +68,6 @@ For any questions, suggestions, submission evaluations, or collaboration opportu
 | **Loka Li** | **Duzhen Zhang** | **Xingbo Du** |
 |:---:|:---:|:---:|
 | 📧 [longkang.li@mbzuai.ac.ae](mailto:loka.li@mbzuai.ac.ae) | 📧 [duzhen.zhang@mbzuai.ac.ae](mailto:duzhen.zhang@mbzuai.ac.ae) | 📧 [xingbo.du@mbzuai.ac.ae](mailto:xingbo.du@mbzuai.ac.ae) |
-
-## 📰 News
-
-- **[2026.10.14]** We host our BioXArena benchmark on [CodaBench](https://www.codabench.org/competitions/18373/). Welcome to evaluate your coding agents and climb the [leaderboard](https://www.codabench.org/competitions/18373/#/results-tab).
-
-- **[2026.05.10]** We open-sourced the **BioXArena** codebase and released the [project page](https://mbzuai-ai4bio.github.io/BioXArena-ProjectPage/).
 
 ## How to Use
 
@@ -292,3 +333,17 @@ At the moment, we have **not yet publicly released** the ground-truth `answers.c
 If you run evaluations for your agents, you can package the contents under `BioXArena-Output/` and send them to us. If the outputs are large, you do **not** need to include all intermediate files—please ensure that for each task, the root directory contains at least the required files (`submission.csv`, `solution.py`, and `metrics.json`), with `submission.csv` being the minimum requirement. You can package only these files and send them to us.
 
 We will compute the final scores using your outputs together with the private answers, return the results to you, and optionally include your submission on our leaderboard.
+
+## 📝 Citation
+
+If you find BioXArena useful in your research, please cite our paper:
+
+```bibtex
+@article{li2026bioxarena,
+  title={{BioXArena: Benchmarking LLM Agents on Multi-Modal Biomedical Machine Learning Tasks}},
+  author={Li, Loka and Zhang, Duzhen and Du, Xingbo and Song, Leonard and Wang, Zixiao and Aukenov, Assanali and Thomas, Noel and Sailaukan, Shakhnazar and Yang, Yonghan and Chen, Feilong and Dong, Jiahua and Zhang, Kun and Zhang, Bin and Song, Le},
+  journal={arXiv preprint arXiv:2605.15766},
+  year={2026},
+  url={https://arxiv.org/abs/2605.15766}
+}
+```
