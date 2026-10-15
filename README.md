@@ -53,9 +53,9 @@ The subscript of each row gives the backbone LLM:
 
 For any questions, suggestions, submission evaluations, or collaboration opportunities, please feel free to reach:
 
-| **Loka Li** | **Duzhen Zhang** | **Xingbo Du** |
-|:---:|:---:|:---:|
-| 📧 [longkang.li@mbzuai.ac.ae](mailto:loka.li@mbzuai.ac.ae) | 📧 [duzhen.zhang@mbzuai.ac.ae](mailto:duzhen.zhang@mbzuai.ac.ae) | 📧 [xingbo.du@mbzuai.ac.ae](mailto:xingbo.du@mbzuai.ac.ae) |
+| **Duzhen Zhang** |
+|:---:|
+| 📧 [duzhen.zhang@mbzuai.ac.ae](mailto:duzhen.zhang@mbzuai.ac.ae) |
 
 ## How to Use
 
