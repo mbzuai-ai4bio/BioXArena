@@ -5,6 +5,8 @@
   <a href="https://mbzuai-ai4bio.github.io/BioXArena-ProjectPage/"><img src="https://img.shields.io/badge/Project-Page-blue.svg" alt="Project Page"></a>
   <a href="https://huggingface.co/datasets/mbzuai-ai4bio/BioXArena-Data-Public"><img src="https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Dataset-yellow.svg" alt="Hugging Face Dataset"></a>
   <img src="https://img.shields.io/badge/NeurIPS%202026-E%26D%20Track-purple.svg" alt="NeurIPS 2026 E&D Track">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/Code%20License-MIT-green.svg" alt="Code License: MIT"></a>
+  <a href="https://creativecommons.org/licenses/by-nc/4.0/"><img src="https://img.shields.io/badge/Data%20License-CC%20BY--NC%204.0-lightgrey.svg" alt="Data License: CC BY-NC 4.0"></a>
 </p>
 
 <p align="center">
