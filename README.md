@@ -1,7 +1,7 @@
 # BioXArena: Benchmarking LLM Agents on Multi-Modal Biomedical Machine Learning Tasks (NeurIPS 2026)
 
 <p align="center">
-  <a href="https://arxiv.org/abs/2605.15766"><img src="https://img.shields.io/badge/arXiv-2605.15766-b31b1b.svg" alt="arXiv"></a> <a href="https://mbzuai-ai4bio.github.io/BioXArena-ProjectPage/"><img src="https://img.shields.io/badge/Project-Page-blue.svg" alt="Project Page"></a> <a href="https://huggingface.co/datasets/mbzuai-ai4bio/BioXArena-Data-Public"><img src="https://img.shields.io/badge/%F0%9F%A4%97-Dataset-yellow.svg" alt="Hugging Face Dataset"></a> <img src="https://img.shields.io/badge/NeurIPS-2026-purple.svg" alt="NeurIPS 2026"> <a href="LICENSE"><img src="https://img.shields.io/badge/Code-MIT-green.svg" alt="Code License: MIT"></a> <a href="https://creativecommons.org/licenses/by-nc/4.0/"><img src="https://img.shields.io/badge/Data-CC%20BY--NC%204.0-lightgrey.svg" alt="Data License: CC BY-NC 4.0"></a>
+  <a href="https://arxiv.org/abs/2605.15766"><img src="https://img.shields.io/badge/arXiv-2605.15766-b31b1b.svg" alt="arXiv"></a> <a href="https://mbzuai-ai4bio.github.io/BioXArena-ProjectPage/"><img src="https://img.shields.io/badge/Project-Page-blue.svg" alt="Project Page"></a> <a href="https://huggingface.co/datasets/mbzuai-ai4bio/BioXArena-Data-Public"><img src="https://img.shields.io/badge/%F0%9F%A4%97-Dataset-yellow.svg" alt="Hugging Face Dataset"></a> <a href="LICENSE"><img src="https://img.shields.io/badge/Code-MIT-green.svg" alt="Code License: MIT"></a> <a href="https://creativecommons.org/licenses/by-nc/4.0/"><img src="https://img.shields.io/badge/Data-CC%20BY--NC%204.0-lightgrey.svg" alt="Data License: CC BY-NC 4.0"></a>
 </p>
 
 <p align="center">
