@@ -264,6 +264,11 @@ Then zip the output and submit it to CodaBench as in [step 4](#4-submit-to-codab
 
 </details>
 
+## 📄 License
+
+- **Code** in this repository is released under the [MIT License](LICENSE). The third-party agent frameworks in `agents/` (Biomni, STELLA, MLEvolve, EvoMaster) keep their own licenses (Apache License 2.0).
+- **Data** ([BioXArena-Data-Public](https://huggingface.co/datasets/mbzuai-ai4bio/BioXArena-Data-Public)) is released under [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/), for academic and other non-commercial use. Each task is derived from public sources (cited in its `description.md`), and use of a task's data is also subject to the license and terms of use of its original source.
+
 ## 📝 Citation
 
 If you find BioXArena useful in your research, please cite our NeurIPS 2026 paper:
