@@ -9,6 +9,13 @@ MLEvolve runner:
 
 MLMaster2.0 itself is executed through EvoMaster:
     python run.py --agent ml_master_2 --config <generated.yaml> --task <description.md>
+
+The LLM is served through OpenRouter. The API key is passed to EvoMaster through the
+OPENROUTER_API_KEY environment variable (the generated config only holds the
+"${OPENROUTER_API_KEY}" placeholder).
+
+Example:
+    python run_mlmaster2.0_agent.py --model deepseek/deepseek-v4-pro --steps 999 --time-limit 7200 --task chemical-biology/tox21-sr-are
 """
 
 from __future__ import annotations
@@ -29,6 +36,8 @@ from pathlib import Path
 from typing import Any
 
 import yaml
+
+from openrouter_config import DEFAULT_ENV_PATH, OPENROUTER_BASE_URL, resolve_api_key
 
 try:
     sys.stdout.reconfigure(line_buffering=True)  # type: ignore[attr-defined]
@@ -363,7 +372,7 @@ def write_final_metrics_json(
         source_payload.get("notes"),
         None
         if source_metrics_path is not None
-        else "metrics.json synthesized by run_mlmaster2.0_agent_zdz.py from MLMaster2.0 artifacts.",
+        else "metrics.json synthesized by run_mlmaster2.0_agent.py from MLMaster2.0 artifacts.",
         None
         if usage_found
         else "MLMaster2.0 did not persist token usage metadata; input_tokens/output_tokens defaulted to 0.",
@@ -724,7 +733,7 @@ def build_task_config(
     llm_cfg["openrouter"] = {
         "provider": "openrouter",
         "model": model,
-        "api_key": api_key,
+        "api_key": "${OPENROUTER_API_KEY}",
         "base_url": base_url,
         "temperature": temperature,
         "max_tokens": 65536,
@@ -764,7 +773,21 @@ def build_task_config(
         raise ValueError("session.local section in template config must be a mapping.")
     local_cfg["timeout"] = max(time_limit, 60)
     local_cfg["gpu_devices"] = ["0"]
-    local_cfg["cpu_devices"] = "0-15"
+    # Slurm assigns a node-specific cpuset; it is frequently not CPU 0-15.
+    # MLMaster's local session wraps candidate execution in `taskset -c`, so a
+    # hard-coded range makes every generated program fail before Python starts.
+    try:
+        allowed_cpus = sorted(os.sched_getaffinity(0))
+    except (AttributeError, OSError):
+        allowed_cpus = []
+    if allowed_cpus and allowed_cpus == list(range(allowed_cpus[0], allowed_cpus[-1] + 1)):
+        # ResourceAllocator accepts a contiguous range string.
+        local_cfg["cpu_devices"] = f"{allowed_cpus[0]}-{allowed_cpus[-1]}"
+    elif allowed_cpus:
+        # For a non-contiguous Slurm cpuset it accepts a YAML list of integers.
+        local_cfg["cpu_devices"] = allowed_cpus
+    else:
+        local_cfg["cpu_devices"] = None
     local_cfg["symlinks"] = {str(task_spec.task_dir): "input"}
     parallel_cfg = local_cfg.setdefault("parallel", {})
     if isinstance(parallel_cfg, dict):
@@ -822,7 +845,7 @@ def build_child_env(
         or env_vars.get("GPT_BASE_URL")
     )
 
-    child_env.setdefault("OPENROUTER_API_KEY", api_key or "")
+    child_env["OPENROUTER_API_KEY"] = api_key or ""
     child_env.setdefault("OPENROUTER_MODEL", model)
     child_env.setdefault("GPT_CHAT_MODEL", env_vars.get("GPT_CHAT_MODEL") or model)
     child_env.setdefault("DEEPSEEK_API_KEY", env_vars.get("DEEPSEEK_API_KEY") or api_key or "")
@@ -979,6 +1002,12 @@ def run_single_task(
 def main() -> None:
     parser = argparse.ArgumentParser(description="Run MLMaster2.0 agent on BioXArena tasks")
     parser.add_argument("--prefix-dir", type=str, default=str(WORKSPACE_ROOT))
+    parser.add_argument("--tasks-root", type=str, default=None,
+                        help="Task data root (default: <prefix>/BioXArena-Data-Public)")
+    parser.add_argument("--output-root", type=str, default=None,
+                        help="Exact output directory for this model/round")
+    parser.add_argument("--model-dir", type=str, default=None,
+                        help="Stable model directory label used when deriving output-root")
     parser.add_argument("--model", type=str, default="google/gemini-3.1-pro-preview")
     parser.add_argument("--base-url", type=str, default=None)
     parser.add_argument("--api-key", type=str, default=None)
@@ -994,18 +1023,19 @@ def main() -> None:
     args = parser.parse_args()
 
     prefix_dir = Path(args.prefix_dir).resolve()
-    tasks_root = (prefix_dir / "BioXArena-Data-Public").resolve()
-    model_dir_name = args.model.replace("/", "__").replace(":", "_")
-    output_root = (
-        prefix_dir / "BioXArena-Output" / f"mlmaster2.0__{model_dir_name}" / args.round_name
-    )
-    env_path = prefix_dir / "BioXArena" / ".env"
-    env_vars = load_env_file(env_path)
+    tasks_root = (Path(args.tasks_root) if args.tasks_root else
+                  prefix_dir / "BioXArena-Data-Public").resolve()
+    model_dir_name = args.model_dir or f"mlmaster2.0__{args.model.replace('/', '__').replace(':', '_')}"
+    output_root = (Path(args.output_root) if args.output_root else
+                   prefix_dir / "BioXArena-Output" / model_dir_name / args.round_name)
+    env_vars = load_env_file(DEFAULT_ENV_PATH)
+    # The OpenRouter key is passed separately; do not forward .env credentials wholesale.
+    for key_name in ("api_key", "api_url", "OPENROUTER_API_KEY"):
+        env_vars.pop(key_name, None)
 
-    if args.api_key is None:
-        args.api_key = env_vars.get("api_key", "")
     if args.base_url is None:
-        args.base_url = env_vars.get("api_url", "https://openrouter.ai/api/v1")
+        args.base_url = OPENROUTER_BASE_URL
+    args.api_key = "" if args.dry_run else resolve_api_key(args.api_key)
 
     grading_server_port = os.environ.get("GRADING_SERVER_PORT", "").strip()
     grading_server_url = None

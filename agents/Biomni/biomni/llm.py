@@ -181,12 +181,17 @@ def get_llm(
             except Exception as e:
                 print(f"Note: Could not load ANTHROPIC_API_KEY from bash_profile: {e}")
 
-        return ChatAnthropic(
-            model=model,
-            temperature=temperature,
-            max_tokens=8192,
-            stop_sequences=stop_sequences,
-        )
+        anthropic_kwargs = {
+            "model": model,
+            "max_tokens": 8192,
+            "stop_sequences": stop_sequences,
+            "anthropic_api_key": api_key,
+            "base_url": base_url,
+        }
+        # Sonnet 5 rejects the temperature field, including temperature=0.
+        if "sonnet-5" not in model.lower():
+            anthropic_kwargs["temperature"] = temperature
+        return ChatAnthropic(**anthropic_kwargs)
 
     elif source == "Gemini":
         # If you want to use ChatGoogleGenerativeAI, you need to pass the stop sequences upon invoking the model.

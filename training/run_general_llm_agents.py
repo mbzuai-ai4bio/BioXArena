@@ -1,10 +1,13 @@
 #!/usr/bin/env python3
-"""Run general LLM agents on BioXArena tasks via an OpenAI-compatible API.
+"""Minimal runner: run general LLMs on BioXArena tasks via the OpenRouter (OpenAI-compatible) API.
+
+The model writes a complete solution.py in one response; the runner executes it and feeds
+errors back for up to --max-attempts generate-execute-repair rounds.
 
 Examples:
-    python run_general_llm_agents.py --task sequence/active-regulatory-element
-    python run_general_llm_agents.py --domain sequence --max-workers 4
-    python run_general_llm_agents.py --all-tasks --model anthropic/claude-3.7-sonnet
+    python run_general_llm_agents.py --model deepseek/deepseek-v3.2 --task sequence/active-regulatory-element
+    python run_general_llm_agents.py --model z-ai/glm-5.1 --domain sequence --max-workers 4
+    python run_general_llm_agents.py --model openai/gpt-5.6-sol --all-tasks --temperature 0 --seed 2026
 """
 
 from __future__ import annotations
@@ -25,18 +28,19 @@ from typing import Any
 
 from openai import OpenAI
 
+from openrouter_config import OPENROUTER_BASE_URL, resolve_api_key
 
-SCRIPT_PATH = Path(__file__).resolve()  # /<work_root>/BioXArena/training/run_general_llm_agents.py
-TRAINING_DIR = SCRIPT_PATH.parent  # /<work_root>/BioXArena/training/
-EVAL_ROOT = TRAINING_DIR.parent  # /<work_root>/BioXArena
-WORKSPACE_ROOT = EVAL_ROOT.parent  # default prefix if none is provided explicitly  /<work_root>
+
+SCRIPT_PATH = Path(__file__).resolve()  # <repo>/training/run_general_llm_agents.py
+TRAINING_DIR = SCRIPT_PATH.parent  # <repo>/training/
+EVAL_ROOT = TRAINING_DIR.parent  # <repo>
+WORKSPACE_ROOT = EVAL_ROOT.parent  # default prefix if none is provided explicitly
 DEFAULT_PREFIX_ROOT = WORKSPACE_ROOT
-DEFAULT_TASKS_ROOT = EVAL_ROOT / "tasks"  # /<work_root>/BioXArena/tasks
+DEFAULT_TASKS_ROOT = EVAL_ROOT / "tasks"  # <repo>/tasks
 DEFAULT_PROMPT_PATH = EVAL_ROOT / "prompts" / "unified_eval_prompt.py"
 DEFAULT_ENV_PATH = EVAL_ROOT / ".env"
-DEFAULT_MODEL = "openai/gpt-5.4-mini"
+DEFAULT_MODEL = "deepseek/deepseek-v3.2"
 DEFAULT_ROUND_NAME = "round1"
-API_KEY_ENV = "api_key"
 API_URL_ENV = "api_url"
 DEFAULT_MAX_ATTEMPTS = 3
 DEFAULT_REQUEST_TIMEOUT_SEC = 180
@@ -110,9 +114,15 @@ class LLMClient:
             base_url=self.api_url,
             api_key=self.api_key,
             timeout=self.timeout_sec,
+            # Repair attempts are managed by the benchmark runner. Hidden SDK
+            # retries can otherwise extend a near-deadline request beyond the
+            # per-task wall clock.
+            max_retries=0,
         )
 
-    def chat(self, messages: list[dict[str, Any]]) -> dict[str, Any]:
+    def chat(
+        self, messages: list[dict[str, Any]], timeout_sec: int | None = None
+    ) -> dict[str, Any]:
         request_kwargs: dict[str, Any] = {
             "model": self.model,
             "messages": messages,
@@ -124,10 +134,41 @@ class LLMClient:
             request_kwargs["max_tokens"] = self.max_completion_tokens
         if self.seed is not None:
             request_kwargs["seed"] = self.seed
+        if timeout_sec is not None:
+            request_kwargs["timeout"] = max(1, min(self.timeout_sec, timeout_sec))
 
-        response = self.client.chat.completions.create(
-            **request_kwargs,
-        )
+        # Some OpenAI-compatible proxies cut non-streaming responses after ~120 s.
+        # When the bare GPT-5.6-sol / GPT-6 Astra names are used (i.e. not the
+        # OpenRouter "openai/..." ids), stream the response and reconstruct the
+        # ordinary response shape expected by the rest of this runner.
+        if self.model in {"gpt-5.6-sol", "gpt-6-astra"}:
+            request_kwargs["stream"] = True
+            request_kwargs["stream_options"] = {"include_usage": True}
+            content_parts: list[str] = []
+            usage: dict[str, Any] | None = None
+            finish_reason: str | None = None
+            for chunk in self.client.chat.completions.create(**request_kwargs):
+                if chunk.usage is not None:
+                    usage = chunk.usage.model_dump(mode="json", exclude_none=True)
+                if not chunk.choices:
+                    continue
+                choice = chunk.choices[0]
+                if choice.delta.content:
+                    content_parts.append(choice.delta.content)
+                if choice.finish_reason is not None:
+                    finish_reason = choice.finish_reason
+            payload: dict[str, Any] = {
+                "choices": [{
+                    "index": 0,
+                    "message": {"role": "assistant", "content": "".join(content_parts)},
+                    "finish_reason": finish_reason,
+                }]
+            }
+            if usage is not None:
+                payload["usage"] = usage
+            return payload
+
+        response = self.client.chat.completions.create(**request_kwargs)
         return response.model_dump(mode="json", exclude_none=True)
 
 
@@ -493,6 +534,7 @@ def run_single_task(
     prompt_template: str,
     client: LLMClient,
     max_attempts: int,
+    api_retry_backoff_sec: float,
     run_timeout_sec: int,
     dry_run: bool,
     print_lock: threading.Lock,
@@ -548,8 +590,6 @@ def run_single_task(
                 )
             )
             break
-        # Cap this attempt's subprocess timeout to whatever is left in the task budget.
-        effective_run_timeout = max(1, min(run_timeout_sec, int(remaining)))
         request_start = time.time()
         request_payload_path = task_spec.output_dir / f"api_request_attempt_{attempt_index:02d}.json"
         response_payload_path = task_spec.output_dir / f"api_response_attempt_{attempt_index:02d}.json"
@@ -560,7 +600,9 @@ def run_single_task(
         write_json(request_payload_path, {"messages": messages, "model": client.model})
 
         try:
-            raw_response = client.chat(messages)
+            raw_response = client.chat(
+                messages, timeout_sec=max(1, min(client.timeout_sec, int(remaining)))
+            )
             attempt_input_tokens, attempt_output_tokens, has_usage = extract_token_usage(raw_response)
             total_input_tokens += attempt_input_tokens
             total_output_tokens += attempt_output_tokens
@@ -601,18 +643,47 @@ def run_single_task(
                     duration_sec=time.time() - request_start,
                 )
             )
-            messages.append(
-                {
-                    "role": "user",
-                        "content": build_repair_message(
-                            task_spec=task_spec,
-                            error=error_text,
-                            missing_outputs=REQUIRED_OUTPUT_LABELS.copy(),
-                            stderr_text="",
-                        ),
-                    }
-            )
+            # No candidate code was generated, so retry the original conversation.
+            # Treating an HTTP/proxy outage as a code-repair turn needlessly grows
+            # the prompt and misrepresents what happened.
+            if api_retry_backoff_sec > 0 and attempt_index < max_attempts:
+                retry_delay = min(
+                    api_retry_backoff_sec * (2 ** (attempt_index - 1)),
+                    max(0.0, task_deadline - time.time()),
+                )
+                if retry_delay > 0:
+                    with print_lock:
+                        print(
+                            f"[API-RETRY] {task_spec.key}: waiting {retry_delay:.0f}s "
+                            f"after attempt {attempt_index}"
+                        )
+                    time.sleep(retry_delay)
             continue
+
+        # API generation consumes the same per-task wall clock as execution.
+        # Recompute the remaining budget after the response; using the value
+        # from before the API request can let a long completion extend the
+        # generated program beyond the documented hard deadline.
+        remaining_after_generation = task_deadline - time.time()
+        if remaining_after_generation <= 0:
+            timeout_error = (
+                f"Task wall-clock exceeded {task_timeout_sec}s during solution generation."
+            )
+            attempts.append(
+                AttemptRecord(
+                    attempt=attempt_index,
+                    request_ok=True,
+                    execution_ok=False,
+                    missing_required_outputs=REQUIRED_OUTPUT_LABELS.copy(),
+                    error=timeout_error,
+                    duration_sec=time.time() - request_start,
+                    solution_path=str(solution_attempt_path),
+                )
+            )
+            break
+        effective_run_timeout = max(
+            1, min(run_timeout_sec, int(remaining_after_generation))
+        )
 
         try:
             completed = run_solution_file(
@@ -623,7 +694,7 @@ def run_single_task(
             stdout_path.write_text(completed.stdout or "", encoding="utf-8")
             stderr_path.write_text(completed.stderr or "", encoding="utf-8")
         except subprocess.TimeoutExpired as exc:
-            timeout_error = f"Execution timed out after {run_timeout_sec} seconds."
+            timeout_error = f"Execution timed out after {effective_run_timeout} seconds."
             timeout_stdout = ensure_text(exc.stdout)
             timeout_stderr = ensure_text(exc.stderr)
             stdout_path.write_text(timeout_stdout, encoding="utf-8")
@@ -751,13 +822,14 @@ def build_arg_parser() -> argparse.ArgumentParser:
     parser.add_argument("--model", default=None, help="Model name understood by the configured API endpoint.")
     parser.add_argument("--round-name", default=DEFAULT_ROUND_NAME, help="Round/output subdirectory name appended after the model-specific output directory.")
     parser.add_argument("--env-file", type=Path, default=DEFAULT_ENV_PATH, help="Path to the .env file.")
-    parser.add_argument("--prefix-dir", type=Path, default=DEFAULT_PREFIX_ROOT, help="Shared prefix for BioXArena-Data-Public and BioXArena-Output. Defaults to the parent of BioXArena.")
-    parser.add_argument("--tasks-root", type=Path, default=DEFAULT_TASKS_ROOT, help="Path to BioXArena/tasks.")
+    parser.add_argument("--prefix-dir", type=Path, default=DEFAULT_PREFIX_ROOT, help="Shared prefix for BioXArena-Data-Public and BioXArena-Output. Defaults to the parent of this repository.")
+    parser.add_argument("--tasks-root", type=Path, default=DEFAULT_TASKS_ROOT, help="Path to <repo>/tasks (task registry with graders).")
     parser.add_argument("--data-root", type=Path, default=None, help="Path to the BioXArena-Data-Public data root. Overrides --prefix-dir/BioXArena-Data-Public.")
     parser.add_argument("--output-root", type=Path, default=None, help="Base output root. The script appends <model_name>/<round_name>/ under this directory.")
     parser.add_argument("--prompt-path", type=Path, default=DEFAULT_PROMPT_PATH, help="Path to unified_eval_prompt.py.")
     parser.add_argument("--max-workers", type=int, default=1, help="Number of tasks to run in parallel.")
     parser.add_argument("--max-attempts", type=int, default=DEFAULT_MAX_ATTEMPTS, help="Max repair attempts per task.")
+    parser.add_argument("--api-retry-backoff-sec", type=float, default=0.0, help="Initial exponential backoff after an API request failure (default: no delay).")
     parser.add_argument("--request-timeout-sec", type=int, default=DEFAULT_REQUEST_TIMEOUT_SEC, help="API HTTP timeout.")
     parser.add_argument("--run-timeout-sec", type=int, default=DEFAULT_RUN_TIMEOUT_SEC, help="Timeout for each generated solution.py execution.")
     parser.add_argument("--task-timeout-sec", type=int, default=7200, help="Hard wall-clock per task across all attempts (default 7200=2h).")
@@ -775,8 +847,11 @@ def main() -> int:
 
     load_env_file(args.env_file)
     resolved_model = args.model or DEFAULT_MODEL
-    api_key = os.environ.get(API_KEY_ENV)
-    resolved_api_url = os.environ.get(API_URL_ENV)
+    try:
+        api_key = resolve_api_key(None, args.env_file)
+    except RuntimeError:
+        api_key = None
+    resolved_api_url = os.environ.get(API_URL_ENV) or OPENROUTER_BASE_URL
     resolved_round_name = sanitize_path_component(args.round_name)
     resolved_model_dir = sanitize_path_component(args.model_dir) if args.model_dir else sanitize_path_component(resolved_model)
     resolved_prefix_dir = args.prefix_dir.resolve()
@@ -785,8 +860,7 @@ def main() -> int:
     resolved_output_root = base_output_root / resolved_model_dir / resolved_round_name
     if not api_key and not args.dry_run:
         parser.error(
-            f"{API_KEY_ENV} is not set. Put it in {args.env_file} "
-            "or export it in the environment."
+            f"No OpenRouter API key. Set OPENROUTER_API_KEY or put OPENROUTER_API_KEY=... in {args.env_file}."
         )
     if not resolved_api_url and not args.dry_run:
         parser.error(
@@ -860,6 +934,7 @@ def main() -> int:
                 prompt_template=prompt_template,
                 client=client,
                 max_attempts=args.max_attempts,
+                api_retry_backoff_sec=max(0.0, args.api_retry_backoff_sec),
                 run_timeout_sec=args.run_timeout_sec,
                 task_timeout_sec=args.task_timeout_sec,
                 dry_run=args.dry_run,

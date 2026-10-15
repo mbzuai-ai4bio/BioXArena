@@ -10,10 +10,18 @@ STELLA is a self-evolving agent with multiple sub-agents:
 Unlike general LLM agents, STELLA handles its own ReAct loop
 and self-evolving skill management internally.
 
+All STELLA sub-agents (manager, dev, critic, tool creation) use the --model backbone,
+served through OpenRouter (OpenAI-compatible API).
+
+Paper settings (enabled by training/run_agent.py):
+  STELLA_WAIT_BACKGROUND=1   wait (within the time limit) for background training
+                             processes the agent left running before judging outputs
+  STELLA_SAVE_TO_TASK_DIR=1  tell the dev agent to save outputs in the task output
+                             directory instead of './agent_outputs'
+
 Examples:
-    python run_stella_agent.py --task chemical-biology/tox21-sr-are
-    python run_stella_agent.py --domain chemical-biology --max-workers 2
-    python run_stella_agent.py --all-tasks --max-workers 4
+    python run_stella_agent.py --model anthropic/claude-sonnet-5 --task chemical-biology/tox21-sr-are --time-limit 7200
+    python run_stella_agent.py --model deepseek/deepseek-v3.2 --domain chemical-biology --max-workers 2
 """
 
 from __future__ import annotations
@@ -31,16 +39,17 @@ from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any
 
+from openrouter_config import OPENROUTER_BASE_URL, resolve_api_key
+
 # ---------------------------------------------------------------------------
 # Paths
 # ---------------------------------------------------------------------------
 SCRIPT_PATH = Path(__file__).resolve()
 TRAINING_DIR = SCRIPT_PATH.parent
-EVAL_ROOT = TRAINING_DIR.parent          # BioXArena/
+EVAL_ROOT = TRAINING_DIR.parent          # repository root
 WORKSPACE_ROOT = EVAL_ROOT.parent
 DEFAULT_TASKS_ROOT = EVAL_ROOT / "tasks"
 DEFAULT_PROMPT_PATH = EVAL_ROOT / "prompts" / "unified_eval_prompt.py"
-DEFAULT_ENV_PATH = EVAL_ROOT / ".env"
 DEFAULT_ROUND_NAME = "round1"
 STELLA_AGENT_DIR = EVAL_ROOT / "agents" / "STELLA"
 
@@ -154,27 +163,23 @@ def patch_stella_models(model_id: str, api_key: str, base_url: str, temperature:
 
     mgr_id = manager_model_id or model_id
 
+    model_kwargs = {"api_base": base_url, "api_key": api_key}
+    # Sonnet 5 rejects the temperature field, including temperature=0.
+    if "sonnet-5" not in model_id.lower():
+        model_kwargs["temperature"] = temperature
+    # Optional context-limit overrides, off unless set in the environment. Used only for
+    # the 2026-10-07 rerun of six STELLA/DeepSeek-V3.2 tasks that failed on context length.
+    if os.environ.get("STELLA_MAX_TOKENS"):
+        model_kwargs["max_tokens"] = int(os.environ["STELLA_MAX_TOKENS"])
+    if os.environ.get("STELLA_OPENROUTER_TRANSFORMS"):
+        model_kwargs["extra_body"] = {"transforms": os.environ["STELLA_OPENROUTER_TRANSFORMS"].split(",")}
+
     # Dev Agent + Tool Creation Agent model
-    dev_model = OpenAIServerModel(
-        model_id=model_id,
-        api_base=base_url,
-        api_key=api_key,
-        temperature=temperature,
-    )
+    dev_model = OpenAIServerModel(model_id=model_id, **model_kwargs)
     # Manager Agent model
-    manager_model = OpenAIServerModel(
-        model_id=mgr_id,
-        api_base=base_url,
-        api_key=api_key,
-        temperature=temperature,
-    )
+    manager_model = OpenAIServerModel(model_id=mgr_id, **model_kwargs)
     # Critic Agent model
-    critic_model = OpenAIServerModel(
-        model_id=mgr_id,
-        api_base=base_url,
-        api_key=api_key,
-        temperature=temperature,
-    )
+    critic_model = OpenAIServerModel(model_id=mgr_id, **model_kwargs)
 
     import stella_core
     stella_core.claude_model = dev_model      # -> dev_agent
@@ -252,12 +257,24 @@ def run_single_task(
             use_mem0=False,  # Disable external memory service
         )
 
-        # If mixed-model mode, patch tool_creation_agent to use dev model (claude)
-        # instead of gpt_model (gemini) — matches original paper design.
+        # The sub-agents (dev / critic / tool_creation) are built at stella_core import time and keep the
+        # hard-coded default model object (google/gemini-3-flash-preview via OpenRouter); rebinding the
+        # module-level model variables in patch_stella_models does not reach them. Re-point them here so every
+        # agent uses the requested backbone (fixed 2026-10-08; earlier STELLA runs used Gemini-3-Flash sub-agents).
+        # In mixed-model mode tool_creation_agent uses the dev model, matching the original paper design.
         import stella_core as _sc
-        if getattr(_sc, '_dev_model_override', None) is not None:
-            if hasattr(_sc, 'tool_creation_agent') and _sc.tool_creation_agent is not None:
-                _sc.tool_creation_agent.model = _sc._dev_model_override
+        _sc.dev_agent.model = _sc.claude_model
+        _sc.critic_agent.model = _sc.gemini_model
+        if getattr(_sc, 'tool_creation_agent', None) is not None:
+            _sc.tool_creation_agent.model = getattr(_sc, '_dev_model_override', None) or _sc.gpt_model
+        _bound = {name: getattr(getattr(_sc, name, None), 'model', None) for name in ('dev_agent', 'critic_agent', 'tool_creation_agent')}
+        _bound['manager'] = manager_agent.model
+        _bound.update({f'managed:{n}': a.model for n, a in getattr(manager_agent, 'managed_agents', {}).items()})
+        _expected = {model_id, manager_model_id or model_id}
+        _wrong = {n: getattr(m, 'model_id', m) for n, m in _bound.items() if m is not None and getattr(m, 'model_id', None) not in _expected}
+        if _wrong:
+            raise RuntimeError(f"STELLA agents not bound to the requested backbone: {_wrong}")
+        print("  STELLA agent models: " + ", ".join(f"{n}={getattr(m, 'model_id', m)}" for n, m in _bound.items()), flush=True)
 
         # Build prompt
         prompt = build_stella_prompt(prompt_template, task_spec)
@@ -286,6 +303,16 @@ def run_single_task(
         if missing:
             status = "failed"
             error = f"Missing outputs: {missing}"
+            # Record the failure at decision time (2026-10-08) so that files a leftover background
+            # process writes later are not scored by the evaluator.
+            # 2026-10-12: with STELLA_WAIT_BACKGROUND=1 the parent first waits for the task's background
+            # processes (within the 7,200 s budget) and writes FAILED.json itself after re-checking outputs.
+            if os.environ.get("STELLA_WAIT_BACKGROUND") != "1":
+              (task_spec.output_dir / "FAILED.json").write_text(
+                json.dumps({"task": task_spec.key, "error": error, "duration_sec": duration,
+                            "note": "decided when the agent returned; later files do not count"}, indent=2),
+                encoding="utf-8",
+            )
         else:
             status = "success"
             error = None
@@ -338,6 +365,9 @@ def _child_run_task(
     manager_model_id=None,
 ):
     try:
+        # 2026-10-13: tag every process the agent starts (inherited env) so background jobs launched from
+        # /tmp or other directories are still recognised as belonging to this task.
+        os.environ["BX_STELLA_TASK_DIR"] = str(Path(task_spec.output_dir).resolve())
         local_lock = threading.Lock()
         result = run_single_task(
             task_spec=task_spec,
@@ -362,6 +392,81 @@ def _child_run_task(
                 duration_sec=0.0,
             )
         )
+
+
+def _task_processes(output_dir: Path, started_after: float) -> list:
+    """This user's processes started after the task began whose cwd or command line points into the task dir."""
+    import psutil
+
+    me, out, found = os.getuid(), str(Path(output_dir).resolve()), []
+    for p in psutil.process_iter(["pid", "uids", "create_time", "cwd", "cmdline"]):
+        try:
+            if p.pid == os.getpid() or p.info["uids"] is None or p.info["uids"].real != me:
+                continue
+            if (p.info["create_time"] or 0) < started_after - 1:
+                continue
+            if (p.info["cwd"] or "").startswith(out) or out in " ".join(p.info["cmdline"] or []):
+                found.append(p)
+            elif p.environ().get("BX_STELLA_TASK_DIR") == out:  # 2026-10-13: inherited task tag
+                found.append(p)
+        except (psutil.NoSuchProcess, psutil.AccessDenied):
+            continue
+    return found
+
+
+def _wait_for_background(task_spec, start: float, time_limit: float, print_lock) -> dict:
+    """2026-10-12 (STELLA_WAIT_BACKGROUND=1): the agent returned without all outputs but left background
+    processes (e.g. ``python solution.py &``) running. Wait for them until the task's 7,200 s budget ends."""
+    import psutil
+
+    procs = _task_processes(task_spec.output_dir, start)
+    info = {"waited": False, "processes": [f"{p.pid}:{' '.join(p.cmdline())[:120]}" for p in procs if p.is_running()]}
+    if not procs:
+        return info
+    info["waited"] = True
+    with print_lock:
+        print(f"[WAIT] {task_spec.key}: agent returned with {len(procs)} background process(es); waiting until wall-clock {time_limit}s")
+    while time.time() - start < time_limit:
+        alive = [p for p in _task_processes(task_spec.output_dir, start) if p.status() != psutil.STATUS_ZOMBIE]
+        if not alive:
+            break
+        time.sleep(15)
+    info["wait_end_sec"] = time.time() - start
+    info["budget_exhausted"] = time.time() - start >= time_limit
+    return info
+
+
+def _kill_task_leftovers(output_dir: Path, started_after: float) -> list[str]:
+    """Kill processes the agent left running for this task (2026-10-08).
+
+    Background jobs launched by the agent (e.g. ``nohup python train.py &``) survive the task's child process,
+    keep using the GPU during the next task and may write outputs after the task was judged. Targets: this user's
+    processes started after the task began whose cwd or command line points into the task's output directory.
+    """
+    import psutil
+
+    me, out, killed = os.getuid(), str(Path(output_dir).resolve()), []
+    victims = []
+    for p in psutil.process_iter(["pid", "uids", "create_time", "cwd", "cmdline"]):
+        try:
+            if p.pid == os.getpid() or p.info["uids"] is None or p.info["uids"].real != me:
+                continue
+            if (p.info["create_time"] or 0) < started_after - 1:
+                continue
+            cwd = p.info["cwd"] or ""
+            cmd = " ".join(p.info["cmdline"] or [])
+            if cwd.startswith(out) or out in cmd or p.environ().get("BX_STELLA_TASK_DIR") == out:  # env tag: 2026-10-13
+                victims.append(p)
+        except (psutil.NoSuchProcess, psutil.AccessDenied):
+            continue
+    for p in victims:
+        try:
+            killed.append(f"{p.pid}:{' '.join(p.cmdline())[:120]}")
+            p.kill()
+        except (psutil.NoSuchProcess, psutil.AccessDenied):
+            pass
+    psutil.wait_procs(victims, timeout=10)
+    return killed
 
 
 def run_task_with_wall_clock(
@@ -401,12 +506,27 @@ def run_task_with_wall_clock(
     # Give the child a small grace period beyond time_limit so its own internal
     # timeout (future.result(timeout=time_limit)) has a chance to fire cleanly.
     proc.join(time_limit + 60)
-    if proc.is_alive():
+    timed_out = proc.is_alive()
+    if timed_out:
         proc.terminate()
         proc.join(10)
         if proc.is_alive():
             proc.kill()
             proc.join(5)
+    wait_info = None
+    if not timed_out and os.environ.get("STELLA_WAIT_BACKGROUND") == "1":
+        wait_info = _wait_for_background(task_spec, start, time_limit, print_lock)
+        if wait_info.get("budget_exhausted"):
+            timed_out = True
+    leftovers = _kill_task_leftovers(task_spec.output_dir, start)
+    if leftovers:
+        with print_lock:
+            print(f"[CLEANUP] {task_spec.key}: killed {len(leftovers)} leftover process(es): {leftovers[:5]}")
+        try:
+            (task_spec.output_dir / "killed_leftover_processes.json").write_text(json.dumps(leftovers, indent=2), encoding="utf-8")
+        except Exception:
+            pass
+    if timed_out:
         duration = time.time() - start
         with print_lock:
             print(f"[TIMEOUT] {task_spec.key} ({duration:.0f}s) exceeded wall-clock {time_limit}s")
@@ -434,7 +554,32 @@ def run_task_with_wall_clock(
         )
 
     try:
-        return q.get(timeout=10)
+        result = q.get(timeout=10)
+    except Exception as exc:
+        result = None
+        child_error = exc
+    if os.environ.get("STELLA_WAIT_BACKGROUND") == "1" and result is not None:
+        # Final judgement after the background wait (outputs written within the 7,200 s budget count).
+        missing = [f for f in REQUIRED_OUTPUT_LABELS if not (task_spec.output_dir / f).exists()]
+        duration = time.time() - start
+        if wait_info and wait_info.get("waited"):
+            (task_spec.output_dir / "background_wait.json").write_text(json.dumps(wait_info, indent=2), encoding="utf-8")
+        failed_marker = task_spec.output_dir / "FAILED.json"
+        if missing and not failed_marker.exists():
+            failed_marker.write_text(json.dumps({"task": task_spec.key, "error": f"Missing outputs: {missing}",
+                                                 "duration_sec": duration,
+                                                 "note": "decided after waiting for background processes within the time limit"},
+                                                indent=2), encoding="utf-8")
+        if not missing and not failed_marker.exists():
+            result = TaskRunResult(task_key=task_spec.key, status="success", output_dir=str(task_spec.output_dir),
+                                   error=None, duration_sec=duration)
+        elif missing:
+            result = TaskRunResult(task_key=task_spec.key, status="failed", output_dir=str(task_spec.output_dir),
+                                   error=f"Missing outputs: {missing}", duration_sec=duration)
+    if result is not None:
+        return result
+    try:
+        raise child_error
     except Exception as exc:
         return TaskRunResult(
             task_key=task_spec.key,
@@ -451,14 +596,20 @@ def run_task_with_wall_clock(
 def main() -> None:
     parser = argparse.ArgumentParser(description="Run STELLA agent on BioXArena tasks")
     parser.add_argument("--prefix-dir", type=str, default=str(WORKSPACE_ROOT))
-    parser.add_argument("--model", type=str, default="qwen/qwen3.6-plus:free",
+    parser.add_argument("--tasks-root", type=str, default=None,
+                        help="Task data root (default: <prefix>/BioXArena-Data-Public)")
+    parser.add_argument("--output-root", type=str, default=None,
+                        help="Exact output directory for this model/round")
+    parser.add_argument("--model-dir", type=str, default=None,
+                        help="Stable model directory label (used when deriving output-root)")
+    parser.add_argument("--model", type=str, default="anthropic/claude-sonnet-5",
                         help="LLM model for Dev + Tool Creation agents (via OpenRouter)")
     parser.add_argument("--manager-model", type=str, default=None,
                         help="LLM model for Manager + Critic agents. If not set, uses --model for all.")
     parser.add_argument("--base-url", type=str, default=None,
-                        help="API base URL (default: from .env)")
+                        help="API base URL (default: OpenRouter)")
     parser.add_argument("--api-key", type=str, default=None,
-                        help="API key (default: from .env)")
+                        help="OpenRouter API key (default: OPENROUTER_API_KEY or <repo>/.env)")
     parser.add_argument("--temperature", type=float, default=0.0,
                         help="Temperature for all agents (0=deterministic)")
     parser.add_argument("--enable-tool-creation", action="store_true", default=True,
@@ -479,24 +630,15 @@ def main() -> None:
         args.enable_tool_creation = False
 
     prefix_dir = Path(args.prefix_dir)
-    tasks_root = prefix_dir / "BioXArena-Data-Public"
-    model_dir_name = args.model.replace("/", "__").replace(":", "_")
-    output_root = prefix_dir / "BioXArena-Output" / f"stella__{model_dir_name}" / args.round_name
+    tasks_root = Path(args.tasks_root) if args.tasks_root else prefix_dir / "BioXArena-Data-Public"
+    model_dir_name = args.model_dir or f"stella__{args.model.replace('/', '__').replace(':', '_')}"
+    output_root = (Path(args.output_root) if args.output_root else
+                   prefix_dir / "BioXArena-Output" / model_dir_name / args.round_name)
 
-    # Load API credentials from .env if not provided
-    if args.api_key is None or args.base_url is None:
-        env_path = DEFAULT_ENV_PATH
-        if env_path.exists():
-            env_vars = {}
-            for line in env_path.read_text().splitlines():
-                line = line.strip()
-                if "=" in line and not line.startswith("#"):
-                    k, v = line.split("=", 1)
-                    env_vars[k.strip()] = v.strip()
-            if args.api_key is None:
-                args.api_key = env_vars.get("api_key", "")
-            if args.base_url is None:
-                args.base_url = env_vars.get("api_url", "https://openrouter.ai/api/v1")
+    if args.base_url is None:
+        args.base_url = OPENROUTER_BASE_URL
+    if not args.dry_run:
+        args.api_key = resolve_api_key(args.api_key)
 
     # Load prompt template
     prompt_template = load_prompt_template(DEFAULT_PROMPT_PATH)

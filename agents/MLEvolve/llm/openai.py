@@ -1,5 +1,6 @@
 """OpenAI-compatible API backend (query + generate). Supports Qwen API and any OpenAI-compatible endpoint."""
 
+import os
 import json
 import logging
 import re
@@ -209,7 +210,7 @@ def query(
     model = filtered.get("model", "")
     stage = _stage_config_for_model(cfg, model)
     client = OpenAI(
-        api_key=stage.api_key,
+        api_key=stage.api_key or os.environ.get("OPENROUTER_API_KEY"),
         base_url=stage.base_url or None,
         timeout=180.0,
     )
@@ -368,7 +369,7 @@ def generate(
     model = stage.model
     messages = _prompt_to_messages(prompt, model=model)
     client = OpenAI(
-        api_key=stage.api_key,
+        api_key=stage.api_key or os.environ.get("OPENROUTER_API_KEY"),
         base_url=stage.base_url or None,
         timeout=180.0,
     )

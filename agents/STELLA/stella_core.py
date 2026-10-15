@@ -1604,9 +1604,14 @@ dev_agent = ToolCallingAgent(
     """,
 )
 
-dev_agent.prompt_templates["managed_agent"]["task"] += """
+dev_agent.prompt_templates["managed_agent"]["task"] += (
+    # 2026-10-12 (BioXArena): with STELLA_SAVE_TO_TASK_DIR=1 the default './agent_outputs' instruction, which
+    # conflicts with the task's required output directory, is replaced. Default behaviour unchanged.
+    """
+Save all required outputs (submission.csv, metrics.json, solution.py, model files) directly in the task output directory given in the task description, not in './agent_outputs'.
+""" if __import__("os").environ.get("STELLA_SAVE_TO_TASK_DIR") == "1" else """
 Save Files and Data to the './agent_outputs' directory.
-
+""") + """
 RESEARCH-FIRST DEVELOPMENT APPROACH:
 - ALWAYS search for existing open-source implementations on GitHub before coding from scratch
 - Look for established libraries, pre-trained models, and proven methodologies

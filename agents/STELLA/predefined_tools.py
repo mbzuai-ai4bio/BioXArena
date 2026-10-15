@@ -591,6 +591,29 @@ def run_shell_command(command: str, working_directory: str = ".") -> str:
     except Exception as e:
         return f"Error executing command '{command}': {str(e)}"
 
+# BioXArena: during evaluation a STELLA agent once recreated the runner's own conda env ("bioxbench") with this
+# tool and wiped it. Agents may create new envs, but never touch the runner env / base or overwrite an existing env.
+_PROTECTED_ENVS = {"bioxbench", "base"}
+
+
+def _existing_conda_envs() -> set[str]:
+    import json, subprocess
+    try:
+        out = subprocess.run(["conda", "env", "list", "--json"], capture_output=True, text=True, timeout=60).stdout
+        return {os.path.basename(p.rstrip("/")) for p in json.loads(out).get("envs", [])}
+    except Exception:
+        return set()
+
+
+def _env_guard(env_name: str, creating: bool = False) -> str | None:
+    name = str(env_name).strip().rstrip("/").split("/")[-1]
+    if name in _PROTECTED_ENVS or (os.environ.get("CONDA_DEFAULT_ENV") and name == os.path.basename(os.environ["CONDA_DEFAULT_ENV"].rstrip("/"))):
+        return f"Refused: '{name}' is the benchmark runner's protected environment. Create and use a new environment with a different name."
+    if creating and name in _existing_conda_envs():
+        return f"Refused: conda environment '{name}' already exists; choose a new name (existing environments are not overwritten)."
+    return None
+
+
 @tool
 def create_conda_environment(env_name: str, python_version: str = "3.9") -> str:
     """Create a new conda environment.
@@ -602,6 +625,9 @@ def create_conda_environment(env_name: str, python_version: str = "3.9") -> str:
     Returns:
         Result of the conda environment creation
     """
+    refused = _env_guard(env_name, creating=True)
+    if refused:
+        return refused
     command = f"conda create -n {env_name} python={python_version} -y"
     return run_shell_command(command)
 
@@ -616,6 +642,9 @@ def install_packages_conda(env_name: str, packages: str) -> str:
     Returns:
         Result of the package installation
     """
+    refused = _env_guard(env_name)
+    if refused:
+        return refused
     command = f"conda activate {env_name} && conda install {packages} -y"
     return run_shell_command(command)
 
@@ -630,6 +659,9 @@ def install_packages_pip(env_name: str, packages: str) -> str:
     Returns:
         Result of the pip installation
     """
+    refused = _env_guard(env_name)
+    if refused:
+        return refused
     command = f"conda activate {env_name} && pip install {packages}"
     return run_shell_command(command)
 

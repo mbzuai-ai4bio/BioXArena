@@ -108,86 +108,85 @@ conda activate bioxbench
 
 ### 3. Run evaluation
 
-First, clone the repository and move into it:
+All agents in BioXArena are evaluated through the paid **[OpenRouter](https://openrouter.ai) API**: every backbone LLM in the paper is called with its OpenRouter model id (e.g. `anthropic/claude-opus-4.6`, `openai/gpt-5.6-sol`), and every agent framework, including Claude Code, Codex CLI and OpenCode, is pointed at OpenRouter.
+
+Clone the repository and provide your OpenRouter key, either as an environment variable or in `.env`:
 
 ```bash
 git clone git@github.com:mbzuai-ai4bio/BioXArena.git
 cd BioXArena
-```
-
-We evaluate LLM agents through the **OpenRouter** LLM API. Add your API key to `.env` before running:
-
-```bash
-api_key=xxx
-```
-
-Then move into the training directory:
-
-```bash
+export OPENROUTER_API_KEY=sk-or-...          # or: cp .env.example .env and fill in OPENROUTER_API_KEY
+conda activate bioxbench
 cd training
 ```
 
-The `training/` directory contains shell entrypoints for evaluating different LLM agents.
+#### Unified entry point
 
-For each agent, the benchmark is split into **four parts**, and **each part contains 19 tasks**. The four parts can be run in parallel, typically with **one GPU per part**.
-
-Before launching any script, make sure the correct environment is activated:
+[`training/run_agent.py`](training/run_agent.py) runs any agent with any backbone. Its inputs are the **agent name**, the **backbone model** (an OpenRouter model id) and the **API key**:
 
 ```bash
-conda activate bioxbench
+python run_agent.py --agent claudecode --model anthropic/claude-opus-4.6 --api-key "$OPENROUTER_API_KEY" \
+    --data-root /path/to/BioXArena-Data-Public --task chemical-biology/bace1-binding-affinity
 ```
 
-#### Example: General LLM agents
+| Agent (`--agent`) | Framework | Runner |
+|:---|:---|:---|
+| `minimal` | Minimal runner (generate → execute → repair, 3 attempts) | `run_general_llm_agents.py` |
+| `opencode` | [OpenCode](https://opencode.ai) CLI | `run_opencode_agent.py` |
+| `codex` | [Codex CLI](https://github.com/openai/codex) | `run_codexcli_agent.py` |
+| `claudecode` | [Claude Code](https://docs.claude.com/en/docs/claude-code) CLI | `run_claudecode_agent.py` |
+| `biomni` | [Biomni](https://github.com/snap-stanford/Biomni) A1 | `run_biomni_agent.py` |
+| `stella` | [STELLA](https://github.com/zaixizhang/STELLA) | `run_stella_agent.py` |
+| `mlevolve` | [MLEvolve](https://github.com/InternScience/MLEvolve) | `run_mlevolve_agent.py` |
+| `mlmaster2` | MLMaster 2.0 (via [EvoMaster](https://github.com/sjtu-sai-agents/EvoMaster)) | `run_mlmaster2.0_agent.py` |
 
-For general LLM agents, run the following four evaluation entry shell scripts:
+Task selection: `--task <domain>/<task>` (repeatable), `--domain <domain>`, `--part {1,2,3,4}` (19 tasks each, sorted by task key) or `--all-tasks`. By default each task gets a 2-hour wall clock (`--time-limit 7200`) and 1 GPU, as in the paper. Useful extras:
 
 ```bash
-Slurm_run_general_llm_part1.sh
-Slurm_run_general_llm_part2.sh
-Slurm_run_general_llm_part3.sh
-Slurm_run_general_llm_part4.sh
+python run_agent.py --list-configs                                  # agents + the 18 paper configurations
+python run_agent.py --agent minimal --model z-ai/glm-5.1 --check    # one short request: is the backbone reachable?
+python run_agent.py --agent codex --model openai/gpt-5.6-sol --part 1 --dry-run   # print the runner command only
 ```
 
-These shell scripts internally call the corresponding Python runner. For example:
+#### Reproducing the 18 paper configurations
 
-```text
-Slurm_run_general_llm_part*.sh -> run_general_llm_agents.py
-```
+`--config` fills in the agent, backbone and paper-specific settings (e.g. the $30 per-task budget cap for Claude Code with Opus 5 / 5.5):
 
-Before running the scripts, update the following fields in each shell script:
-
-- `PREFIX_DIR="xxx"` on line 7
-- `MODEL="z-ai/glm-5.1"` on line 8
-
-`PREFIX_DIR` should be the path that contains the extracted `BioXArena-Data-Public/` directory, but it should **not** include the `BioXArena-Data-Public` folder name itself.
-
-For example, if your data is located at:
-
-```text
-/path/to/data/BioXArena-Data-Public
-```
-
-then set:
+| `--config` | Agent | OpenRouter model | | `--config` | Agent | OpenRouter model |
+|:---|:---|:---|---|:---|:---|:---|
+| `minimal_g56s` | Minimal | `openai/gpt-5.6-sol` | | `codex_g56s` | Codex | `openai/gpt-5.6-sol` |
+| `minimal_o46` | Minimal | `anthropic/claude-opus-4.6` | | `codex_g6a` | Codex | `openai/gpt-6-astra` |
+| `minimal_ge` | Minimal | `google/gemini-3.1-pro-preview` | | `claudecode_o46` | Claude Code | `anthropic/claude-opus-4.6` |
+| `minimal_glm` | Minimal | `z-ai/glm-5.1` | | `claudecode_o5` | Claude Code | `anthropic/claude-opus-5` |
+| `minimal_qw` | Minimal | `qwen/qwen3.6-plus` | | `claudecode_o55` | Claude Code | `anthropic/claude-opus-5.5` |
+| `minimal_gm` | Minimal | `google/gemma-4-31b-it` | | `biomni_s5` | Biomni | `anthropic/claude-sonnet-5` |
+| `minimal_dv3` | Minimal | `deepseek/deepseek-v3.2` | | `stella_s5` | STELLA | `anthropic/claude-sonnet-5` |
+| `opencode_g56s` | OpenCode | `openai/gpt-5.6-sol` | | `mlevolve_ge` | MLEvolve | `google/gemini-3.1-pro-preview` |
+| `opencode_o46` | OpenCode | `anthropic/claude-opus-4.6` | | `mlmaster2_dv4` | MLMaster2 | `deepseek/deepseek-v4-pro` |
 
 ```bash
-PREFIX_DIR="/path/to/data"
+python run_agent.py --config codex_g6a --data-root /path/to/BioXArena-Data-Public --part 1
 ```
 
-`MODEL` can be set to any LLM available on OpenRouter. In the example scripts, we use:
+On a Slurm cluster, [`training/Slurm_run_agent.sh`](training/Slurm_run_agent.sh) runs one part (19 tasks) on 1 GPU; the four parts can run in parallel. Set `PREFIX_DIR` (the directory containing `BioXArena-Data-Public/`) in the script, then:
 
 ```bash
-MODEL="z-ai/glm-5.1"
+for part in 1 2 3 4; do sbatch Slurm_run_agent.sh --config claudecode_o55 $part; done
+for part in 1 2 3 4; do sbatch Slurm_run_agent.sh opencode qwen/qwen3.6-plus $part; done   # any agent/backbone
 ```
 
-#### Other agents
-
-Evaluation for other LLM agents follows the same pattern. Their evaluation entry shell scripts and corresponding Python runner files are also located under `training/`. The codebase for each (custom) agent is organized under the `agents/` directory.
-
-You can also add more agents, including your own LLM agents, by following the same script structure.
+The API key is passed to the runners through the `OPENROUTER_API_KEY` environment variable only; it is not written to command lines, configs or output files. CLI state (Claude Code / Codex / OpenCode configs and sessions) is kept in `BioXArena/.runtime/`, outside the results tree.
 
 #### Special notes
 
-For the **Biomni** agent, you must download the Biomni data lake in advance and place `biomni_data/` under `PREFIX_DIR`. 
+The **Claude Code**, **Codex** and **OpenCode** agents need the corresponding CLIs on `PATH` (we used Claude Code 2.1, Codex CLI 0.153 and OpenCode 1.18):
+
+```bash
+curl -fsSL https://claude.ai/install.sh | bash      # claude
+npm install -g @openai/codex opencode-ai            # codex, opencode (Node.js >= 20)
+```
+
+For the **Biomni** agent, download the Biomni data lake in advance and place `biomni_data/` under `PREFIX_DIR` (or pass `--biomni-data-dir`).
 You may either use the shared `bioxbench` environment or create its dedicated environment (`biomni_e1`) as follows.
 ```bash
 cd BioXArena/agents/Biomni/biomni_env
@@ -223,10 +222,10 @@ pip install -r playground/ml_master_2/requirements.txt
 After evaluation finishes, each agent produces outputs following a unified directory structure:
 
 ```text
-BioXArena-Output/<AgentName>/<round>/<domain>/<task>/
+BioXArena-Output/<agent>__<model>/<round>/<domain>/<task>/
 ```
 
-All outputs are stored under `BioXArena-Output/`, which is located inside `PREFIX_DIR/`.
+For example, `BioXArena-Output/claudecode__anthropic__claude-opus-4.6/round1/chemical-biology/bace1-binding-affinity/`. By default `BioXArena-Output/` is created next to the repository (`--output-root` to change it).
 
 #### Required files
 
@@ -248,13 +247,13 @@ For agents that employ **search-based strategies** such as Monte Carlo Tree Sear
 the execution process may generate intermediate results within a nested workspace directory:
 
 ```text
-BioXArena-Output/<AgentName>/<round>/<domain>/<task>/<workspace>/
+BioXArena-Output/<agent>__<model>/<round>/<domain>/<task>/<workspace>/
 ```
 
 During execution, multiple candidate solutions may be explored. After completion, the best-performing artifacts are selected and promoted to the task **root** directory:
 
 ```text
-BioXArena-Output/<AgentName>/<round>/<domain>/<task>/
+BioXArena-Output/<agent>__<model>/<round>/<domain>/<task>/
 ```
 
 Specifically:
@@ -288,7 +287,7 @@ The `metrics.json` file typically records information such as:
 For all other agents, outputs are written directly to the task root directory:
 
 ```text
-BioXArena-Output/<AgentName>/<round>/<domain>/<task>/
+BioXArena-Output/<agent>__<model>/<round>/<domain>/<task>/
 ```
 
 These agents must also produce the same required files:
@@ -306,7 +305,7 @@ To integrate a new agent into the BioXArena evaluation pipeline, ensure the foll
 1. Outputs follow the standardized directory structure:
 
    ```text
-   BioXArena-Output/<AgentName>/<round>/<domain>/<task>/
+   BioXArena-Output/<agent>__<model>/<round>/<domain>/<task>/
    ```
 
 2. Each task produces the required files:

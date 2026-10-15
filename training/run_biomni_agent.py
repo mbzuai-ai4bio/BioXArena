@@ -8,10 +8,13 @@ We just need to:
   2. Call agent.go(prompt)
   3. Collect outputs (submission.csv, metrics.json, solution.py)
 
+The LLM is served through OpenRouter: Claude models use Biomni's Anthropic source
+(OpenRouter's Anthropic-compatible endpoint), other models the OpenAI-compatible
+"Custom" source.
+
 Examples:
-    python run_biomni_agent.py --task chemical-biology/bace1-binding-affinity
-    python run_biomni_agent.py --domain chemical-biology --max-workers 2
-    python run_biomni_agent.py --all-tasks --max-workers 4
+    python run_biomni_agent.py --model anthropic/claude-sonnet-5 --source Anthropic --task chemical-biology/bace1-binding-affinity
+    python run_biomni_agent.py --model deepseek/deepseek-v3.2 --source Custom --domain chemical-biology --max-workers 2
 """
 
 from __future__ import annotations
@@ -29,16 +32,17 @@ from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any
 
+from openrouter_config import OPENROUTER_ANTHROPIC_BASE_URL, OPENROUTER_BASE_URL, resolve_api_key
+
 # ---------------------------------------------------------------------------
 # Paths (mirror the general LLM runner layout)
 # ---------------------------------------------------------------------------
 SCRIPT_PATH = Path(__file__).resolve()
 TRAINING_DIR = SCRIPT_PATH.parent
-EVAL_ROOT = TRAINING_DIR.parent          # BioXArena/
+EVAL_ROOT = TRAINING_DIR.parent          # repository root
 WORKSPACE_ROOT = EVAL_ROOT.parent
 DEFAULT_TASKS_ROOT = EVAL_ROOT / "tasks"
 DEFAULT_PROMPT_PATH = EVAL_ROOT / "prompts" / "unified_eval_prompt.py"
-DEFAULT_ENV_PATH = EVAL_ROOT / ".env"
 DEFAULT_ROUND_NAME = "round1"
 BIOMNI_AGENT_DIR = EVAL_ROOT / "agents" / "Biomni"
 
@@ -292,7 +296,7 @@ def run_single_task(
 
     # Pre-create biomni_data as a symlink to the shared copy so A1 skips
     # the 15GB S3 download and avoids per-task redundant copies.
-    _shared_biomni_data = Path("/lustre/scratch/shared-folders/bioagent-project/biomni_data")
+    _shared_biomni_data = Path(os.environ.get("BIOMNI_DATA_DIR", str(WORKSPACE_ROOT / "biomni_data")))
     _local_biomni_data = task_spec.output_dir / "biomni_data"
     if _shared_biomni_data.is_dir() and not _local_biomni_data.exists():
         try:
@@ -717,13 +721,21 @@ def run_task_with_wall_clock(
 def main() -> None:
     parser = argparse.ArgumentParser(description="Run Biomni agent on BioXArena tasks")
     parser.add_argument("--prefix-dir", type=str, default=str(WORKSPACE_ROOT))
-    parser.add_argument("--model", type=str, default="qwen/qwen3.6-plus:free")
-    parser.add_argument("--source", type=str, default="Custom",
-                        help="LLM source: OpenAI, Anthropic, Custom, etc.")
+    parser.add_argument("--tasks-root", type=str, default=None,
+                        help="Public data root containing <domain>/<task>/public (default: <prefix-dir>/BioXArena-Data-Public).")
+    parser.add_argument("--output-root", type=str, default=None,
+                        help="Full output directory for this run, overriding the model-derived default.")
+    parser.add_argument("--model-dir", type=str, default=None,
+                        help="Model output directory label used when --output-root is not supplied.")
+    parser.add_argument("--model", type=str, default="anthropic/claude-sonnet-5")
+    parser.add_argument("--source", type=str, default=None,
+                        help="Biomni LLM source: Anthropic or Custom (default: Anthropic for anthropic/* models, else Custom)")
     parser.add_argument("--base-url", type=str, default=None,
-                        help="Base URL for the LLM API (e.g., https://openrouter.ai/api/v1)")
+                        help="Base URL for the LLM API (default: the OpenRouter endpoint matching --source)")
     parser.add_argument("--api-key", type=str, default=None,
-                        help="API key (or reads from .env)")
+                        help="OpenRouter API key (default: OPENROUTER_API_KEY or <repo>/.env)")
+    parser.add_argument("--biomni-data-dir", type=str, default=None,
+                        help="Pre-downloaded Biomni data lake (default: <prefix-dir>/biomni_data)")
     parser.add_argument("--temperature", type=float, default=0.0)
     parser.add_argument("--timeout-seconds", type=int, default=600,
                         help="Timeout for each code execution INSIDE Biomni agent (per shell call)")
@@ -748,24 +760,17 @@ def main() -> None:
     args = parser.parse_args()
 
     prefix_dir = Path(args.prefix_dir)
-    tasks_root = prefix_dir / "BioXArena-Data-Public"
-    model_dir_name = args.model.replace("/", "__").replace(":", "_")
-    output_root = prefix_dir / "BioXArena-Output" / f"biomni__{model_dir_name}" / args.round_name
+    tasks_root = Path(args.tasks_root) if args.tasks_root else prefix_dir / "BioXArena-Data-Public"
+    model_dir_name = args.model_dir or f"biomni__{args.model.replace('/', '__').replace(':', '_')}"
+    output_root = Path(args.output_root) if args.output_root else prefix_dir / "BioXArena-Output" / model_dir_name / args.round_name
 
-    # Load API credentials from .env if not provided
-    if args.api_key is None or args.base_url is None:
-        env_path = DEFAULT_ENV_PATH
-        if env_path.exists():
-            env_vars = {}
-            for line in env_path.read_text().splitlines():
-                line = line.strip()
-                if "=" in line and not line.startswith("#"):
-                    k, v = line.split("=", 1)
-                    env_vars[k.strip()] = v.strip()
-            if args.api_key is None:
-                args.api_key = env_vars.get("api_key", "")
-            if args.base_url is None:
-                args.base_url = env_vars.get("api_url", "")
+    if args.source is None:
+        args.source = "Anthropic" if args.model.startswith("anthropic/") else "Custom"
+    if args.base_url is None:
+        args.base_url = OPENROUTER_ANTHROPIC_BASE_URL if args.source == "Anthropic" else OPENROUTER_BASE_URL
+    if not args.dry_run:
+        args.api_key = resolve_api_key(args.api_key)
+    os.environ.setdefault("BIOMNI_DATA_DIR", args.biomni_data_dir or str(prefix_dir / "biomni_data"))
 
     # Add Biomni to sys.path
     biomni_path = str(BIOMNI_AGENT_DIR)

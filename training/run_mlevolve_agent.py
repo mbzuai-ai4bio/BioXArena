@@ -8,9 +8,11 @@ MLEvolve uses Monte Carlo Graph Search with multi-agent collaboration:
   - Evolution Agent: trajectory-aware evolution
   - Fusion Agent: cross-branch fusion
 
+The LLM is served through OpenRouter (OpenAI-compatible API).
+
 Examples:
-    python run_mlevolve_agent.py --task chemical-biology/tox21-sr-are
-    python run_mlevolve_agent.py --all-tasks --max-workers 4
+    python run_mlevolve_agent.py --model google/gemini-3.1-pro-preview --steps 999 --time-limit 7200 --task chemical-biology/tox21-sr-are
+    python run_mlevolve_agent.py --model deepseek/deepseek-v3.2 --steps 999 --time-limit 7200 --all-tasks --max-workers 4
 """
 
 from __future__ import annotations
@@ -18,6 +20,7 @@ from __future__ import annotations
 import argparse
 import csv
 import json
+import os
 import shutil
 import subprocess
 import sys
@@ -28,6 +31,8 @@ from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any
 
+from openrouter_config import OPENROUTER_BASE_URL, resolve_api_key
+
 # ---------------------------------------------------------------------------
 # Paths
 # ---------------------------------------------------------------------------
@@ -36,7 +41,6 @@ TRAINING_DIR = SCRIPT_PATH.parent
 EVAL_ROOT = TRAINING_DIR.parent
 WORKSPACE_ROOT = EVAL_ROOT.parent
 DEFAULT_TASKS_ROOT = EVAL_ROOT / "tasks"
-DEFAULT_ENV_PATH = EVAL_ROOT / ".env"
 DEFAULT_ROUND_NAME = "round1"
 MLEVOLVE_DIR = EVAL_ROOT / "agents" / "MLEvolve"
 MLEVOLVE_EXEC_TIMEOUT = 5400
@@ -544,11 +548,9 @@ def run_single_task(
             f"agent.code.model={model}",
             f"agent.code.temp={temperature}",
             f"agent.code.base_url={base_url}",
-            f"agent.code.api_key={api_key}",
             f"agent.feedback.model={model}",
             f"agent.feedback.temp={temperature}",
             f"agent.feedback.base_url={base_url}",
-            f"agent.feedback.api_key={api_key}",
             f"agent.steps={steps}",
             f"agent.time_limit={time_limit}",
             f"exec.timeout={MLEVOLVE_EXEC_TIMEOUT}",
@@ -562,9 +564,14 @@ def run_single_task(
             " \\\n  ".join(cmd), encoding="utf-8"
         )
 
+        # The API key is passed through the environment (never on the command line or in
+        # mlevolve_cmd.txt / MLEvolve's saved config.yaml).
+        child_env = os.environ.copy()
+        child_env["OPENROUTER_API_KEY"] = api_key
         result = subprocess.run(
             cmd,
             cwd=str(mlevolve_dir),
+            env=child_env,
             capture_output=True,
             text=True,
             encoding="utf-8",
@@ -699,7 +706,10 @@ def run_single_task(
 def main() -> None:
     parser = argparse.ArgumentParser(description="Run MLEvolve agent on BioXArena tasks")
     parser.add_argument("--prefix-dir", type=str, default=str(WORKSPACE_ROOT))
-    parser.add_argument("--model", type=str, default="google/gemma-4-31b-it")
+    parser.add_argument("--tasks-root", type=str, default=None)
+    parser.add_argument("--output-root", type=str, default=None)
+    parser.add_argument("--model-dir", type=str, default=None)
+    parser.add_argument("--model", type=str, default="google/gemini-3.1-pro-preview")
     parser.add_argument("--base-url", type=str, default=None)
     parser.add_argument("--api-key", type=str, default=None)
     parser.add_argument("--temperature", type=float, default=0.0)
@@ -714,29 +724,16 @@ def main() -> None:
     args = parser.parse_args()
 
     prefix_dir = Path(args.prefix_dir).resolve()
-    tasks_root = (prefix_dir / "BioXArena-Data-Public").resolve()
-    model_dir_name = args.model.replace("/", "__").replace(":", "_")
-    output_root = prefix_dir / "BioXArena-Output" / f"mlevolve__{model_dir_name}" / args.round_name
+    tasks_root = (Path(args.tasks_root) if args.tasks_root else
+                  prefix_dir / "BioXArena-Data-Public").resolve()
+    model_dir_name = args.model_dir or f"mlevolve__{args.model.replace('/', '__').replace(':', '_')}"
+    output_root = (Path(args.output_root) if args.output_root else
+                   prefix_dir / "BioXArena-Output" / model_dir_name / args.round_name)
     mlevolve_dir = MLEVOLVE_DIR.resolve()
-    env_path = prefix_dir / "BioXArena" / ".env"
 
-    if args.api_key is None or args.base_url is None:
-        if env_path.exists():
-            env_vars = {}
-            for line in env_path.read_text().splitlines():
-                line = line.strip()
-                if "=" in line and not line.startswith("#"):
-                    k, v = line.split("=", 1)
-                    env_vars[k.strip()] = v.strip()
-            if args.api_key is None:
-                args.api_key = env_vars.get("api_key", "")
-            if args.base_url is None:
-                args.base_url = env_vars.get("api_url", "https://openrouter.ai/api/v1")
-
-    if args.api_key is None:
-        args.api_key = ""
     if args.base_url is None:
-        args.base_url = "https://openrouter.ai/api/v1"
+        args.base_url = OPENROUTER_BASE_URL
+    args.api_key = "" if args.dry_run else resolve_api_key(args.api_key)
 
     all_tasks = discover_tasks(tasks_root, output_root)
     selected = filter_tasks(all_tasks, args.domains, args.tasks, args.all_tasks)
