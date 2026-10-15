@@ -24,34 +24,22 @@ This repository contains the evaluation code for **BioXArena**, a biomedical mac
 
 ## 🏆 Leaderboard (18 agent configurations)
 
-All scores are normalized to a 0–100 scale (higher is better) and computed on the corrected tasks. **Task Avg** averages over all 76 tasks, and failed runs score 0. **Domain Avg** gives each of the 9 domains equal weight. **Success** counts the runs whose submission passed the task grader. **Success-only Avg** averages over successful runs only.
-
-| Rank | Agent | Backbone LLM | Type | Success (/76) | Task Avg | Domain Avg | Success-only Avg |
-|:---:|:---|:---|:---|:---:|:---:|:---:|:---:|
-| 1 | Codex | GPT-6 Astra | Generic coding agent | 76 | **73.9** | **73.6** | 73.9 |
-| 2 | Claude Code | Claude Opus 5.5 | Generic coding agent | 72 | 73.8 | 73.4 | 77.9 |
-| 3 | OpenCode | GPT-5.6-sol | Generic coding agent | 75 | 68.7 | 68.2 | 69.6 |
-| 4 | Codex | GPT-5.6-sol | Generic coding agent | 76 | 68.7 | 68.3 | 68.7 |
-| 5 | Claude Code | Claude Opus 5 | Generic coding agent | 63 | 65.6 | 65.0 | **79.1** |
-| 6 | Minimal | GPT-5.6-sol | Minimal runner | 75 | 65.3 | 64.9 | 66.2 |
-| 7 | Claude Code | Claude Opus 4.6 | Generic coding agent | 69 | 64.6 | 64.7 | 71.1 |
-| 8 | MLEvolve | Gemini-3.1-Pro | ML coding agent | 74 | 63.3 | 62.5 | 65.0 |
-| 9 | Biomni | Claude Sonnet 5 | Biomedical agent | 67 | 60.9 | 60.8 | 69.0 |
-| 10 | Minimal | GLM-5.1 | Minimal runner | 72 | 60.7 | 60.4 | 64.1 |
-| 11 | OpenCode | Claude Opus 4.6 | Generic coding agent | 63 | 60.4 | 60.3 | 72.8 |
-| 12 | Minimal | Gemini-3.1-Pro | Minimal runner | 72 | 58.9 | 58.3 | 62.2 |
-| 13 | Minimal | Claude Opus 4.6 | Minimal runner | 67 | 58.4 | 58.1 | 66.3 |
-| 14 | Minimal | Qwen3.6-Plus | Minimal runner | 71 | 55.0 | 54.6 | 58.9 |
-| 15 | STELLA | Claude Sonnet 5 | Biomedical agent | 60 | 55.0 | 54.7 | 69.6 |
-| 16 | MLMaster2 | DeepSeek-V4-Pro | ML coding agent | 63 | 53.5 | 53.0 | 64.6 |
-| 17 | Minimal | Gemma-4-31B | Minimal runner | 55 | 45.6 | 44.5 | 63.0 |
-| 18 | Minimal | DeepSeek-V3.2 | Minimal runner | 55 | 39.8 | 39.3 | 55.0 |
-
-Configurations are ranked by Task Avg. *Minimal* is our minimal code-execution runner, which generates, executes, and repairs a single solution script. The figure below (Figure 3 in the paper) shows the per-domain scores and the failure breakdown.
-
 <p align="center">
   <img src="figs/Figure3_main_leaderboard_failures.png" alt="BioXArena main results" width="90%">
 </p>
+
+Results of the 18 agent configurations on the 76 tasks (Figure 3 in the paper). **(a)** Successful and failed runs per configuration, with failures split into no submission, timeout, ID mismatch, NaN/Inf predictions, constant predictions and format errors. **(b)** Normalized scores (0–100, higher is better) per domain; failed runs score 0. **Task Avg** averages over all 76 tasks and **Domain Avg** gives each of the 9 domains equal weight. Rows are grouped by agent framework: Minimal (our minimal code-execution runner, which generates, executes and repairs a single solution script), OpenCode, Codex and Claude Code (generic coding agents), Biomni and STELLA (biomedical agents), and MLEvolve and MLMaster2 (ML coding agents).
+
+The subscript of each row gives the backbone LLM:
+
+| Subscript | Backbone LLM | | Subscript | Backbone LLM |
+|:---|:---|---|:---|:---|
+| g56s | GPT-5.6-sol | | ge | Gemini-3.1-Pro |
+| g6a | GPT-6 Astra | | glm | GLM-5.1 |
+| o46 | Claude Opus 4.6 | | qw | Qwen3.6-Plus |
+| o5 | Claude Opus 5 | | gm | Gemma-4-31B |
+| o55 | Claude Opus 5.5 | | dv3 | DeepSeek-V3.2 |
+| s5 | Claude Sonnet 5 | | dv4 | DeepSeek-V4-Pro |
 
 ## 💬 Join Our Community
 
