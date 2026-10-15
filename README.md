@@ -41,6 +41,11 @@ The subscript of each row gives the backbone LLM:
 | o55 | Claude Opus 5.5 | | dv3 | DeepSeek-V3.2 |
 | s5 | Claude Sonnet 5 | | dv4 | DeepSeek-V4-Pro |
 
+## 📄 License
+
+- **Code** in this repository is released under the [MIT License](LICENSE). The third-party agent frameworks in `agents/` (Biomni, STELLA, MLEvolve, EvoMaster) keep their own licenses (Apache License 2.0).
+- **Data** ([BioXArena-Data-Public](https://huggingface.co/datasets/mbzuai-ai4bio/BioXArena-Data-Public)) is released under [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/), for academic and other non-commercial use. Each task is derived from public sources (cited in its `description.md`), and use of a task's data is also subject to the license and terms of use of its original source.
+
 ## 💬 Join Our Community
 
 <div align="center">
@@ -263,11 +268,6 @@ To evaluate a new agent, follow the existing runners in `training/`:
 Then zip the output and submit it to CodaBench as in [step 4](#4-submit-to-codabench-for-scoring).
 
 </details>
-
-## 📄 License
-
-- **Code** in this repository is released under the [MIT License](LICENSE). The third-party agent frameworks in `agents/` (Biomni, STELLA, MLEvolve, EvoMaster) keep their own licenses (Apache License 2.0).
-- **Data** ([BioXArena-Data-Public](https://huggingface.co/datasets/mbzuai-ai4bio/BioXArena-Data-Public)) is released under [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/), for academic and other non-commercial use. Each task is derived from public sources (cited in its `description.md`), and use of a task's data is also subject to the license and terms of use of its original source.
 
 ## 📝 Citation
 
