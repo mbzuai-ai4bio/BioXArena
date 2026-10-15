@@ -1,7 +1,7 @@
 # BioXArena: Benchmarking LLM Agents on Multi-Modal Biomedical Machine Learning Tasks (NeurIPS 2026)
 
 <p align="center">
-  <a href="https://arxiv.org/abs/2605.15766"><img src="https://img.shields.io/badge/arXiv-2605.15766-b31b1b.svg" alt="arXiv"></a> <a href="https://mbzuai-ai4bio.github.io/BioXArena-ProjectPage/"><img src="https://img.shields.io/badge/Project-Page-blue.svg" alt="Project Page"></a> <a href="https://huggingface.co/datasets/mbzuai-ai4bio/BioXArena-Data-Public"><img src="https://img.shields.io/badge/%F0%9F%A4%97-Dataset-yellow.svg" alt="Hugging Face Dataset"></a> <a href="LICENSE"><img src="https://img.shields.io/badge/Code-MIT-green.svg" alt="Code License: MIT"></a> <a href="https://creativecommons.org/licenses/by-nc/4.0/"><img src="https://img.shields.io/badge/Data-CC%20BY--NC%204.0-lightgrey.svg" alt="Data License: CC BY-NC 4.0"></a>
+  <a href="https://arxiv.org/abs/2605.15766"><img src="https://img.shields.io/badge/arXiv-2605.15766-b31b1b.svg" alt="arXiv"></a> <a href="https://mbzuai-ai4bio.github.io/BioXArena-ProjectPage/"><img src="https://img.shields.io/badge/Project-Page-blue.svg" alt="Project Page"></a> <a href="https://mbzuai-ai4bio.github.io/BioXArena-ProjectPage/leaderboard.html"><img src="https://img.shields.io/badge/%F0%9F%8F%86-Leaderboard-orange.svg" alt="Leaderboard"></a> <a href="https://huggingface.co/datasets/mbzuai-ai4bio/BioXArena-Data-Public"><img src="https://img.shields.io/badge/%F0%9F%A4%97-Dataset-yellow.svg" alt="Hugging Face Dataset"></a> <a href="LICENSE"><img src="https://img.shields.io/badge/Code-MIT-green.svg" alt="Code License: MIT"></a> <a href="https://creativecommons.org/licenses/by-nc/4.0/"><img src="https://img.shields.io/badge/Data-CC%20BY--NC%204.0-lightgrey.svg" alt="Data License: CC BY-NC 4.0"></a>
 </p>
 
 <p align="center">
@@ -37,6 +37,8 @@ The subscript of each row gives the backbone LLM:
 | o5 | Claude Opus 5 | | gm | Gemma-4-31B |
 | o55 | Claude Opus 5.5 | | dv3 | DeepSeek-V3.2 |
 | s5 | Claude Sonnet 5 | | dv4 | DeepSeek-V4-Pro |
+
+📊 **Per-task and per-configuration results.** For the full 76 tasks × 18 configurations results, read the [**interactive leaderboard**](https://mbzuai-ai4bio.github.io/BioXArena-ProjectPage/leaderboard.html). It shows each task's description and, for every run, the raw and normalized score, the metric, failure reasons, run time, token usage and the model the agent built.
 
 ## 📄 License
 
