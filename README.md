@@ -12,7 +12,8 @@ This repository contains the evaluation code for **BioXArena**, a biomedical mac
 
 ## 📰 News
 
-- **[2026.10.15]** 🔥 We updated our [project page](https://mbzuai-ai4bio.github.io/BioXArena-ProjectPage/), [GitHub repository](https://github.com/mbzuai-ai4bio/BioXArena), [leaderboard](https://mbzuai-ai4bio.github.io/BioXArena-ProjectPage/leaderboard.html), and [camera-ready paper](https://arxiv.org/abs/2605.15766)!
+- **[2026.11.11]** 🔥 BioXArena-Pro is available! Check [project page](https://mbzuai-ai4bio.github.io/BioXArena-Pro-ProjectPage/), [GitHub repository](https://github.com/mbzuai-ai4bio/BioXArena-Pro), [leaderboard](https://mbzuai-ai4bio.github.io/BioXArena-Pro/), [arXiv paper](https://arxiv.org/abs/2611.13994), and [CodaBench evaluation](https://www.codabench.org/competitions/18583/)!
+- **[2026.10.15]** 🔥 We updated BioXArena [project page](https://mbzuai-ai4bio.github.io/BioXArena-ProjectPage/), [GitHub repository](https://github.com/mbzuai-ai4bio/BioXArena), [leaderboard](https://mbzuai-ai4bio.github.io/BioXArena-ProjectPage/leaderboard.html), and [camera-ready paper](https://arxiv.org/abs/2605.15766)!
 - **[2026.10.14]** [CodaBench](https://www.codabench.org/competitions/18373/) is available for automatic evaluation of your agent results. Each evaluation takes about 3–8 minutes.
 - **[2026.10.07]** We updated most of the benchmark data on [Hugging Face](https://huggingface.co/datasets/mbzuai-ai4bio/BioXArena-Data-Public). We fixed data leakage, improved the task descriptions, and made further data corrections. All 18 configurations were re-evaluated on the corrected tasks.
 - **[2026.09.24]** 🎉 BioXArena was accepted to the **NeurIPS 2026 Evaluations & Datasets Track**!
